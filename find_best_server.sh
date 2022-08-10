@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ -z "$1" ]; then
   read -p 'please chose a server region you would like to test ... (US/EU/AS) ' userInput
 else
@@ -11,15 +10,15 @@ echo "user selected server $userInput for testing"
 for server in 5 6 7 8 9 10 11 12
 do
   dotest=0
-
+  #if US selected and server is between 5 and 7
   if [[ $userInput = "US" && $server -ge 5 && $server -le 7 ]]; then
     dotest=1
   fi
-
+  #if EU selected and server is between 8 and 11
   if [[ $userInput = "EU" && $server -ge 8 && $server -le 11 ]]; then
     dotest=1
   fi
-
+  #if AS (ASIA) selected and server is between 12
   if [[ $userInput = "AS" && $server -ge 12 && $server -le 12 ]]; then
     dotest=1
   fi
@@ -39,14 +38,10 @@ do
       if [[ "$numberLines" -gt 0 ]];
       then
         echo "average download time for server $server"
-        awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server > new_download_file$server
-        awk '{print $(NF)}' new_download_file$server > average_time_server$server
-        awk '{s+=$1}END{print s/(50)" mins"}' average_time_server$server
+        awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
       fi
     fi
   fi
 done
 
 rm -f download*
-rm -f new_download_file*
-rm -f average_time_server*
