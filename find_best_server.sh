@@ -30,6 +30,9 @@ do
     sleep 8
     kill -s SIGKILL "$wget_pid"
     wait $! 2>/dev/null
+    
+    #remove download file
+    rm -f download
 
     FILE=download_file$server
     if [ -f "$FILE" ];
