@@ -5,6 +5,12 @@ else
   userInput="$1"
 fi
 
+
+if [ -z "$userInput" ]; then 
+  printf "\nno servers selected .. exiting ...\n"
+  exit 0
+fi
+
 echo "user selected server $userInput for testing"
 
 for server in 5 6 7 8 9 10 11 12
