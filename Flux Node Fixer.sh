@@ -1,9 +1,3 @@
-#{
-#  "status": "online",
-#  "benchmarking": "CUMULUS",
-#  "flux": "connected"
-#}
-
 #!/bin/bash
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
@@ -28,7 +22,7 @@ function check_status() {
 }
 
 function check_bench() {
-  if [[ ($bench_status == *"failed"*) || ($bench_status == *"toaster"*) ]];
+  if [[ (-z $bench_status) || ($bench_status == *"failed"*) || ($bench_status == *"toaster"*) ]];
   then
     echo 'benchmarks failed'
     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
@@ -45,7 +39,7 @@ function check_bench() {
 }
 
 function check_back(){
-  if [[ $flux_back == *"connected"* ]];
+  if [[ ($flux_back = *"disconnected"*) || (-z $flux_back) ]];
   then
     echo 'flux back disconnected'
     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
