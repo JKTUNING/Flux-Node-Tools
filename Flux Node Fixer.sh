@@ -2,8 +2,8 @@
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
 
-fluxbench-cli getstatus > currentFluxBack
-fluxbench-cli getbenchmarks > currentBenchmarks
+fluxbench-cli getstatus > currentFluxBack 2>/dev/null
+fluxbench-cli getbenchmarks > currentBenchmarks 2>/dev/null
 
 flux_status=$(grep -i "status" currentFluxBack)
 flux_benchmarks=$(grep -i "benchmarking" currentFluxBack)
@@ -67,3 +67,6 @@ function flux_update_restart(){
 check_status
 check_bench
 check_back
+
+rm -f currentBenchmarks
+rm -f currentFluxBack
