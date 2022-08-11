@@ -23,6 +23,7 @@ do
     dotest=1
   fi
 
+  #if dotest then wget bootstrap file and let it run for x seconds - then kill process and parse the output and average the last 50 records
   if [[ $dotest -ge 1 ]]; then
     echo "testing server $server ..."
     wget -o download_file$server -O download http://cdn-$server.runonflux.io/apps/fluxshare/getfile/flux_explorer_bootstrap.tar.gz &
