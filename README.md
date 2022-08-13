@@ -18,3 +18,9 @@ testing server 7 ...
 average download time for server 7
 11 mins
 ```
+
+## To run the script from the terminal you can use this command
+
+```
+bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/find_best_server.sh)
+```
