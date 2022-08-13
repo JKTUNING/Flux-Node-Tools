@@ -1,13 +1,14 @@
 #!/bin/bash
+#check the input from the command line to see if it is empty - if so then ask for a server
 if [ -z "$1" ]; then
   read -p 'please chose a server region you would like to test ... (US/EU/AS) ' userInput
 else
   userInput="$1"
 fi
 
-
+#check to see if user input is null - if so exit
 if [ -z "$userInput" ]; then 
-  printf "\nno servers selected .. exiting ...\n"
+  printf "\nno servers selected ... exiting ...\n"
   exit 0
 fi
 
@@ -54,4 +55,5 @@ do
   fi
 done
 
+#remove download file and temp wget output file
 rm -f download*
