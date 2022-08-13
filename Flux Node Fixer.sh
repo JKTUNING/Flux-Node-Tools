@@ -64,7 +64,7 @@ function flux_update_restart(){
   #sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
   #pm2 restart flux
   #sudo systemctl restart zelcash
-  echo 'waiting 1min for zel service to restart then restarting bench'
+  echo 'waiting 1 min for zel service to restart then restarting bench'
   sleep 60
   fluxbench-cli restartnodebenchmarks
 }
