@@ -68,7 +68,7 @@ do
    fi
 done
 
-#echo "$bestTime"
+echo "$bestTime"
 
 #remove download file and temp wget output file
 rm -f download*
