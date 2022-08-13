@@ -50,7 +50,7 @@ do
       then
         echo "average download time for server $server"
         #could store output into an array to give user the best choice for download speed 
-        downloadSpeed=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)"-$server"}'))
+        downloadSpeed=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)"-"$server}'))
 
         awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
       fi
