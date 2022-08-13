@@ -46,13 +46,16 @@ do
     if [ -f "$FILE" ];
     then
       numberLines=$(wc -l < download_file$server)
-      if [[ "$numberLines" -gt 0 ]];
+      #if number of lines greater than 57 means we have something we can work with - otherwise it's too slow!
+      if [[ "$numberLines" -gt 57 ]];
       then
         echo "average download time for server $server"
         #could store output into an array to give user the best choice for download speed 
-        downloadSpeed=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)"-"$server}'))
+        downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)}'))
 
         awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
+      else
+        echo "Server $server download speed too slow .. trying next server"
       fi
     fi
   fi
@@ -61,13 +64,14 @@ done
 # would have to parse out min/hr/days - in the case you get 2 hours back - compared to another server with 10 mins
 #loop through every element in the array to find lowest time
 bestTime=65000
-for i in "${downloadSpeed[@]}"
-do
-   if [[ $bestTime -lt "${downloadSpeed[i]}" ]]; then
-      bestTime=downloadSpeed[i]
-   fi
-done
+ for i in "${downloadSpeed[@]}"
+ do
+    if [[ $bestTime -gt "${downloadSpeed[i]}" ]]; then
+       bestTime=downloadSpeed[i]
+    fi
+ done
 
+echo "${downloadSpeed[0]}"
 echo "$bestTime"
 
 #remove download file and temp wget output file
