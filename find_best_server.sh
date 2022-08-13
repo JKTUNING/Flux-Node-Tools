@@ -50,7 +50,7 @@ do
       then
         echo "average download time for server $server"
         #could store output into an array to give user the best choice for download speed 
-        #downloadSpeed=($awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)"-$server"}')
+        downloadSpeed=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)"-$server"}'))
 
         awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
       fi
@@ -60,13 +60,13 @@ done
 
 # would have to parse out min/hr/days - in the case you get 2 hours back - compared to another server with 10 mins
 #loop through every element in the array to find lowest time
-#bestTime=65000
-#for i in "${downloadSpeed[@]}"
-#do
-#   if [[ $bestTime -lt "${downloadSpeed[i]}" ]]; then
-#      bestTime=downloadSpeed[i]
-#   fi
-#done
+bestTime=65000
+for i in "${downloadSpeed[@]}"
+do
+   if [[ $bestTime -lt "${downloadSpeed[i]}" ]]; then
+      bestTime=downloadSpeed[i]
+   fi
+done
 
 #echo "$bestTime"
 
