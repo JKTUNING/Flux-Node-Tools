@@ -65,6 +65,8 @@ do
   fi
 done
 
+printf "\n\n"
+
 #loop through every element in the array to find highest download speed in Kbps
 bestTime=0
  
