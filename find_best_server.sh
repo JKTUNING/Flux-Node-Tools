@@ -32,7 +32,7 @@ do
 
   #if dotest then wget bootstrap file and let it run for x seconds - then kill process and parse the output and average the last 50 records
   if [[ $dotest -ge 1 ]]; then
-    echo "testing server $server ..."
+    printf "\ntesting server $server ...\n"
     wget -o download_file$server -O download http://cdn-$server.runonflux.io/apps/fluxshare/getfile/flux_explorer_bootstrap.tar.gz &
     wget_pid=$!
     sleep 8
@@ -49,30 +49,34 @@ do
       #if number of lines greater than 57 means we have something we can work with - otherwise it's too slow!
       if [[ "$numberLines" -gt 57 ]];
       then
-        echo "average download time for server $server"
+        printf "average download speed for server $server\n"
         #could store output into an array to give user the best choice for download speed 
-        downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)}'))
+        #downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}')) #| awk '{s+=$1}END{print s/(50)}'))
 
-        awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
+        downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'))
+        awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'
+
+        #awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]"
+        #awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
       else
-        echo "Server $server download speed too slow .. trying next server"
+        printf "\nServer $server download speed too slow .. trying next server"
       fi
     fi
   fi
 done
 
-# would have to parse out min/hr/days - in the case you get 2 hours back - compared to another server with 10 mins
-#loop through every element in the array to find lowest time
-bestTime=65000
+#loop through every element in the array to find highest download speed in Kbps
+bestTime=0
+ 
  for i in "${downloadSpeed[@]}"
  do
-    if [[ $bestTime -gt "${downloadSpeed[i]}" ]]; then
-       bestTime=downloadSpeed[i]
-    fi
+     if [[ $bestTime -lt $i ]]; then
+        printf "\n$i"
+        bestTime=$i
+     fi
  done
 
-echo "${downloadSpeed[0]}"
-echo "$bestTime"
+printf "\n\nBest download speed is $bestTime Kbps\n\n"
 
 #remove download file and temp wget output file
 rm -f download*
