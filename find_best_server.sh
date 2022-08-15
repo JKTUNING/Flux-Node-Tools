@@ -14,6 +14,9 @@ fi
 
 echo "user selected server $userInput for testing"
 
+#initialize empty array
+serverIndex=()
+
 for server in 5 6 7 8 9 10 11 12
 do
   dotest=0
@@ -51,13 +54,15 @@ do
       then
         printf "average download speed for server $server\n"
         #could store output into an array to give user the best choice for download speed 
-        #downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}')) #| awk '{s+=$1}END{print s/(50)}'))
 
         downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'))
+        serverIndex+=($server)
+        
+        # JSON array if you want JSON output
+        #downloadSpeed_array+=($(jq --null-input --arg server_name "$server" --arg downloadSpeedTest "$downloadSpeed_JSON" '{"name": $server_name, "downloadSpeedTest": $downloadSpeedTest}'))
+
         awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'
 
-        #awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]"
-        #awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $(NF)}' | awk '{s+=$1}END{print s/(50)" mins"}'
       else
         printf "\nServer $server download speed too slow .. trying next server"
       fi
@@ -69,16 +74,21 @@ printf "\n\n"
 
 #loop through every element in the array to find highest download speed in Kbps
 bestTime=0
+bestServer=0
+count=0
  
  for i in "${downloadSpeed[@]}"
  do
+    
      if [[ $bestTime -lt $i ]]; then
-        printf "\n$i"
+        #printf "$i\n"
         bestTime=$i
+        bestServer=${serverIndex[$count]}
      fi
+     ((count++))
  done
 
-printf "\n\nBest download speed is $bestTime Kbps\n\n"
+printf "\n----------- RESULTS -----------\nBest server -- $bestServer\nDownload speed -- $bestTime Kbps\n"
 
 #remove download file and temp wget output file
 rm -f download*
