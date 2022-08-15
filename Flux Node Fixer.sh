@@ -2,6 +2,10 @@
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
 
+flux_status=$(cat fluxbench-cli getbenchmarks | jq -r '.status')
+echo "$flux_status"
+exit
+
 fluxbench-cli getstatus > currentFluxBack 2>/dev/null
 fluxbench-cli getbenchmarks > currentBenchmarks 2>/dev/null
 
@@ -58,10 +62,11 @@ function check_back(){
 function flux_update_restart(){
   sleep 1
   #sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
-  #sudo systemctl stop flux
-  #sleep 2
-  #sudo systemctl start flux
-  #sleep 5
+  #pm2 restart flux
+  #sudo systemctl restart zelcash
+  echo 'waiting 1 min for zel service to restart then restarting bench'
+  sleep 60
+  fluxbench-cli restartnodebenchmarks
 }
 
 check_status
