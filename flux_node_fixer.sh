@@ -1,11 +1,14 @@
 #!/bin/bash
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
+flux_status=$(cat fluxbench-cli getbenchmarks | jq -r '.status')
+echo "$flux_status"
+exit
 
 fluxbench-cli getstatus > currentFluxBack
 fluxbench-cli getbenchmarks > currentBenchmarks
 
-flux_status=$(grep -i "status" currentFluxBack)
+#flux_status=$(grep -i "status" currentFluxBack)
 flux_benchmarks=$(grep -i "benchmarking" currentFluxBack)
 flux_back=$(grep -i "flux" currentFluxBack)
 
