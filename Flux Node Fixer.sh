@@ -4,7 +4,7 @@
 
 flux_status=$(cat fluxbench-cli getbenchmarks | jq -r '.status')
 echo "$flux_status"
-exit
+exit 0
 
 fluxbench-cli getstatus > currentFluxBack 2>/dev/null
 fluxbench-cli getbenchmarks > currentBenchmarks 2>/dev/null
@@ -66,7 +66,7 @@ function flux_update_restart(){
   #sudo systemctl restart zelcash
   echo 'waiting 1 min for zel service to restart then restarting bench'
   sleep 60
-  fluxbench-cli restartnodebenchmarks
+  #fluxbench-cli restartnodebenchmarks
 }
 
 check_status
