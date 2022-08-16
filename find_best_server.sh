@@ -1,4 +1,5 @@
 #!/bin/bash
+#change line feed
 #check the input from the command line to see if it is empty - if so then ask for a server
 if [ -z "$1" ]; then
   read -p 'please chose a server region you would like to test ... (US/EU/AS) ' userInput
