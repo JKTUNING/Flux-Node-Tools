@@ -2,9 +2,9 @@
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
 
-flux_status=$(cat fluxbench-cli getbenchmarks | jq -r '.status')
-echo "$flux_status"
-exit 0
+#flux_status=$(cat fluxbench-cli getbenchmarks | jq -r '.status')
+#echo "$flux_status"
+#exit 0
 
 fluxbench-cli getstatus > currentFluxBack 2>/dev/null
 fluxbench-cli getbenchmarks > currentBenchmarks 2>/dev/null
