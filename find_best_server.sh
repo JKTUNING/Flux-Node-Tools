@@ -36,14 +36,14 @@ do
   #if dotest then wget bootstrap file and let it run for x seconds - then kill process and parse the output and average the last 50 records
   if [[ $dotest -ge 1 ]]; then
     printf "\ntesting server $server ...\n"
-    wget -o download_file$server -O download http://cdn-$server.runonflux.io/apps/fluxshare/getfile/flux_explorer_bootstrap.tar.gz &
+    wget -o download_file$server -O download_bootstrap http://cdn-$server.runonflux.io/apps/fluxshare/getfile/flux_explorer_bootstrap.tar.gz &
     wget_pid=$!
     sleep 8
     kill -s SIGKILL "$wget_pid"
     wait $! 2>/dev/null
     
-    #remove download file
-    rm -f download
+    #remove bootstrap download file
+    rm -f download_bootstrap
 
     FILE=download_file$server
     if [ -f "$FILE" ];
@@ -66,6 +66,8 @@ do
       else
         printf "\nServer $server download speed too slow .. trying next server"
       fi
+      #remove temp download speed file
+      rm -f download_file$server
     fi
   fi
 done
@@ -89,6 +91,3 @@ count=0
  done
 
 printf "\n----------- RESULTS -----------\nBest server -- $bestServer\nDownload speed -- $bestTime Kbps\n"
-
-#remove download file and temp wget output file
-rm -f download*
