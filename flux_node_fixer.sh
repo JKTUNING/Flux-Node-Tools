@@ -44,15 +44,15 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 function check_status() {
   if [[ $flux_bench_flux_status == "online" ]];
   then
-    echo -e "Flux node status - ${GREEN}ONLINE${NC}"
+    echo -e "Flux node status           -    ${GREEN}ONLINE${NC}"
   else
-    echo -e "Flux node status - ${RED}OFFLINE${NC}"
+    echo -e "Flux node status           -    ${RED}OFFLINE${NC}"
   fi
 }
 
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
-    echo -e "Flux node benchmark - ${RED}$flux_bench_status${NC}"
+    echo -e "Flux node benchmark        -    ${RED}$flux_bench_status${NC}"
     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
       echo 'user does not want to restart benchmarks'
@@ -65,14 +65,14 @@ function check_bench() {
   elif [[ $flux_bench_benchmark == "dos" ]]; then
     echo -e "${RED}node in denial of service state${NC}"
   else
-    echo -e "Flux node benchmark - ${GREEN}$flux_bench_benchmark${NC}"
+    echo -e "Flux node benchmark        -    ${GREEN}$flux_bench_benchmark${NC}"
   fi
 }
 
 function check_back(){
   if [[ $flux_bench_back != *"connected"* ]];
   then
-    echo -e "Flux back status - ${RED}DISCONNECTED${NC}"
+    echo -e "Flux back status           -    ${RED}DISCONNECTED${NC}"
     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
       echo -e "${RED}user does not want to restart flux back${NC}"
@@ -82,7 +82,7 @@ function check_back(){
       flux_update_restart
     fi
   else
-    echo -e "Flux back status - ${GREEN}CONNECTED${NC}"
+    echo -e "Flux back status           -    ${GREEN}CONNECTED${NC}"
   fi
 }
 
