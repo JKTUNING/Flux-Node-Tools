@@ -136,7 +136,7 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 
 main (){
     #basic information, hostname, date, ...
-    window "Flux Daemon Details" "blue" "50%"
+    window "Flux Daemon Details" "blue"
       append "`date`"
       addsep
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
@@ -146,11 +146,11 @@ main (){
       append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
     endwin
 
-      col_right
-      move_up
+      #col_right
+      #move_up
 
      #5 most used processes ordered by cpu and memory usage
-    window "Flux Node Details" "green" "50%"
+    window "Flux Node Details" "green"
       append_tabbed "Flux node status:$flux_node_status"  2
       append_tabbed "Flux collateral:$flux_node_collateral"  2
       append_tabbed "Flux added height:$flux_node_added_height"  2
@@ -161,4 +161,4 @@ main (){
     endwin
 }
 
-main_loop -t 1 "$@"
+main_loop -t 60 "$@"
