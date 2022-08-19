@@ -21,7 +21,7 @@ flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
 flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details")
 
 #gets blockchain info
-flux_daemon_details=$($COIN_CLI getstatus)
+flux_daemon_details=$($COIN_CLI getinfo)
 flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details")
 flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details")
 flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details")
