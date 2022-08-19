@@ -11,12 +11,32 @@ BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 
+#gets fluxbench version info
 flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
-flux_bench_status=$($BENCH_CLI getstatus)
-flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_status")
-flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_status")
-flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_status")
+#gets fluxbench status
+flux_bench_details=$($BENCH_CLI getstatus)
+flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
+flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
+flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details")
+
+#gets blockchain info
+flux_daemon_details=$($COIN_CLI getstatus)
+flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details")
+flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details")
+flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details")
+flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details")
+flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details")
+flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
+
+#gets flux node status
+flux_node_details=$($COIN_CLI getzelnodestatus)
+flux_node_status=$(jq -r '.status' <<<"$flux_node_details")
+flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details")
+flux_node_added_height=$(jq -r '.added_height' <<<"$flux_node_details")
+flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
+flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
+flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
 
 # echo "Flux Bench Version    -  $flux_bench_version"
 # echo "Flux back status      -  $flux_bench_back"
@@ -86,6 +106,25 @@ function flux_update_benchmarks(){
   #$BENCH_CLI restartnodebenchmarks
 }
 
+function flux_daemon_info(){
+  echo -e "Flux daemon version          -    $flux_daemon_version"
+  echo -e "Flux protocol version        -    $flux_daemon_protocol_version"
+  echo -e "Flux daemon block height     -    $flux_daemon_block_height"
+  echo -e "Flux daemon connections      -    $flux_daemon_connections"
+  echo -e "Flux deamon difficulty       -    $flux_daemon_difficulty"
+}
+
+function flux_node_info(){
+  echo -e "Flux node status             -    $flux_node_status"
+  echo -e "Flux node collateral         -    $flux_node_collateral"
+  echo -e "Flux node added height       -    $flux_node_added_height"
+  echo -e "Flux node confirmed height   -    $flux_node_confirmed_height"
+  echo -e "Flux node last confirmed     -    $flux_node_last_confirmed_height"
+  echo -e "Flux node last paid height   -    $flux_node_last_paid_height" 
+}
+
+flux_daemon_info
+flux_node_info
 check_status
 check_back
 check_bench
