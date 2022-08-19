@@ -136,7 +136,7 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 
 main (){
     #Display Daemon Details
-    window "Flux Daemon Details" "blue"
+    window "Flux Daemon Details" "blue" "50%"
       append "`date`"
       addsep
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
@@ -161,7 +161,8 @@ main (){
     move_up
 
     #Display Bench Details
-    window "Flux Benchmark Details" "red"
+    window "Flux Benchmark Details" "red" "50%"
+      append "$flux_bench_version"
       append_tabbed "Flux back status:$flux_bench_back"  2
       append_tabbed "Flux bench status:$flux_bench_flux_status"  2
       append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
@@ -169,4 +170,4 @@ main (){
 
 }
 
-main_loop -t 60 "$@"
+main_loop -t 5 "$@"
