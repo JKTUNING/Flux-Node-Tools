@@ -128,8 +128,21 @@ function flux_node_info(){
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
 }
 
-flux_daemon_info
-flux_node_info
-check_status
-check_back
-check_bench
+#flux_daemon_info
+#flux_node_info
+#check_status
+#check_back
+#check_bench
+
+main (){
+    #basic information, hostname, date, ...
+    window "`hostname`" "red"
+    append "`date`"
+    addsep
+    append_tabbed "Up since|`uptime | cut -f1 -d"," | sed 's/^ *//' | cut -f3- -d" "`" 2 "|"
+    append_tabbed "Users:`uptime | cut -f2 -d"," | sed 's/^ *//'| cut -f1 -d" "`" 2
+    append_tabbed "`awk '{print "Load average:" $1 " " $2 " " $3}' < /proc/loadavg`" 2
+    endwin
+}
+
+main_loop 10
