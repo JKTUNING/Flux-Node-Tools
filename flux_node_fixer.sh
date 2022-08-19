@@ -34,8 +34,8 @@ function check_status() {
 }
 
 function check_bench() {
-  if [[ ($flux_bench_status == "failed") || ($flux_bench_status == "toaster") ]]; then
-    echo -e "Flux node benchmark - ${RED} benchmarks failed${NC}"
+  if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
+    echo -e "Flux node benchmark - ${RED}$flux_bench_status${NC}"
     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
       echo 'user does not want to restart benchmarks'
@@ -43,12 +43,12 @@ function check_bench() {
       echo 'user would like to restart benchmarks'
       flux_update_benchmarks
     fi
-  elif [[ $flux_bench_status == "running" ]]; then
+  elif [[ $flux_bench_benchmark == "running" ]]; then
     echo -e "${BLUE}node benchmarks running ... ${NC}"
-  elif [[ $flux_bench_status == "dos" ]]; then
+  elif [[ $flux_bench_benchmark == "dos" ]]; then
     echo -e "${RED}node in denial of service state${NC}"
   else
-    echo -e "Flux node benchmark - ${GREEN}$flux_bench_status${NC}"
+    echo -e "Flux node benchmark - ${GREEN}$flux_bench_benchmark${NC}"
   fi
 }
 
@@ -65,7 +65,7 @@ function check_back(){
       flux_update_restart
     fi
   else
-    echo -e "Flux back status - ${GREEN}flux back connected${NC}"
+    echo -e "Flux back status - ${GREEN}CONNECTED${NC}"
   fi
 }
 
