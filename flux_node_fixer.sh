@@ -120,7 +120,8 @@ BENCH_DIR_LOG='.fluxbenchmark'
 # fi
 
 #fluxbench-cli getbenchmarks | grep status > currentBenchmarks
-flux_status=$($($BENCH_CLI getstatus) | jq -r '.status')
+flux_status=$($BENCH_CLI getstatus)
+#flux_status=$($($BENCH_CLI getstatus) | jq -r '.status')
 echo "$flux_status"
 exit
 
