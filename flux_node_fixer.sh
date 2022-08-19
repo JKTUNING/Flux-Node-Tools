@@ -107,21 +107,21 @@ function flux_update_benchmarks(){
 }
 
 function flux_daemon_info(){
-  echo -e "${BLUE_CIRCLE}   Flux daemon version          -    $flux_daemon_version"
-  echo -e "${BLUE_CIRCLE}   Flux protocol version        -    $flux_daemon_protocol_version"
-  echo -e "${BLUE_CIRCLE}   Flux daemon block height     -    $flux_daemon_block_height"
-  echo -e "${BLUE_CIRCLE}   Flux daemon connections      -    $flux_daemon_connections"
-  echo -e "${BLUE_CIRCLE}   Flux deamon difficulty       -    $flux_daemon_difficulty"
+  echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
+  echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
+  echo -e "$BLUE_CIRCLE   Flux daemon block height     -    $flux_daemon_block_height"
+  echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
+  echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
 }
 
 function flux_node_info(){
-  echo -e "${BLUE_CIRCLE}   Flux node status             -    $flux_node_status"
-  echo -e "${BLUE_CIRCLE}   Flux node collateral         -    $flux_node_collateral"
-  echo -e "${BLUE_CIRCLE}   Flux node added height       -    $flux_node_added_height"
-  echo -e "${BLUE_CIRCLE}   Flux node confirmed height   -    $flux_node_confirmed_height"
-  echo -e "${BLUE_CIRCLE}   Flux node last confirmed     -    $flux_node_last_confirmed_height"
-  echo -e "${BLUE_CIRCLE}   Flux node last paid height   -    $flux_node_last_paid_height"
-  echo -e "${BLUE_CIRCLE}   Blocks since last confirmed  -    $blockDiff"
+  echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Flux node collateral         -    $flux_node_collateral"
+  echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
+  echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
+  echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
+  echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
+  echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
 }
 
 flux_daemon_info
