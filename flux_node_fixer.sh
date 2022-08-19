@@ -137,8 +137,6 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 main (){
     #Display Daemon Details
     window "Flux Daemon Details" "blue" "50%"
-      append "`date`"
-      addsep
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
       append_tabbed "Flux protocol version:$flux_daemon_protocol_version"  2
       append_tabbed "Flux protocol block height:$flux_daemon_block_height"  2
@@ -147,7 +145,7 @@ main (){
     endwin
     
     #Display Node Details
-    window "Flux Node Details" "green"
+    window "Flux Node Details" "green" "50%"
       append_tabbed "Flux node status:$flux_node_status"  2
       append_tabbed "Flux collateral:$flux_node_collateral"  2
       append_tabbed "Flux added height:$flux_node_added_height"  2
@@ -157,8 +155,8 @@ main (){
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
 
-      col_right
-      move_up
+        col_right
+        move_up
 
     #Display Bench Details
     window "Flux Benchmark Details" "red" "50%"
