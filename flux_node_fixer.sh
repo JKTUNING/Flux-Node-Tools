@@ -27,15 +27,15 @@ flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_status")
 function check_status() {
   if [[ $flux_bench_flux_status == "online" ]];
   then
-    echo -e "${GREEN}flux online"
+    echo -e "Flux node status - ${GREEN}ONLINE${NC}"
   else
-    echo -e "${RED}flux offline"
+    echo -e "Flux node status - ${RED}OFFLINE${NC}"
   fi
 }
 
 function check_bench() {
   if [[ ($flux_bench_status == "failed") || ($flux_bench_status == "toaster") ]]; then
-    echo -e "${RED} benchmarks failed"
+    echo -e "Flux node benchmark - ${RED} benchmarks failed${NC}"
     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
       echo 'user does not want to restart benchmarks'
@@ -44,28 +44,28 @@ function check_bench() {
       flux_update_benchmarks
     fi
   elif [[ $flux_bench_status == "running" ]]; then
-    echo -e "${BLUE}node benchmarks running ... "
+    echo -e "${BLUE}node benchmarks running ... ${NC}"
   elif [[ $flux_bench_status == "dos" ]]; then
-    echo 'node in denial of service state'
+    echo -e "${RED}node in denial of service state${NC}"
   else
-    echo -e "${GREEN}node oprating normally"
+    echo -e "Flux node benchmark - ${GREEN}$flux_bench_status${NC}"
   fi
 }
 
 function check_back(){
   if [[ $flux_bench_back != *"connected"* ]];
   then
-    echo -e "${RED}flux back disconnected"
+    echo -e "Flux back status - ${RED}DISCONNECTED${NC}"
     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
-      echo -e "${RED}user does not want to restart flux back"
+      echo -e "${RED}user does not want to restart flux back${NC}"
     else
-      echo -e "${BLUE}user would like to update and restart flux-back"
+      echo -e "${BLUE}user would like to update and restart flux-back${NC}"
       echo 'updating ... '
       flux_update_restart
     fi
   else
-    echo -e "${GREEN}flux back connected"
+    echo -e "Flux back status - ${GREEN}flux back connected${NC}"
   fi
 }
 
