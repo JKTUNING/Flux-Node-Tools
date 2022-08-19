@@ -126,9 +126,10 @@ flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_status")
 flux_bench_status=$(jq -r '.status' <<<"$flux_bench_status")
 flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_status")
 
-echo "$flux_status"
 echo "$flux_version"
+echo "$flux_bench_back"
 echo "$flux_bench_status"
+echo "$flux_bench_benchmark"
 exit
 
 function check_status() {
