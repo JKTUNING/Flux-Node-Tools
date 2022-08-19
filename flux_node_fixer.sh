@@ -159,7 +159,7 @@ function check_bench() {
     fi
   elif [[ $flux_bench_status == "running" ]]; then
     echo -e "${BLUE}node benchmarks running ... "
-  elif elif [[ $flux_bench_status == "dos" ]]; then
+  elif [[ $flux_bench_status == "dos" ]]; then
     echo 'node in denial of service state'
   else
     echo -e "${GREEN}node oprating normally"
