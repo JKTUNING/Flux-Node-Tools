@@ -38,11 +38,8 @@ flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
 flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
 flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
 
-# echo "Flux Bench Version    -  $flux_bench_version"
-# echo "Flux back status      -  $flux_bench_back"
-# echo "Flux node status      -  $flux_bench_flux_status"
-# echo -e "Flux node benchmark   -  $flux_bench_benchmark - sweet"
-#exit
+#calculated block height since last confirmed
+blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 
 function check_status() {
   if [[ $flux_bench_flux_status == "online" ]];
@@ -120,7 +117,8 @@ function flux_node_info(){
   echo -e "Flux node added height       -    $flux_node_added_height"
   echo -e "Flux node confirmed height   -    $flux_node_confirmed_height"
   echo -e "Flux node last confirmed     -    $flux_node_last_confirmed_height"
-  echo -e "Flux node last paid height   -    $flux_node_last_paid_height" 
+  echo -e "Flux node last paid height   -    $flux_node_last_paid_height"
+  echo -e "Blocks since last confirmed  -    $blockDiff"
 }
 
 flux_daemon_info
