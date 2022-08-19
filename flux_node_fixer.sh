@@ -4,10 +4,12 @@
 GREEN='\033[1;32m'
 RED='\033[1;31m'
 BLUE="\\033[38;5;27m"
+SEA="\\033[38;5;49m"
 NC='\033[0m'
 
 WRENCH='\xF0\x9F\x94\xA7'
-BLUE_CIRCLE='\xF0\x9F\x94\xB5'
+#BLUE_CIRCLE='\xF0\x9F\x94\xB5'
+BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
 
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
