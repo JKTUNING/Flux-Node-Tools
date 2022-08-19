@@ -6,8 +6,8 @@ RED='\033[1;31m'
 BLUE="\\033[38;5;27m"
 NC='\033[0m'
 
-WRENCH="\xF0\x9F\x94\xA7"
-BLUE_CIRCLE="\xF0\x9F\x94\xB5"
+WRENCH='\xF0\x9F\x94\xA7'
+BLUE_CIRCLE='\xF0\x9F\x94\xB5'
 
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
