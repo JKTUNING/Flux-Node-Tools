@@ -135,7 +135,7 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 #check_bench
 
 main (){
-    #basic information, hostname, date, ...
+    #Display Daemon Details
     window "Flux Daemon Details" "blue"
       append "`date`"
       addsep
@@ -145,11 +145,8 @@ main (){
       append_tabbed "Flux protocol connections:$flux_daemon_connections"  2
       append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
     endwin
-
-      #col_right
-      #move_up
-
-     #5 most used processes ordered by cpu and memory usage
+    
+    #Display Node Details
     window "Flux Node Details" "green"
       append_tabbed "Flux node status:$flux_node_status"  2
       append_tabbed "Flux collateral:$flux_node_collateral"  2
@@ -159,6 +156,17 @@ main (){
       append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
+
+    col_right
+    move_up
+
+    #Display Bench Details
+    window "Flux Benchmark Details" "red"
+      append_tabbed "Flux back status:$flux_bench_back"  2
+      append_tabbed "Flux bench status:$flux_bench_flux_status"  2
+      append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
+    endwin
+
 }
 
 main_loop -t 60 "$@"
