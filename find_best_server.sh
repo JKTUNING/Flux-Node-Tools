@@ -1,5 +1,5 @@
 #!/bin/bash
-#change line feed
+
 #check the input from the command line to see if it is empty - if so then ask for a server
 if [ -z "$1" ]; then
   read -p 'please chose a server region you would like to test ... (US/EU/AS) ' userInput
@@ -17,6 +17,10 @@ echo "user selected server $userInput for testing"
 
 #initialize empty array
 serverIndex=()
+
+#amount of time we want the wget function to run
+downloadTime='8'
+downloadFileSize=0
 
 for server in 5 6 7 8 9 10 11 12
 do
@@ -39,7 +43,7 @@ do
     printf "\ntesting server $server ...\n"
     wget -o download_file$server -O download_bootstrap http://cdn-$server.runonflux.io/apps/fluxshare/getfile/flux_explorer_bootstrap.tar.gz &
     wget_pid=$!
-    sleep 8
+    sleep $downloadTime
     kill -s SIGKILL "$wget_pid"
     wait $! 2>/dev/null
     
@@ -49,24 +53,24 @@ do
     FILE=download_file$server
     if [ -f "$FILE" ];
     then
-      numberLines=$(wc -l < download_file$server)
-      #if number of lines greater than 57 means we have something we can work with - otherwise it's too slow!
-      if [[ "$numberLines" -gt 57 ]];
-      then
-        printf "average download speed for server $server\n"
-        #could store output into an array to give user the best choice for download speed 
+      printf "average download speed for server $server\n"
 
-        downloadSpeed+=($(awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'))
-        serverIndex+=($server)
-        
-        # JSON array if you want JSON output
-        #downloadSpeed_array+=($(jq --null-input --arg server_name "$server" --arg downloadSpeedTest "$downloadSpeed_JSON" '{"name": $server_name, "downloadSpeedTest": $downloadSpeedTest}'))
+      #grab the size of the file after wget call for $downloadTime amount of time
+      #s=substr - this gets the number value in Kb and then converts the output to Mb with the  s/1000
+      downloadFileSize=($(tail -1 download_file$server | awk '{printf $0}' | awk '{ s=substr($1,1,length($1)); $1=(s/1000); }1' | awk '{printf "%.1f", ($1)}'))
 
-        awk "NR > $((numberLines -50)) && NR <= $numberLines" download_file$server | awk '{print $8}' | grep -o "[0-9.]\+[KMG]" | awk '{ s=substr($1,1,length($1)); u=substr($1,length($1)); if(u=="K") $1=(s*1); if(u=="M") $1=(s*1000); if(u=="G") $1=(s*1000000); }1' | awk '{s+=$1}END{printf "%.0f", s/(50)}'
+      #store the size of the downloadFile into an array
+      fileSizes+=($downloadFileSize)
 
-      else
-        printf "\nServer $server download speed too slow .. trying next server"
-      fi
+      #divide the size of the $downloadFile by $downloadTime and store it in an array
+      #bash can't do floating point math - so only storing integer value for download speed at this time
+      downloadSpeed+=($(echo "($downloadFileSize / ($downloadTime))" | bc))
+
+      #add the current server number to serverIndex array
+      serverIndex+=($server)
+
+      printf "Server $server total download size $downloadFileSize Mb\n"
+
       #remove temp download speed file
       rm -f download_file$server
     fi
@@ -87,8 +91,10 @@ count=0
         #printf "$i\n"
         bestTime=$i
         bestServer=${serverIndex[$count]}
+        echo "${fileSizes[$count]} Mb"
+        echo "${downloadSpeed[$count]} Mb/s"
      fi
      ((count++))
  done
 
-printf "\n----------- RESULTS -----------\nBest server -- $bestServer\nDownload speed -- $bestTime Kbps\n"
+printf "\n----------- RESULTS -----------\nBest server -- $bestServer\nDownload speed -- $bestTime Mb/s\n"
