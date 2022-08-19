@@ -49,11 +49,10 @@ flux_bench_stats=$($BENCH_CLI getbenchmarks)
 flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats")
 flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats")
 flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats")
-flux_bench_stats_ssd$(jq -r '.ssd' <<<"$flux_bench_stats")
+flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats")
 flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats")
 flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats")
 flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats")
-flux_bench_stats_writespeed=$(jq -r '.writespeed' <<<"$flux_bench_stats")
 flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats")
 flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats")
 flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
@@ -80,7 +79,6 @@ main (){
       append_tabbed "hhd:$flux_bench_stats_hhd"  2
       append_tabbed "dd write:$flux_bench_stats_ddwrite"  2
       append_tabbed "Total Storage:$flux_bench_stats_storage"  2
-      append_tabbed "Write Speed:$flux_bench_stats_writespeed"  2
       append_tabbed "EPS:$flux_bench_stats_eps"  2
       append_tabbed "Ping:$flux_bench_stats_ping"  2
       append_tabbed "Download Speed:$flux_bench_stats_download"  2
