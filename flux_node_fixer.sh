@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#colors
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+BLUE="\\033[38;5;27m"
+NC='\033[0m'
+
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
@@ -119,31 +125,31 @@ BENCH_DIR_LOG='.fluxbenchmark'
 #   echo -e "${NC}"
 # fi
 
-flux_version=$(($BENCH_CLI getinfo) | jq -r '.version')
+flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
 flux_bench_status=$($BENCH_CLI getstatus)
 flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_status")
 flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_status")
 flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_status")
 
-echo "$flux_version"
-echo "$flux_bench_back"
-echo "$flux_bench_flux_status"
-echo "$flux_bench_benchmark"
-exit
+# echo "Flux Bench Version    -  $flux_bench_version"
+# echo "Flux back status      -  $flux_bench_back"
+# echo "Flux node status      -  $flux_bench_flux_status"
+# echo -e "Flux node benchmark   -  $flux_bench_benchmark - sweet"
+#exit
 
 function check_status() {
   if [[ $flux_bench_status == "online" ]];
   then
-    echo 'flux online'
+    echo -e "${GREEN}flux online"
   else
-    echo 'flux offline'
+    echo -e "${RED}flux offline"
   fi
 }
 
 function check_bench() {
   if [[ ($flux_bench_status == "failed") || ($flux_bench_status == "toaster") ]]; then
-    echo 'benchmarks failed'
+    echo -e "${RED} benchmarks failed"
     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
     if [ $userInput == 'n' ]; then
       echo 'user does not want to restart benchmarks'
@@ -152,24 +158,23 @@ function check_bench() {
       flux_update_restart
     fi
   elif [[ $flux_bench_status == "running" ]]; then
-    echo 'node benchmarks running ... '
+    echo -e "${BLUE}node benchmarks running ... "
   elif elif [[ $flux_bench_status == "dos" ]]; then
     echo 'node in denial of service state'
   else
-    echo 'node oprating normally'
+    echo -e "${GREEN}node oprating normally"
   fi
 }
 
 function check_back(){
   if [[ $flux_bench_back != *"connected"* ]];
   then
-    echo 'flux back disconnected'
+    echo -e "${RED}flux back disconnected"
     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
-    if [ $userInput == 'n' ]
-    then
-      echo 'user does not want to restart flux back'
+    if [ $userInput == 'n' ]; then
+      echo -e "${RED}user does not want to restart flux back"
     else
-      echo 'user would like to update and restart flux-back'
+      echo -e "${BLUE}user would like to update and restart flux-back"
       echo 'updating ... '
       flux_update_restart
       exit 0
