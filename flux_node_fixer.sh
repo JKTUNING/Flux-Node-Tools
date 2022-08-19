@@ -143,29 +143,29 @@ main (){
       append_tabbed "Flux protocol connections:$flux_daemon_connections"  2
       append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
     endwin
-    
-    #Display Node Details
+
+    col_right
+
+    #Display Bench Details
+    window "Flux Benchmark Details" "red" "50%"
+      append_tabbed "Flux bench version:$flux_bench_version"  2
+      append_tabbed "Flux back status:$flux_bench_back"  2
+      append_tabbed "Flux bench status:$flux_bench_flux_status"  2
+      append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
+    endwin
+
+    move_up
+
+     #Display Node Details
     window "Flux Node Details" "green" "50%"
       append_tabbed "Flux node status:$flux_node_status"  2
-      append_tabbed "Flux collateral:$flux_node_collateral"  2
+      #append_tabbed "Flux collateral:$flux_node_collateral"  2
       append_tabbed "Flux added height:$flux_node_added_height"  2
       append_tabbed "Flux confirmed height:$flux_node_confirmed_height"  2
       append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
       append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
-
-        col_right
-        move_up
-
-    #Display Bench Details
-    window "Flux Benchmark Details" "red" "50%"
-      append "$flux_bench_version"
-      append_tabbed "Flux back status:$flux_bench_back"  2
-      append_tabbed "Flux bench status:$flux_bench_flux_status"  2
-      append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
-    endwin
-
 }
 
 main_loop -t 5 "$@"
