@@ -157,8 +157,8 @@ main (){
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
 
-    col_right
-    move_up
+      col_right
+      move_up
 
     #Display Bench Details
     window "Flux Benchmark Details" "red" "50%"
