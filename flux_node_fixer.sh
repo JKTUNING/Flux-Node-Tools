@@ -79,24 +79,24 @@ main (){
   if [[ $show_bench == '1' ]]; then
   #Display Bench Details
     window "Flux Benchmark Details" "red"
-      append_tabbed "Flux bench version:$flux_bench_version"  2
-      append_tabbed "Flux back status:$flux_bench_back"  2
-      append_tabbed "Flux bench status:$flux_bench_flux_status"  2
-      append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
-      addsep
-      append_tabbed "real cores:$flux_bench_stats_real_cores"  2
-      append_tabbed "cores:$flux_bench_stats_cores"  2
-      append_tabbed "ram:$flux_bench_stats_ram"  2
-      append_tabbed "ssd:$flux_bench_stats_ssd"  2
-      append_tabbed "hhd:$flux_bench_stats_hhd"  2
-      append_tabbed "dd write:$flux_bench_stats_ddwrite"  2
-      append_tabbed "Total Storage:$flux_bench_stats_storage"  2
-      append_tabbed "EPS:$flux_bench_stats_eps"  2
-      append_tabbed "Ping:$flux_bench_stats_ping"  2
-      append_tabbed "Download Speed:$flux_bench_stats_download"  2
-      append_tabbed "Upload Speed:$flux_bench_stats_upload"  2
-      append_tabbed "Speed Test Version:$flux_bench_stats_speed_test_version"  2
-      append_tabbed "Errors:$flux_bench_stats_error"  2      
+    append_tabbed "Flux bench version:$flux_bench_version"  2
+    append_tabbed "Flux back status:$flux_bench_back"  2
+    append_tabbed "Flux bench status:$flux_bench_flux_status"  2
+    append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
+    addsep
+    append_tabbed "real cores:$flux_bench_stats_real_cores"  2
+    append_tabbed "cores:$flux_bench_stats_cores"  2
+    append_tabbed "ram:$flux_bench_stats_ram"  2
+    append_tabbed "ssd:$flux_bench_stats_ssd"  2
+    append_tabbed "hhd:$flux_bench_stats_hhd"  2
+    append_tabbed "dd write:$flux_bench_stats_ddwrite"  2
+    append_tabbed "Total Storage:$flux_bench_stats_storage"  2
+    append_tabbed "EPS:$flux_bench_stats_eps"  2
+    append_tabbed "Ping:$flux_bench_stats_ping"  2
+    append_tabbed "Download Speed:$flux_bench_stats_download"  2
+    append_tabbed "Upload Speed:$flux_bench_stats_upload"  2
+    append_tabbed "Speed Test Version:$flux_bench_stats_speed_test_version"  2
+    append_tabbed "Errors:$flux_bench_stats_error"  2      
     endwin
 
         #show bench log under
@@ -104,7 +104,7 @@ main (){
 
     if [[ $bench_log != "" ]]; then
       window "Flux Bench Log" "red"
-        append "$bench_log"
+      append "$bench_log"
       endwin
     fi
   fi
@@ -114,18 +114,18 @@ main (){
   if [[ $show_daemon == '1' ]]; then
     #Display Daemon Details
     window "Flux Daemon Details" "blue"
-      append_tabbed "Flux daemon version:$flux_daemon_version" 2
-      append_tabbed "Flux version:$flux_daemon_protocol_version"  2
-      append_tabbed "Flux block height:$flux_daemon_block_height"  2
-      append_tabbed "Flux connections:$flux_daemon_connections"  2
-      append_tabbed "Flux difficulty:$flux_daemon_difficulty"  2
+    append_tabbed "Flux daemon version:$flux_daemon_version" 2
+    append_tabbed "Flux version:$flux_daemon_protocol_version"  2
+    append_tabbed "Flux block height:$flux_daemon_block_height"  2
+    append_tabbed "Flux connections:$flux_daemon_connections"  2
+    append_tabbed "Flux difficulty:$flux_daemon_difficulty"  2
     endwin
 
     #col_right
 
     if [[ $daemon_log != "" ]]; then
       window "Flux Daemon Log" "red"
-        append "$daemon_log"
+      append "$daemon_log"
       endwin
     fi
 
@@ -134,13 +134,13 @@ main (){
   if [[ $show_node == '1' ]]; then
     #Display Node Details
     window "Flux Node Details" "green"
-      append_tabbed "Flux node status:$flux_node_status"  2
-      #append_tabbed "Flux collateral:$flux_node_collateral"  2
-      append_tabbed "Flux added height:$flux_node_added_height"  2
-      append_tabbed "Flux confirmed height:$flux_node_confirmed_height"  2
-      append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
-      append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
-      append_tabbed "Blocks since last confirmed:$blockDiff"  2
+    append_tabbed "Flux node status:$flux_node_status"  2
+    #append_tabbed "Flux collateral:$flux_node_collateral"  2
+    append_tabbed "Flux added height:$flux_node_added_height"  2
+    append_tabbed "Flux confirmed height:$flux_node_confirmed_height"  2
+    append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
+    append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
+    append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
   fi
 }
