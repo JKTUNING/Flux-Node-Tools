@@ -112,15 +112,19 @@ main (){
 update (){
   local userInput
     
-    read -s -n 1 -t 5 userInput
+    while true; do
+      read -s -n 1 -t 1 userInput
 
-    if [[ $userInput == 'b' ]]; then
-      clear
-      tail -F .fluxbenchmark/debug.log
-    elif [[ $userInput == 'd' ]]; then
-      clear
-      tail -F ~/.flux/debug.log
-    fi
+      if [[ $userInput == 'b' ]]; then
+        clear
+        tail -F .fluxbenchmark/debug.log
+        break
+      elif [[ $userInput == 'd' ]]; then
+        clear
+        tail -F ~/.flux/debug.log
+        break
+      fi
+    done
 }
 
 # this runs update function
