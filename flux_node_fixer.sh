@@ -19,7 +19,7 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 
 BENCH_LOG_DIR='benchmark_debug_error.log'
-DAEMON_LOG_DIR='~/.flux/debug.log'
+DAEMON_LOG_DIR='flux_daemon_debug_error.log'
 
 show_daemon='0'
 show_bench='1'
