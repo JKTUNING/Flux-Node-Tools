@@ -132,9 +132,8 @@ main (){
 update (){
   local userInput
     
-    while true; do
+    #while true; do
       read -s -n 1 -t 2 userInput
-      main
       #'b' shows the last 5 lines of bench mark error log
       #'d' shows the last 5 lines of daemon error log
       #'q' will quit
@@ -152,11 +151,11 @@ update (){
         clear
         exit
       fi
-    done
+    #done
 }
 
 # this runs update function
-main_loop -t 2 "$@"
+main_loop -t 5 "$@"
 
 #this runs a timer
 #main_loop -t 5 "$@"
