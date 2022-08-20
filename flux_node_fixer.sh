@@ -114,11 +114,11 @@ main (){
   if [[ $show_daemon == '1' ]]; then
     #Display Daemon Details
     window "Flux Daemon Details" "blue"
-    append_tabbed "Flux daemon version:$flux_daemon_version" 2
-    append_tabbed "Flux version:$flux_daemon_protocol_version"  2
-    append_tabbed "Flux block height:$flux_daemon_block_height"  2
-    append_tabbed "Flux connections:$flux_daemon_connections"  2
-    append_tabbed "Flux difficulty:$flux_daemon_difficulty"  2
+    append "Flux daemon version:$flux_daemon_version"
+    append "Flux version:$flux_daemon_protocol_version"
+    append "Flux block height:$flux_daemon_block_height"
+    append "Flux connections:$flux_daemon_connections"
+    append "Flux difficulty:$flux_daemon_difficulty"
     endwin
 
     #col_right
