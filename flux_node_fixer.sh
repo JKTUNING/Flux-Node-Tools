@@ -30,7 +30,6 @@ show_node='0'
 #gets fluxbench version info
 flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
-gets fluxbench status
 flux_bench_details=$($BENCH_CLI getstatus)
 flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
 flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
@@ -73,7 +72,8 @@ daemon_log=""
 bench_log=""
 
 #calculated block height since last confirmed
-blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
+blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
+#blockDiff='25'
 
 # function main (){
 #   sleep 0.5
@@ -246,7 +246,7 @@ function update (){
 
 function flux_daemon_info(){
   clear
-  sleep 0.5
+  sleep 0.25
   echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
   echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
   echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
@@ -265,7 +265,7 @@ function flux_daemon_info(){
 
 function flux_node_info(){\
   clear
-  sleep 0.5
+  sleep 0.25
   echo -e "-------------------------    FLUX NODE INFO    --------------------------------"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
@@ -278,8 +278,8 @@ function flux_node_info(){\
 }
 
 function flux_benchmark_info(){\
-  clear
-  sleep 0.5
+  #clear
+  sleep 0.25
   echo -e "-------------------------    FLUX BENCHMARK INFO    ---------------------------"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
@@ -332,8 +332,6 @@ function main_terminal(){
 }
 
 main_terminal
-#flux_daemon_info
-#flux_node_info
 #check_status
 #check_back
 #check_bench
