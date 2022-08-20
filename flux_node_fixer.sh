@@ -133,8 +133,11 @@ update (){
   local userInput
     
     while true; do
-      read -s -n 1 -t 1 userInput
-
+      read -s -n 1 -t 2 userInput
+      main
+      #'b' shows the last 5 lines of bench mark error log
+      #'d' shows the last 5 lines of daemon error log
+      #'q' will quit
       if [[ $userInput == 'b' ]]; then
         clear
         bench_log=$(tail -5 $BENCH_LOG_DIR)
