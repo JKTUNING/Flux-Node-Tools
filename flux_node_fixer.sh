@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /dev/stdin <<<"$(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/simple_curses.sh)"
+#source /dev/stdin <<<"$(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/simple_curses.sh)"
 
 #colors
 GREEN='\033[1;32m'
@@ -18,7 +18,7 @@ DASH_DAEMON_TITLE='FLUX DAEMON INFO'
 DASH_BENCH_ERROR_TITLE='FLUX BENCH ERROR LOG'
 DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
 
-WINDOW_WIDTH='80'
+WINDOW_WIDTH=$(tput cols)
 WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
 WRENCH='\xF0\x9F\x94\xA7'
@@ -158,7 +158,7 @@ blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
 function update (){
   local userInput
 
-  read -s -n 1 -t 2 userInput
+  read -s -n 1 -t 1 userInput
   #'b' shows the last 5 lines of bench mark error log
   #'d' shows the last 5 lines of daemon error log
   #'q' will quit
@@ -360,6 +360,8 @@ function navigation(){
 function main_terminal(){
  
   while true; do
+    WINDOW_WIDTH=$(tput cols)
+    WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
     if [[ $show_daemon == '1' ]]; then
       flux_daemon_info
       show_daemon='0'
