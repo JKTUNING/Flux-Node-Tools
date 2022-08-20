@@ -9,6 +9,18 @@ BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
 
+_HLINE="\xE2\x94\x80"
+_VLINE="\xE2\x94\x82"
+
+DASH_BENCH_TITLE='FLUX BENCHMARK INFO'
+DASH_NODE_TITLE='FLUX NODE INFO'
+DASH_DAEMON_TITLE='FLUX DAEMON INFO'
+DASH_BENCH_ERROR_TITLE='FLUX BENCH ERROR LOG'
+DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
+
+WINDOW_WIDTH='80'
+WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
+
 WRENCH='\xF0\x9F\x94\xA7'
 #BLUE_CIRCLE='\xF0\x9F\x94\xB5'
 BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
@@ -75,73 +87,73 @@ bench_log=""
 blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
 #blockDiff='25'
 
-function main (){
-  sleep 0.5
-  if [[ $show_bench == '1' ]]; then
-  #Display Bench Details
-    window "Flux Benchmark Details" "red"
-    append "Flux bench version:$flux_bench_version"
-    append "Flux back status:$flux_bench_back"
-    append "Flux bench status:$flux_bench_flux_status"
-    append "Flux benchmarks:$flux_bench_benchmark"
-    addsep
-    append "real cores:$flux_bench_stats_real_cores"
-    append "cores:$flux_bench_stats_cores"
-    append "ram:$flux_bench_stats_ram"
-    append "ssd:$flux_bench_stats_ssd"
-    append "hhd:$flux_bench_stats_hhd"
-    append "dd write:$flux_bench_stats_ddwrite"
-    append "Total Storage:$flux_bench_stats_storage"
-    append "EPS:$flux_bench_stats_eps"
-    append "Ping:$flux_bench_stats_ping"
-    append "Download Speed:$flux_bench_stats_download"
-    append "Upload Speed:$flux_bench_stats_upload"
-    append "Speed Test Version:$flux_bench_stats_speed_test_version"
-    append "Errors:$flux_bench_stats_error"
-    if [[ $bench_log != "" ]]; then
-      append "$bench_log"     
-    fi
-    endwin    
-  fi
+# function main (){
+#   sleep 0.5
+#   if [[ $show_bench == '1' ]]; then
+#   #Display Bench Details
+#     window "Flux Benchmark Details" "red"
+#     append "Flux bench version:$flux_bench_version"
+#     append "Flux back status:$flux_bench_back"
+#     append "Flux bench status:$flux_bench_flux_status"
+#     append "Flux benchmarks:$flux_bench_benchmark"
+#     addsep
+#     append "real cores:$flux_bench_stats_real_cores"
+#     append "cores:$flux_bench_stats_cores"
+#     append "ram:$flux_bench_stats_ram"
+#     append "ssd:$flux_bench_stats_ssd"
+#     append "hhd:$flux_bench_stats_hhd"
+#     append "dd write:$flux_bench_stats_ddwrite"
+#     append "Total Storage:$flux_bench_stats_storage"
+#     append "EPS:$flux_bench_stats_eps"
+#     append "Ping:$flux_bench_stats_ping"
+#     append "Download Speed:$flux_bench_stats_download"
+#     append "Upload Speed:$flux_bench_stats_upload"
+#     append "Speed Test Version:$flux_bench_stats_speed_test_version"
+#     append "Errors:$flux_bench_stats_error"
+#     if [[ $bench_log != "" ]]; then
+#       append "$bench_log"     
+#     fi
+#     endwin    
+#   fi
 
-  if [[ $show_daemon == '1' ]]; then
-    #Display Daemon Details
-    window "Flux Daemon Details" "blue"
-    append "Flux daemon version:$flux_daemon_version"
-    append "Flux version:$flux_daemon_protocol_version"
-    append "Flux block height:$flux_daemon_block_height"
-    append "Flux connections:$flux_daemon_connections"
-    append "Flux difficulty:$flux_daemon_difficulty"
-    if [[ $daemon_log != "" ]]; then
-      addsep
-      append "Flux Daemon Debug"
-      append "$daemon_log"
-    fi
-    endwin
+#   if [[ $show_daemon == '1' ]]; then
+#     #Display Daemon Details
+#     window "Flux Daemon Details" "blue"
+#     append "Flux daemon version:$flux_daemon_version"
+#     append "Flux version:$flux_daemon_protocol_version"
+#     append "Flux block height:$flux_daemon_block_height"
+#     append "Flux connections:$flux_daemon_connections"
+#     append "Flux difficulty:$flux_daemon_difficulty"
+#     if [[ $daemon_log != "" ]]; then
+#       addsep
+#       append "Flux Daemon Debug"
+#       append "$daemon_log"
+#     fi
+#     endwin
 
-    #col_right
+#     #col_right
 
-    # if [[ $daemon_log != "" ]]; then
-    #   window "Flux Daemon Log" "red"
-    #   append "$daemon_log"
-    #   endwin
-    # fi
+#     # if [[ $daemon_log != "" ]]; then
+#     #   window "Flux Daemon Log" "red"
+#     #   append "$daemon_log"
+#     #   endwin
+#     # fi
 
-  fi
+#   fi
     
-  if [[ $show_node == '1' ]]; then
-    #Display Node Details
-    window "Flux Node Details" "green"
-    append_tabbed "Flux node status:$flux_node_status"  2
-    #append_tabbed "Flux collateral:$flux_node_collateral"  2
-    append_tabbed "Flux added height:$flux_node_added_height"  2
-    append_tabbed "Flux confirmed height:$flux_node_confirmed_height"  2
-    append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
-    append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
-    append_tabbed "Blocks since last confirmed:$blockDiff"  2
-    endwin
-  fi
-}
+#   if [[ $show_node == '1' ]]; then
+#     #Display Node Details
+#     window "Flux Node Details" "green"
+#     append_tabbed "Flux node status:$flux_node_status"  2
+#     #append_tabbed "Flux collateral:$flux_node_collateral"  2
+#     append_tabbed "Flux added height:$flux_node_added_height"  2
+#     append_tabbed "Flux confirmed height:$flux_node_confirmed_height"  2
+#     append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
+#     append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
+#     append_tabbed "Blocks since last confirmed:$blockDiff"  2
+#     endwin
+#   fi
+# }
 
 function update (){
   local userInput
@@ -174,7 +186,7 @@ function update (){
 }
 
 # this runs update function
-main_loop -t 5 -q "$@"
+#main_loop -t 5 -q "$@"
 
 #this runs a timer
 #main_loop -t 5 "$@"
@@ -247,18 +259,18 @@ main_loop -t 5 -q "$@"
 function flux_daemon_info(){
   clear
   sleep 0.25
-  echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
+  make_header "$DASH_DAEMON_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
   echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
   echo -e "$BLUE_CIRCLE   Flux daemon block height     -    $flux_daemon_block_height"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
-  echo -e "-------------------------------------------------------------------------------"
+  make_header
 
   if [[ $daemon_log != "" ]]; then
-    echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
+    make_header "$DASH_DAEMON_ERROR_TITLE" "$RED"
     echo "$daemon_log"
-    echo -e "-------------------------------------------------------------------------------"
+    make_header
   fi
   navigation
 }
@@ -266,21 +278,21 @@ function flux_daemon_info(){
 function flux_node_info(){\
   clear
   sleep 0.25
-  echo -e "-------------------------    FLUX NODE INFO    --------------------------------"
+  make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
   echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
-  echo -e "-------------------------------------------------------------------------------"
+  make_header
   navigation
 }
 
 function flux_benchmark_info(){\
   clear
   sleep 0.25
-  echo -e "-------------------------    FLUX BENCHMARK INFO    ---------------------------"
+  make_header "$DASH_BENCH_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
@@ -298,20 +310,51 @@ function flux_benchmark_info(){\
   echo -e "$BLUE_CIRCLE   Bench Upload Speed           -    $flux_bench_stats_upload"
   echo -e "$BLUE_CIRCLE   Bench Speed Test Version     -    $flux_bench_stats_speed_test_version"
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
-  echo -e "-------------------------------------------------------------------------------"
+  make_header
 
    if [[ $bench_log != "" ]]; then
-    echo -e "-------------------------    FLUX BENCH INFO     ------------------------------"
+    make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
     echo "$bench_log"
-    echo -e "-------------------------------------------------------------------------------"
+    make_header
   fi
 
   navigation
 
 }
 
+function make_header(){
+  local output
+  local inputLength
+  local halfInputLength
+  local HEADER_TEXT_START
+  local HEADER_TEXT_STOP
+  output=""
+  if [[ -z $1 ]]; then
+    for (( c=1; c<=$WINDOW_WIDTH; c++ ))
+    do 
+      output="${output}${_HLINE}"
+    done
+  else
+    inputLength=${#1}
+    halfInputLength=$(bc <<<"$inputLength / 2")
+    HEADER_TEXT_START=$((WINDOW_HALF_WIDTH-halfInputLength))
+    HEADER_TEXT_STOP=$((HEADER_TEXT_START+inputLength))
+    for (( c=1; c<=$WINDOW_WIDTH; c++ ))
+    do 
+      if [[ $c -lt $HEADER_TEXT_START || $c -gt $HEADER_TEXT_STOP ]]; then
+        output="${output}${NC}${_HLINE}"
+      else
+        offset=$((c-HEADER_TEXT_START))
+        output="${output}${2}${1:offset:1}"
+      fi
+    done
+  fi
+
+  echo -e ${output}
+}
+
 function navigation(){
-  echo -e "-------- d for daemon info | b for benchmarks | n for node | q to quit --------" 
+  echo -e "         d for daemon info | b for benchmarks | n for node | q to quit         " 
 }
 
 function main_terminal(){
@@ -331,7 +374,7 @@ function main_terminal(){
   done
 }
 
-#main_terminal
+main_terminal
 #check_status
 #check_back
 #check_bench
