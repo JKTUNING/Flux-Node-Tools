@@ -20,6 +20,7 @@ BENCH_DIR_LOG='.fluxbenchmark'
 
 BENCH_LOG_DIR='benchmark_debug_error.log'
 DAEMON_LOG_DIR='flux_daemon_debug_error.log'
+WATCHDOG_LOG_DIR='~/watchdog/watchdog_error.log'
 
 show_daemon='0'
 show_bench='1'
@@ -77,7 +78,7 @@ main (){
 
   if [[ $show_bench == '1' ]]; then
   #Display Bench Details
-    window "Flux Benchmark Details" "red" "100%"
+    window "Flux Benchmark Details" "red"
       append_tabbed "Flux bench version:$flux_bench_version"  2
       append_tabbed "Flux back status:$flux_bench_back"  2
       append_tabbed "Flux bench status:$flux_bench_flux_status"  2
@@ -102,10 +103,9 @@ main (){
         #col_right  
 
     if [[ $bench_log != "" ]]; then
-      window "Flux Bench Log" "red" "100%"
+      window "Flux Bench Log" "red"
         append "$bench_log"
       endwin
-    endwin
     fi
   fi
 
@@ -113,7 +113,7 @@ main (){
 
   if [[ $show_daemon == '1' ]]; then
     #Display Daemon Details
-    window "Flux Daemon Details" "blue" "100%"
+    window "Flux Daemon Details" "blue"
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
       append_tabbed "Flux version:$flux_daemon_protocol_version"  2
       append_tabbed "Flux block height:$flux_daemon_block_height"  2
@@ -124,7 +124,7 @@ main (){
     #col_right
 
     if [[ $daemon_log != "" ]]; then
-      window "Flux Daemon Log" "red" "100%"
+      window "Flux Daemon Log" "red"
         append "$daemon_log"
       endwin
     fi
@@ -133,7 +133,7 @@ main (){
     
   if [[ $show_node == '1' ]]; then
     #Display Node Details
-    window "Flux Node Details" "green" "100%"
+    window "Flux Node Details" "green"
       append_tabbed "Flux node status:$flux_node_status"  2
       #append_tabbed "Flux collateral:$flux_node_collateral"  2
       append_tabbed "Flux added height:$flux_node_added_height"  2
@@ -143,8 +143,6 @@ main (){
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
   fi
-
-    
 }
 
 update (){
