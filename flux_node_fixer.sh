@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /dev/stdin <<<"$(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/simple_curses.sh)"
+#source /dev/stdin <<<"$(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/simple_curses.sh)"
 
 #colors
 #GREEN='\033[1;32m'
@@ -157,15 +157,18 @@ function update (){
     show_node='0'
     show_daemon='0'
     show_bench='1'
+    sleep 0.1
   elif [[ $userInput == 'n' ]]; then
     show_node='1'
     show_daemon='0'
     show_bench='0'
+    sleep 0.1
   elif [[ $userInput == 'd' ]]; then
     daemon_log=$(tail -5 $DAEMON_LOG_DIR)
     show_node='0'
     show_daemon='1'
     show_bench='0'
+    sleep 0.1
   elif [[ $userInput == 'q' ]]; then
     clear
     exit
@@ -245,7 +248,7 @@ function update (){
 
 function flux_daemon_info(){
   clear
-  sleep 1
+  sleep 0.5
   echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
   echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
   echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
@@ -254,16 +257,16 @@ function flux_daemon_info(){
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
   echo -e "-------------------------------------------------------------------------------"
 
-  if [[ $bench_log != "" ]]; then
+  if [[ $daemon_log != "" ]]; then
     echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
-    echo "$bench_log"
+    echo "$daemon_log"
     echo -e "-------------------------------------------------------------------------------"
   fi
 }
 
 function flux_node_info(){\
   clear
-  sleep 1
+  sleep 0.5
   echo -e "-------------------------    FLUX NODE INFO    --------------------------------"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
@@ -276,7 +279,7 @@ function flux_node_info(){\
 
 function flux_benchmark_info(){\
   clear
-  sleep 1
+  sleep 0.5
   echo -e "-------------------------    FLUX BENCHMARK INFO    ---------------------------"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
@@ -297,9 +300,9 @@ function flux_benchmark_info(){\
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
   echo -e "-------------------------------------------------------------------------------"
 
-   if [[ $daemon_log != "" ]]; then
-    echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
-    echo "$daemon_log"
+   if [[ $bench_log != "" ]]; then
+    echo -e "-------------------------    FLUX BENCH INFO     ------------------------------"
+    echo "$bench_log"
     echo -e "-------------------------------------------------------------------------------"
   fi
 
