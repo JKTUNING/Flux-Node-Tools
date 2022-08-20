@@ -18,6 +18,9 @@ BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 
+BENCH_LOG_DIR='benchmark_debug_error.log'
+DAEMON_LOG_DIR='~/.flux/debug.log'
+
 #gets fluxbench version info
 flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
@@ -60,6 +63,9 @@ flux_bench_stats_upload=$(jq -r '.cores' <<<"$flux_bench_stats")
 flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
 flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
 
+daemon_log=""
+bench_log=""
+
 #calculated block height since last confirmed
 blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 
@@ -87,6 +93,13 @@ main (){
       append_tabbed "Errors:$flux_bench_stats_error"  2      
     endwin
 
+    if [[ $bench_log != "" ]]; then
+      window "Flux Bench Log" "red" "50%"
+        append "$bench_log"
+      endwin
+    endwin
+    fi
+
     col_right   
     #Display Daemon Details
     window "Flux Daemon Details" "blue" "50%"
@@ -106,7 +119,14 @@ main (){
       append_tabbed "Flux last confirmed:$flux_node_last_confirmed_height"  2
       append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
-    endwin    
+    endwin
+
+    if [[ $daemon_log != "" ]]; then
+      window "Flux Daemon Log" "red" "50%"
+        append "$daemon_log"
+      endwin
+    endwin
+    fi
 }
 
 update (){
@@ -117,18 +137,23 @@ update (){
 
       if [[ $userInput == 'b' ]]; then
         clear
-        tail -F .fluxbenchmark/debug.log
+        bench_log=$(tail -5 $BENCH_LOG_DIR)
         break
+        main
       elif [[ $userInput == 'd' ]]; then
         clear
-        tail -F ~/.flux/debug.log
+        daemon_log=$(tail -5 $DAEMON_LOG_DIR)
         break
+        main
+      elif [[ $userInput == 'q' ]]; then
+        clear
+        exit
       fi
     done
 }
 
 # this runs update function
-main_loop "$@"
+main_loop -t 2 "$@"
 
 #this runs a timer
 #main_loop -t 5 "$@"
