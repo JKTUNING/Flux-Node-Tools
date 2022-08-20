@@ -21,6 +21,10 @@ BENCH_DIR_LOG='.fluxbenchmark'
 BENCH_LOG_DIR='benchmark_debug_error.log'
 DAEMON_LOG_DIR='~/.flux/debug.log'
 
+show_daemon='0'
+show_bench='1'
+show_node='0'
+
 #gets fluxbench version info
 flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
@@ -71,6 +75,7 @@ blockDiff=$(($flux_daemon_block_height-$flux_node_last_confirmed_height))
 
 main (){
 
+  if [[ $show_bench == '1' ]]; then
   #Display Bench Details
     window "Flux Benchmark Details" "red" "50%"
       append_tabbed "Flux bench version:$flux_bench_version"  2
@@ -93,14 +98,20 @@ main (){
       append_tabbed "Errors:$flux_bench_stats_error"  2      
     endwin
 
+        #show bench log under
+    col_right  
+
     if [[ $bench_log != "" ]]; then
       window "Flux Bench Log" "red" "50%"
         append "$bench_log"
       endwin
     endwin
     fi
+  fi
 
-    col_right   
+
+
+  if [[ $show_daemon == '1' ]]; then
     #Display Daemon Details
     window "Flux Daemon Details" "blue" "50%"
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
@@ -109,7 +120,18 @@ main (){
       append_tabbed "Flux protocol connections:$flux_daemon_connections"  2
       append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
     endwin
+
+    col_right
+
+    if [[ $daemon_log != "" ]]; then
+      window "Flux Daemon Log" "red" "50%"
+        append "$daemon_log"
+      endwin
+    fi
+
+  fi
     
+  if [[ $show_node == '1' ]]; then
     #Display Node Details
     window "Flux Node Details" "green" "50%"
       append_tabbed "Flux node status:$flux_node_status"  2
@@ -120,13 +142,9 @@ main (){
       append_tabbed "Flux last paid height:$flux_node_last_paid_height"  2
       append_tabbed "Blocks since last confirmed:$blockDiff"  2
     endwin
+  fi
 
-    if [[ $daemon_log != "" ]]; then
-      window "Flux Daemon Log" "red" "50%"
-        append "$daemon_log"
-      endwin
-    endwin
-    fi
+    
 }
 
 update (){
@@ -138,15 +156,19 @@ update (){
       #'d' shows the last 5 lines of daemon error log
       #'q' will quit
       if [[ $userInput == 'b' ]]; then
-        clear
         bench_log=$(tail -5 $BENCH_LOG_DIR)
-        break
-        main
+        show_node='0'
+        show_daemon='0'
+        show_bench='1'
+      elif [[ $userInput == 'n' ]]; then
+        show_node='1'
+        show_daemon='0'
+        show_bench='0'
       elif [[ $userInput == 'd' ]]; then
-        clear
         daemon_log=$(tail -5 $DAEMON_LOG_DIR)
-        break
-        main
+        show_node='0'
+        show_daemon='1'
+        show_bench='0'
       elif [[ $userInput == 'q' ]]; then
         clear
         exit
