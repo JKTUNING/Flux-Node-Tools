@@ -99,7 +99,7 @@ main (){
     endwin
 
         #show bench log under
-    col_right  
+        #col_right  
 
     if [[ $bench_log != "" ]]; then
       window "Flux Bench Log" "red" "50%"
@@ -121,7 +121,7 @@ main (){
       append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
     endwin
 
-    col_right
+    #col_right
 
     if [[ $daemon_log != "" ]]; then
       window "Flux Daemon Log" "red" "50%"
@@ -149,31 +149,29 @@ main (){
 
 update (){
   local userInput
-    
-    #while true; do
-      read -s -n 1 -t 2 userInput
-      #'b' shows the last 5 lines of bench mark error log
-      #'d' shows the last 5 lines of daemon error log
-      #'q' will quit
-      if [[ $userInput == 'b' ]]; then
-        bench_log=$(tail -5 $BENCH_LOG_DIR)
-        show_node='0'
-        show_daemon='0'
-        show_bench='1'
-      elif [[ $userInput == 'n' ]]; then
-        show_node='1'
-        show_daemon='0'
-        show_bench='0'
-      elif [[ $userInput == 'd' ]]; then
-        daemon_log=$(tail -5 $DAEMON_LOG_DIR)
-        show_node='0'
-        show_daemon='1'
-        show_bench='0'
-      elif [[ $userInput == 'q' ]]; then
-        clear
-        exit
-      fi
-    #done
+
+  read -s -n 1 -t 2 userInput
+  #'b' shows the last 5 lines of bench mark error log
+  #'d' shows the last 5 lines of daemon error log
+  #'q' will quit
+  if [[ $userInput == 'b' ]]; then
+    bench_log=$(tail -5 $BENCH_LOG_DIR)
+    show_node='0'
+    show_daemon='0'
+    show_bench='1'
+  elif [[ $userInput == 'n' ]]; then
+    show_node='1'
+    show_daemon='0'
+    show_bench='0'
+  elif [[ $userInput == 'd' ]]; then
+    daemon_log=$(tail -5 $DAEMON_LOG_DIR)
+    show_node='0'
+    show_daemon='1'
+    show_bench='0'
+  elif [[ $userInput == 'q' ]]; then
+    clear
+    exit
+  fi
 }
 
 # this runs update function
