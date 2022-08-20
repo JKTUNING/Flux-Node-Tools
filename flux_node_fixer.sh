@@ -13,9 +13,11 @@ _HLINE="\xE2\x94\x80"
 _VLINE="\xE2\x94\x82"
 
 DASH_BENCH_TITLE='FLUX BENCHMARK INFO'
+DASH_BENCH_DETAILS_TITLE='FLUX BENCHMARK DETAILS'
+DASH_BENCH_ERROR_TITLE='FLUX BENCH ERROR LOG'
+
 DASH_NODE_TITLE='FLUX NODE INFO'
 DASH_DAEMON_TITLE='FLUX DAEMON INFO'
-DASH_BENCH_ERROR_TITLE='FLUX BENCH ERROR LOG'
 DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
 
 WINDOW_WIDTH=$(tput cols)
@@ -297,6 +299,7 @@ function flux_benchmark_info(){\
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
+  make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
   echo -e "$BLUE_CIRCLE   Bench Ram                    -    $flux_bench_stats_ram"
@@ -317,9 +320,7 @@ function flux_benchmark_info(){\
     echo "$bench_log"
     make_header
   fi
-
   navigation
-
 }
 
 function make_header(){
