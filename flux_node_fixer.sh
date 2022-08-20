@@ -3,18 +3,16 @@
 #source /dev/stdin <<<"$(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/simple_curses.sh)"
 
 #colors
-#GREEN='\033[1;32m'
-#RED='\033[1;31m'
-#BLUE="\\033[38;5;27m"
-#SEA="\\033[38;5;49m"
-#NC='\033[0m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+BLUE="\\033[38;5;27m"
+SEA="\\033[38;5;49m"
+NC='\033[0m'
 
-#WRENCH='\xF0\x9F\x94\xA7'
+WRENCH='\xF0\x9F\x94\xA7'
 #BLUE_CIRCLE='\xF0\x9F\x94\xB5'
-#BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
+BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
 #BLUE_CIRCLE="${SEA}"
-
-BLUE_CIRCLE='*'
 
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
@@ -262,6 +260,7 @@ function flux_daemon_info(){
     echo "$daemon_log"
     echo -e "-------------------------------------------------------------------------------"
   fi
+  navigation
 }
 
 function flux_node_info(){\
@@ -275,6 +274,7 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
   echo -e "-------------------------------------------------------------------------------"
+  navigation
 }
 
 function flux_benchmark_info(){\
@@ -306,6 +306,12 @@ function flux_benchmark_info(){\
     echo -e "-------------------------------------------------------------------------------"
   fi
 
+  navigation
+
+}
+
+function navigation(){
+  echo -e "-------- d for daemon info | b for benchmarks | n for node | q to quit --------" 
 }
 
 function main_terminal(){
