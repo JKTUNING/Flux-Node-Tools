@@ -79,34 +79,28 @@ main (){
   if [[ $show_bench == '1' ]]; then
   #Display Bench Details
     window "Flux Benchmark Details" "red"
-    append_tabbed "Flux bench version:$flux_bench_version"  2
-    append_tabbed "Flux back status:$flux_bench_back"  2
-    append_tabbed "Flux bench status:$flux_bench_flux_status"  2
-    append_tabbed "Flux benchmarks:$flux_bench_benchmark"  2
+    append "Flux bench version:$flux_bench_version"
+    append "Flux back status:$flux_bench_back"
+    append "Flux bench status:$flux_bench_flux_status"
+    append "Flux benchmarks:$flux_bench_benchmark"
     addsep
-    append_tabbed "real cores:$flux_bench_stats_real_cores"  2
-    append_tabbed "cores:$flux_bench_stats_cores"  2
-    append_tabbed "ram:$flux_bench_stats_ram"  2
-    append_tabbed "ssd:$flux_bench_stats_ssd"  2
-    append_tabbed "hhd:$flux_bench_stats_hhd"  2
-    append_tabbed "dd write:$flux_bench_stats_ddwrite"  2
-    append_tabbed "Total Storage:$flux_bench_stats_storage"  2
-    append_tabbed "EPS:$flux_bench_stats_eps"  2
-    append_tabbed "Ping:$flux_bench_stats_ping"  2
-    append_tabbed "Download Speed:$flux_bench_stats_download"  2
-    append_tabbed "Upload Speed:$flux_bench_stats_upload"  2
-    append_tabbed "Speed Test Version:$flux_bench_stats_speed_test_version"  2
-    append_tabbed "Errors:$flux_bench_stats_error"  2      
-    endwin
-
-        #show bench log under
-        #col_right  
-
+    append "real cores:$flux_bench_stats_real_cores"
+    append "cores:$flux_bench_stats_cores"
+    append "ram:$flux_bench_stats_ram"
+    append "ssd:$flux_bench_stats_ssd"
+    append "hhd:$flux_bench_stats_hhd"
+    append "dd write:$flux_bench_stats_ddwrite"
+    append "Total Storage:$flux_bench_stats_storage"
+    append "EPS:$flux_bench_stats_eps"
+    append "Ping:$flux_bench_stats_ping"
+    append "Download Speed:$flux_bench_stats_download"
+    append "Upload Speed:$flux_bench_stats_upload"
+    append "Speed Test Version:$flux_bench_stats_speed_test_version"
+    append "Errors:$flux_bench_stats_error"
     if [[ $bench_log != "" ]]; then
-      window "Flux Bench Log" "red"
-      append "$bench_log"
-      endwin
+      append "$bench_log"     
     fi
+    endwin    
   fi
 
 
@@ -119,15 +113,20 @@ main (){
     append "Flux block height:$flux_daemon_block_height"
     append "Flux connections:$flux_daemon_connections"
     append "Flux difficulty:$flux_daemon_difficulty"
+    if [[ $daemon_log != "" ]]; then
+      addsep
+      append "Flux Daemon Debug"
+      append "$daemon_log"
+    fi
     endwin
 
     #col_right
 
-    if [[ $daemon_log != "" ]]; then
-      window "Flux Daemon Log" "red"
-      append "$daemon_log"
-      endwin
-    fi
+    # if [[ $daemon_log != "" ]]; then
+    #   window "Flux Daemon Log" "red"
+    #   append "$daemon_log"
+    #   endwin
+    # fi
 
   fi
     
@@ -173,7 +172,7 @@ update (){
 }
 
 # this runs update function
-main_loop -t 5 "$@"
+main_loop -t 5 -q "$@"
 
 #this runs a timer
 #main_loop -t 5 "$@"
