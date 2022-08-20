@@ -9,9 +9,9 @@ BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
 
-WRENCH='\xF0\x9F\x94\xA7'
-BLUE_CIRCLE='\xF0\x9F\x94\xB5'
-#BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
+#WRENCH='\xF0\x9F\x94\xA7'
+#BLUE_CIRCLE='\xF0\x9F\x94\xB5'
+BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
 
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
@@ -244,6 +244,7 @@ function update (){
 
 function flux_daemon_info(){
   clear
+  sleep 1
   echo -e "-------------------------    FLUX DAEMON INFO    ------------------------------"
   echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
   echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
@@ -261,6 +262,7 @@ function flux_daemon_info(){
 
 function flux_node_info(){\
   clear
+  sleep 1
   echo -e "-------------------------    FLUX NODE INFO    --------------------------------"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
@@ -273,6 +275,7 @@ function flux_node_info(){\
 
 function flux_benchmark_info(){\
   clear
+  sleep 1
   echo -e "-------------------------    FLUX BENCHMARK INFO    ---------------------------"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
