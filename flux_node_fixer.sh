@@ -92,7 +92,7 @@ flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats")
 flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats")
 flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats")
 flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
-flux_bench_stats_upload=$(jq -r '.cores' <<<"$flux_bench_stats")
+flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
 flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
 flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
 
