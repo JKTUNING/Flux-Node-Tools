@@ -77,7 +77,7 @@ main (){
 
   if [[ $show_bench == '1' ]]; then
   #Display Bench Details
-    window "Flux Benchmark Details" "red" "50%"
+    window "Flux Benchmark Details" "red" "100%"
       append_tabbed "Flux bench version:$flux_bench_version"  2
       append_tabbed "Flux back status:$flux_bench_back"  2
       append_tabbed "Flux bench status:$flux_bench_flux_status"  2
@@ -102,7 +102,7 @@ main (){
         #col_right  
 
     if [[ $bench_log != "" ]]; then
-      window "Flux Bench Log" "red" "50%"
+      window "Flux Bench Log" "red" "100%"
         append "$bench_log"
       endwin
     endwin
@@ -113,18 +113,18 @@ main (){
 
   if [[ $show_daemon == '1' ]]; then
     #Display Daemon Details
-    window "Flux Daemon Details" "blue" "50%"
+    window "Flux Daemon Details" "blue" "100%"
       append_tabbed "Flux daemon version:$flux_daemon_version" 2
-      append_tabbed "Flux protocol version:$flux_daemon_protocol_version"  2
-      append_tabbed "Flux protocol block height:$flux_daemon_block_height"  2
-      append_tabbed "Flux protocol connections:$flux_daemon_connections"  2
-      append_tabbed "Flux protocol difficulty:$flux_daemon_difficulty"  2
+      append_tabbed "Flux version:$flux_daemon_protocol_version"  2
+      append_tabbed "Flux block height:$flux_daemon_block_height"  2
+      append_tabbed "Flux connections:$flux_daemon_connections"  2
+      append_tabbed "Flux difficulty:$flux_daemon_difficulty"  2
     endwin
 
     #col_right
 
     if [[ $daemon_log != "" ]]; then
-      window "Flux Daemon Log" "red" "50%"
+      window "Flux Daemon Log" "red" "100%"
         append "$daemon_log"
       endwin
     fi
@@ -133,7 +133,7 @@ main (){
     
   if [[ $show_node == '1' ]]; then
     #Display Node Details
-    window "Flux Node Details" "green" "50%"
+    window "Flux Node Details" "green" "100%"
       append_tabbed "Flux node status:$flux_node_status"  2
       #append_tabbed "Flux collateral:$flux_node_collateral"  2
       append_tabbed "Flux added height:$flux_node_added_height"  2
