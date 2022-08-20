@@ -136,68 +136,6 @@ function update (){
   fi
 }
 
-# function check_status() {
-#   if [[ $flux_bench_flux_status == "online" ]];
-#   then
-#     echo -e "Flux node status           -    ${GREEN}ONLINE${NC}"
-#   else
-#     echo -e "Flux node status           -    ${RED}OFFLINE${NC}"
-#   fi
-# }
-
-# function check_bench() {
-#   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
-#     echo -e "Flux node benchmark        -    ${RED}$flux_bench_status${NC}"
-#     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
-#     if [ $userInput == 'n' ]; then
-#       echo 'user does not want to restart benchmarks'
-#     else
-#       echo 'user would like to restart benchmarks'
-#       flux_update_benchmarks
-#     fi
-#   elif [[ $flux_bench_benchmark == "running" ]]; then
-#     echo -e "${BLUE}node benchmarks running ... ${NC}"
-#   elif [[ $flux_bench_benchmark == "dos" ]]; then
-#     echo -e "${RED}node in denial of service state${NC}"
-#   else
-#     echo -e "Flux node benchmark        -    ${GREEN}$flux_bench_benchmark${NC}"
-#   fi
-# }
-
-# function check_back(){
-#   if [[ $flux_bench_back != *"connected"* ]];
-#   then
-#     echo -e "Flux back status           -    ${RED}DISCONNECTED${NC}"
-#     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
-#     if [ $userInput == 'n' ]; then
-#       echo -e "${RED}user does not want to restart flux back${NC}"
-#     else
-#       echo -e "${BLUE}user would like to update and restart flux-back${NC}"
-#       echo 'updating ... '
-#       flux_update_restart
-#     fi
-#   else
-#     echo -e "Flux back status           -    ${GREEN}CONNECTED${NC}"
-#   fi
-# }
-
-# function node_os_update(){
-#   sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
-# }
-
-# function flux_update_service(){
-#   node_os_update
-#   #sudo systemctl stop flux
-#   #sleep 2
-#   #sudo systemctl start flux
-#   #sleep 5
-# }
-
-# function flux_update_benchmarks(){
-#   node_os_update
-#   #$BENCH_CLI restartnodebenchmarks
-# }
-
 function flux_daemon_info(){
   clear
   sleep 0.25
@@ -331,3 +269,66 @@ function main_terminal(){
 
 main_terminal
 
+
+
+# function check_status() {
+#   if [[ $flux_bench_flux_status == "online" ]];
+#   then
+#     echo -e "Flux node status           -    ${GREEN}ONLINE${NC}"
+#   else
+#     echo -e "Flux node status           -    ${RED}OFFLINE${NC}"
+#   fi
+# }
+
+# function check_bench() {
+#   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
+#     echo -e "Flux node benchmark        -    ${RED}$flux_bench_status${NC}"
+#     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
+#     if [ $userInput == 'n' ]; then
+#       echo 'user does not want to restart benchmarks'
+#     else
+#       echo 'user would like to restart benchmarks'
+#       flux_update_benchmarks
+#     fi
+#   elif [[ $flux_bench_benchmark == "running" ]]; then
+#     echo -e "${BLUE}node benchmarks running ... ${NC}"
+#   elif [[ $flux_bench_benchmark == "dos" ]]; then
+#     echo -e "${RED}node in denial of service state${NC}"
+#   else
+#     echo -e "Flux node benchmark        -    ${GREEN}$flux_bench_benchmark${NC}"
+#   fi
+# }
+
+# function check_back(){
+#   if [[ $flux_bench_back != *"connected"* ]];
+#   then
+#     echo -e "Flux back status           -    ${RED}DISCONNECTED${NC}"
+#     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
+#     if [ $userInput == 'n' ]; then
+#       echo -e "${RED}user does not want to restart flux back${NC}"
+#     else
+#       echo -e "${BLUE}user would like to update and restart flux-back${NC}"
+#       echo 'updating ... '
+#       flux_update_restart
+#     fi
+#   else
+#     echo -e "Flux back status           -    ${GREEN}CONNECTED${NC}"
+#   fi
+# }
+
+# function node_os_update(){
+#   sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
+# }
+
+# function flux_update_service(){
+#   node_os_update
+#   #sudo systemctl stop flux
+#   #sleep 2
+#   #sudo systemctl start flux
+#   #sleep 5
+# }
+
+# function flux_update_benchmarks(){
+#   node_os_update
+#   #$BENCH_CLI restartnodebenchmarks
+# }
