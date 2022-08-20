@@ -109,7 +109,28 @@ main (){
     endwin    
 }
 
-main_loop -t 5 "$@"
+update (){
+  local userInput
+  local success
+
+    read -s -n 1 -t 5 userInput
+
+    if [[ $userInput == 'b' ]]; then
+      tail -F .fluxbenchmark/debug.log
+      return 0
+    elif [[ $userInput == 'd' ]]; then
+      tail -F ~/.flux/debug.log
+      return 0
+    fi
+
+    return 0
+}
+
+# this runs update function
+main_loop "$@"
+
+#this runs a timer
+#main_loop -t 5 "$@"
 
 
 
