@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo -e "checking required packages ..."
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
   sudo apt install jq -y
@@ -8,6 +9,11 @@ if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
     exit
   fi
+fi
+
+if ! lsof -v > /dev/null 2>&1; then
+  echo -e "lsof not found ... installing lsof"
+  sudo apt-get install lsof -y
 fi
 
 #colors
@@ -92,6 +98,8 @@ flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
 flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
 flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
 flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
+
+check_listen_ports=$(sudo lsof -i -n | grep LISTEN)
 
 daemon_log=""
 bench_log=""
