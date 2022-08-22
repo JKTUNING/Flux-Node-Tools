@@ -179,6 +179,12 @@ function check_port_info()
   echo -e "$flux_daemon_port"
   echo -e "$flux_bench_port"
 
+  #awk -v var="$listen_ports" '{ if ($0 == "node") {print $0} }'
+
+  awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" ' {print $2}'
+
+  #awk -v var="${listen_ports}" 'BEGIN {print var}' | awk '{print $1}'
+
 }
 
 check_port_info
