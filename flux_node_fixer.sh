@@ -99,7 +99,16 @@ flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
 flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
 flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
 
-check_listen_ports=$(sudo lsof -i -n | grep LISTEN)
+
+# get a list of the LISTEN ports
+listen_ports=$(sudo lsof -i -n | grep LISTEN)
+flux_api_port=""
+flux_ui_port=""
+mongodb_port=""
+flux_bench_port=""
+flux_daemon_port=""
+
+
 
 daemon_log=""
 bench_log=""
@@ -143,6 +152,38 @@ function update (){
     redraw_term='0'
   fi
 }
+
+function check_port_info()
+{
+  echo -e "$listen_ports"
+  
+  if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
+    mongodb_port="${GREEN}Mongodb is listening on port 27017${NC}"
+  else
+    mongodb_port="${RED}Mongodb is not listening${NC}"
+  fi
+
+  if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
+    flux_daemon_port="${GREEN}Flux daemon is listening on port 16125${NC}"
+  else
+    flux_daemon_port="${RED}Flux daemon is not listening${NC}"
+  fi
+
+   if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
+    flux_bench_port="${GREEN}Flux bench is listening on port 16224${NC}"
+  else
+    flux_bench_port="${RED}Flux bench is not listening${NC}"
+  fi
+
+  echo -e "$mongodb_port"
+  echo -e "$flux_daemon_port"
+  echo -e "$flux_bench_port"
+
+}
+
+check_port_info
+
+exit
 
 function flux_daemon_info(){
   clear
