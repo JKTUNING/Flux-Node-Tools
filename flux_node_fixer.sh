@@ -35,9 +35,13 @@ _VLINE="\xE2\x94\x82"
 DASH_BENCH_TITLE='FLUX BENCHMARK INFO'
 DASH_BENCH_DETAILS_TITLE='FLUX BENCHMARK DETAILS'
 DASH_BENCH_ERROR_TITLE='FLUX BENCH ERROR LOG'
+DASH_BENCH_PORT_TITLE='FLUX BENCHMARK PORT'
 
 DASH_NODE_TITLE='FLUX NODE INFO'
+DASH_NODE_PORT_TITLE='FLUX NODE PORTS'
+
 DASH_DAEMON_TITLE='FLUX DAEMON INFO'
+DASH_DAEMON_PORT_TITLE='FLUX DAEMON PORT'
 DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
 
 WINDOW_WIDTH=$(tput cols)
@@ -157,7 +161,7 @@ function update (){
 
 function check_port_info()
 {
-  echo -e "$listen_ports"
+  #echo -e "$listen_ports"
   
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
     mongodb_port="${GREEN_ARROW}Mongodb is listening on port 27017"
@@ -192,16 +196,14 @@ function check_port_info()
     flux_ui_port="${RED_ARROW}Flux UI is not listening"
   fi
 
-  echo -e "$mongodb_port"
-  echo -e "$flux_daemon_port"
-  echo -e "$flux_bench_port"
-  echo -e "$flux_api_port"
-  echo -e "$flux_ui_port"
+  # echo -e "$mongodb_port"
+  # echo -e "$flux_daemon_port"
+  # echo -e "$flux_bench_port"
+  # echo -e "$flux_api_port"
+  # echo -e "$flux_ui_port"
 }
 
 check_port_info
-
-exit
 
 function flux_daemon_info(){
   clear
@@ -212,6 +214,8 @@ function flux_daemon_info(){
   echo -e "$BLUE_CIRCLE   Flux daemon block height     -    $flux_daemon_block_height"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
+  make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
+  echo -e "$flux_daemon_port"
   make_header
 
   if [[ $daemon_log != "" ]]; then
@@ -232,6 +236,10 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
+  make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
+  echo -e "$flux_api_port"
+  echo -e "$flux_ui_port"
+  echo -e "$mongodb_port"
   make_header
   navigation
 }
@@ -258,6 +266,8 @@ function flux_benchmark_info(){\
   echo -e "$BLUE_CIRCLE   Bench Upload Speed           -    $flux_bench_stats_upload"
   echo -e "$BLUE_CIRCLE   Bench Speed Test Version     -    $flux_bench_stats_speed_test_version"
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
+  make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
+  echo -e "$flux_bench_port"
   make_header
 
    if [[ $bench_log != "" ]]; then
