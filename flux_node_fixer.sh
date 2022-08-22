@@ -23,6 +23,12 @@ BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
 
+WRENCH='\xF0\x9F\x94\xA7'
+#BLUE_CIRCLE='\xF0\x9F\x94\xB5'
+RED_ARROW="${RED}\xE2\x96\xB6${NC}  "
+GREEN_ARROW="${GREEN}\xE2\x96\xB6${NC}  "
+BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}  "
+
 _HLINE="\xE2\x94\x80"
 _VLINE="\xE2\x94\x82"
 
@@ -36,10 +42,6 @@ DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
 
 WINDOW_WIDTH=$(tput cols)
 WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
-
-WRENCH='\xF0\x9F\x94\xA7'
-#BLUE_CIRCLE='\xF0\x9F\x94\xB5'
-BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}"
 
 COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
@@ -158,36 +160,36 @@ function check_port_info()
   echo -e "$listen_ports"
   
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
-    mongodb_port="${GREEN}Mongodb is listening on port 27017${NC}"
+    mongodb_port="${GREEN_ARROW}Mongodb is listening on port 27017"
   else
-    mongodb_port="${RED}Mongodb is not listening${NC}"
+    mongodb_port="${RED_ARROW}Mongodb is not listening"
   fi
 
   if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
-    flux_daemon_port="${GREEN}Flux daemon is listening on port 16125${NC}"
+    flux_daemon_port="${GREEN_ARROW}Flux daemon is listening on port 16125"
   else
-    flux_daemon_port="${RED}Flux daemon is not listening${NC}"
+    flux_daemon_port="${RED_ARROW}Flux daemon is not listening"
   fi
 
    if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
-    flux_bench_port="${GREEN}Flux bench is listening on port 16224${NC}"
+    flux_bench_port="${GREEN_ARROW}Flux bench is listening on port 16224"
   else
-    flux_bench_port="${RED}Flux bench is not listening${NC}"
+    flux_bench_port="${RED_ARROW}Flux bench is not listening"
   fi
 
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
   if [[ $api_port != "" ]]; then
-    flux_api_port="${GREEN}Flux API Listening on $api_port"
+    flux_api_port="${GREEN_ARROW}Flux API Listening on $api_port"
   else
-    flux_api_port="${RED}Flux API is not listening"
+    flux_api_port="${RED_ARROW}Flux API is not listening"
   fi
 
   if [[ $ui_port != "" ]]; then
-    flux_ui_port="${GREEN}Flux UI Listening on $ui_port"
+    flux_ui_port="${GREEN_ARROW}Flux UI Listening on $ui_port"
   else
-    flux_ui_port="${RED}Flux UI is not listening"
+    flux_ui_port="${RED_ARROW}Flux UI is not listening"
   fi
 
   echo -e "$mongodb_port"
