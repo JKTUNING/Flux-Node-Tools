@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo -e "checking required packages ..."
+
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
   sudo apt install jq -y
@@ -55,6 +56,7 @@ BENCH_DIR_LOG='.fluxbenchmark'
 BENCH_LOG_DIR='benchmark_debug_error.log'
 DAEMON_LOG_DIR='flux_daemon_debug_error.log'
 WATCHDOG_LOG_DIR='~/watchdog/watchdog_error.log'
+FLUX_LOG_DIR='$HOME/zelflux/debug.log'
 
 #variables to draw windows
 show_bench='1'
@@ -67,6 +69,7 @@ redraw_term='1'
 #gets fluxbench version info
 flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
+#gets fluxbench info
 flux_bench_details=$($BENCH_CLI getstatus)
 flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
 flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
@@ -81,7 +84,7 @@ flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details")
 flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details")
 flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
 
-#gets flux node status
+#gets flux node info
 flux_node_details=$($COIN_CLI getzelnodestatus)
 flux_node_status=$(jq -r '.status' <<<"$flux_node_details")
 flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details")
@@ -90,6 +93,7 @@ flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
 flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
 flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
 
+#gets flux node benchmark info
 flux_bench_stats=$($BENCH_CLI getbenchmarks)
 flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats")
 flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats")
@@ -114,22 +118,22 @@ mongodb_port=""
 flux_bench_port=""
 flux_daemon_port=""
 
-
-
+#log variables
 daemon_log=""
 bench_log=""
+flux_log=""
 
 #calculated block height since last confirmed
 blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
-#blockDiff='25'
 
 
 function update (){
   local userInput
 
   read -s -n 1 -t 1 userInput
-  #'b' shows the last 5 lines of bench mark error log
-  #'d' shows the last 5 lines of daemon error log
+  #'b' shows benchmark screen and the last 5 lines of bench mark error log
+  #'d' shows daemon screen and the last 5 lines of daemon error log
+  #'n' shows node screen
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     bench_log=$(tail -5 $BENCH_LOG_DIR)
@@ -159,6 +163,7 @@ function update (){
   fi
 }
 
+#this function checks for listen ports using lsof
 function check_port_info()
 {
   #echo -e "$listen_ports"
@@ -181,6 +186,7 @@ function check_port_info()
     flux_bench_port="${RED_ARROW}Flux bench is not listening"
   fi
 
+  #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
@@ -195,12 +201,6 @@ function check_port_info()
   else
     flux_ui_port="${RED_ARROW}Flux UI is not listening"
   fi
-
-  # echo -e "$mongodb_port"
-  # echo -e "$flux_daemon_port"
-  # echo -e "$flux_bench_port"
-  # echo -e "$flux_api_port"
-  # echo -e "$flux_ui_port"
 }
 
 check_port_info
@@ -278,6 +278,8 @@ function flux_benchmark_info(){\
   navigation
 }
 
+#This function simply draws a title header if arguments are provided and a footer if no arguments are provided
+#If text is provided it will be centered and if a second color argument is provided it will have that color
 function make_header(){
   local output
   local inputLength
@@ -309,6 +311,7 @@ function make_header(){
   echo -e ${output}
 }
 
+#this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
   echo -e "         d for daemon info | b for benchmarks | n for node | q to quit         " 
 }
