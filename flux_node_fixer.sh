@@ -138,7 +138,11 @@ function update (){
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     #show last time lines of failed benchmarks
-    bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
+    if [[ -f $BENCH_DIR_LOG ]]; then
+      bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
+    else
+      bench_log="No failed benchmark errors logged"
+    fi
     show_node='0'
     show_daemon='0'
     show_bench='1'
@@ -152,7 +156,11 @@ function update (){
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
     #check last 100 lines of daemon debug log for error of failed
-    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
+    if [[ -f $DAEMON_LOG_DIR ]]; then
+      daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
+    else
+      daemon_log="No Daemon Errors logged"    
+    fi
     show_node='0'
     show_daemon='1'
     show_bench='0'
