@@ -319,7 +319,7 @@ function check_daemon_service(){
 }
 
 #checks last 100 lines of daemon log file for errors or failed entries
-function check_daemon_log2(){
+function check_daemon_log(){
   if [[ -f $DAEMON_LOG_DIR ]]; then
     daemon_log=${RED_ARROW}   $(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
     if [[ -z $daemon_log  ]]; then
@@ -330,7 +330,7 @@ function check_daemon_log2(){
   fi
 }
 
-function check_bench_log(){
+function check_benchmark_log(){
 if [[ -f $BENCH_DIR_LOG ]]; then
       bench_log=${RED_ARROW}   $(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
     else
