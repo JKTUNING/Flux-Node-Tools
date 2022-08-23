@@ -59,6 +59,11 @@ DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
 WATCHDOG_LOG_DIR='~/watchdog/watchdog_error.log'
 FLUX_LOG_DIR="$HOME/zelflux/debug.log"
 
+docker_service_status=""
+mongodb_service_status=""
+daemon_service_status=""
+
+
 #variables to draw windows
 show_bench='1'
 show_daemon='0'
@@ -110,7 +115,6 @@ flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
 flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
 flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
 
-
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
 flux_api_port=""
@@ -127,7 +131,6 @@ flux_log=""
 #calculated block height since last confirmed
 blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
 
-
 function update (){
   local userInput
 
@@ -139,9 +142,9 @@ function update (){
   if [[ $userInput == 'b' ]]; then
     #show last time lines of failed benchmarks
     if [[ -f $BENCH_DIR_LOG ]]; then
-      bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
+      bench_log=${RED_ARROW}   $(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
     else
-      bench_log="No failed benchmark errors logged"
+      bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
     show_node='0'
     show_daemon='0'
@@ -157,9 +160,9 @@ function update (){
   elif [[ $userInput == 'd' ]]; then
     #check last 100 lines of daemon debug log for error of failed
     if [[ -f $DAEMON_LOG_DIR ]]; then
-      daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
+      daemon_log=${RED_ARROW}   $(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
     else
-      daemon_log="No Daemon Errors logged"    
+      daemon_log="${GREEN_ARROW}   No Daemon Errors logged"    
     fi
     show_node='0'
     show_daemon='1'
@@ -180,21 +183,21 @@ function check_port_info()
   #echo -e "$listen_ports"
   
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
-    mongodb_port="${GREEN_ARROW}Mongodb is listening on port 27017"
+    mongodb_port="${GREEN_ARROW}   Mongodb is listening on port 27017"
   else
-    mongodb_port="${RED_ARROW}Mongodb is not listening"
+    mongodb_port="${RED_ARROW}   Mongodb is not listening"
   fi
 
   if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
-    flux_daemon_port="${GREEN_ARROW}Flux daemon is listening on port 16125"
+    flux_daemon_port="${GREEN_ARROW}   Flux daemon is listening on port 16125"
   else
-    flux_daemon_port="${RED_ARROW}Flux daemon is not listening"
+    flux_daemon_port="${RED_ARROW}   Flux daemon is not listening"
   fi
 
    if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
-    flux_bench_port="${GREEN_ARROW}Flux bench is listening on port 16224"
+    flux_bench_port="${GREEN_ARROW}   Flux bench is listening on port 16224"
   else
-    flux_bench_port="${RED_ARROW}Flux bench is not listening"
+    flux_bench_port="${RED_ARROW}   Flux bench is not listening"
   fi
 
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
@@ -202,15 +205,15 @@ function check_port_info()
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
   if [[ $api_port != "" ]]; then
-    flux_api_port="${GREEN_ARROW}Flux API Listening on $api_port"
+    flux_api_port="${GREEN_ARROW}   Flux API Listening on $api_port"
   else
-    flux_api_port="${RED_ARROW}Flux API is not listening"
+    flux_api_port="${RED_ARROW}   Flux API is not listening"
   fi
 
   if [[ $ui_port != "" ]]; then
-    flux_ui_port="${GREEN_ARROW}Flux UI Listening on $ui_port"
+    flux_ui_port="${GREEN_ARROW}   Flux UI Listening on $ui_port"
   else
-    flux_ui_port="${RED_ARROW}Flux UI is not listening"
+    flux_ui_port="${RED_ARROW}   Flux UI is not listening"
   fi
 }
 
@@ -227,11 +230,12 @@ function flux_daemon_info(){
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
+  echo -e "$daemon_service_status"
   make_header
 
   if [[ $daemon_log != "" ]]; then
     make_header "$DASH_DAEMON_ERROR_TITLE" "$RED"
-    echo "$daemon_log"
+    echo -e "$daemon_log"
     make_header
   fi
   navigation
@@ -251,6 +255,8 @@ function flux_node_info(){\
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
   echo -e "$mongodb_port"
+  echo -e "$mongodb_service_status"
+  echo -e "$docker_service_status"
   make_header
   navigation
 }
@@ -283,10 +289,43 @@ function flux_benchmark_info(){\
 
    if [[ $bench_log != "" ]]; then
     make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
-    echo "$bench_log"
+    echo -e "$bench_log"
     make_header
   fi
   navigation
+}
+
+# check to see if docker service is running
+function check_docker_service(){
+  if systemctl --type=service --state=running --quiet |grep docker >/dev/null 2>&1; then
+    docker_service_status="${GREEN_ARROW}   Docker Service is running"
+  elif systemctl --type=service --state=failed --quiet |grep docker >/dev/null 2>&1; then
+    docker_service_status="${RED_ARROW}   Docker Service is inactive"
+  else
+    docker_service_status="${RED_ARROW}   Docker Service is not installed"
+  fi
+}
+
+#check to see if mongoDB service is running
+function check_mongodb_service(){
+  if systemctl --type=service --state=running --quiet |grep mongod >/dev/null 2>&1; then
+    mongodb_service_status="${GREEN_ARROW}   MongoDB Service is running"
+  elif systemctl --type=service --state=failed --quiet |grep mongod >/dev/null 2>&1; then
+    mongodb_service_status="${RED_ARROW}   MongoDB Service is inactive"
+  else
+    mongodb_service_status="${RED_ARROW}   MongoDB Service is not installed"
+  fi
+}
+
+#check to ese if Daemon Service is running
+function check_daemon_service(){
+  if systemctl --type=service --state=running --quiet |grep zelcash >/dev/null 2>&1; then
+    daemon_service_status="${GREEN_ARROW}   Flux Daemon Service is running"
+  elif systemctl --type=service --state=failed --quiet |grep zelcash >/dev/null 2>&1; then
+    daemon_service_status="${RED_ARROW}   Flux Daemon Service is inactive"
+  else
+    daemon_service_status="${RED_ARROW}   Flux Daemon Service is not installed"
+  fi
 }
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
@@ -358,6 +397,10 @@ function main_terminal(){
   done
 }
 
+
+check_docker_service
+check_mongodb_service
+check_daemon_service
 main_terminal
 
 
