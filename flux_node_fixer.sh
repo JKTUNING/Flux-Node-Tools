@@ -140,12 +140,7 @@ function update (){
   #'n' shows node screen
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
-    #show last time lines of failed benchmarks
-    if [[ -f $BENCH_DIR_LOG ]]; then
-      bench_log=${RED_ARROW}   $(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
-    else
-      bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
-    fi
+    check_benchmark_log
     show_node='0'
     show_daemon='0'
     show_bench='1'
@@ -158,12 +153,7 @@ function update (){
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
-    #check last 100 lines of daemon debug log for error of failed
-    if [[ -f $DAEMON_LOG_DIR ]]; then
-      daemon_log=${RED_ARROW}   $(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
-    else
-      daemon_log="${GREEN_ARROW}   No Daemon Errors logged"    
-    fi
+    check_daemon_log
     show_node='0'
     show_daemon='1'
     show_bench='0'
@@ -183,21 +173,21 @@ function check_port_info()
   #echo -e "$listen_ports"
   
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
-    mongodb_port="${GREEN_ARROW}   Mongodb is listening on port 27017"
+    mongodb_port="${GREEN_ARROW}   MongoDB is listening on port 27017"
   else
-    mongodb_port="${RED_ARROW}   Mongodb is not listening"
+    mongodb_port="${RED_ARROW}   MongoDB is not listening"
   fi
 
   if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
-    flux_daemon_port="${GREEN_ARROW}   Flux daemon is listening on port 16125"
+    flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port 16125"
   else
-    flux_daemon_port="${RED_ARROW}   Flux daemon is not listening"
+    flux_daemon_port="${RED_ARROW}   Flux Daemon is not listening"
   fi
 
    if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
-    flux_bench_port="${GREEN_ARROW}   Flux bench is listening on port 16224"
+    flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port 16224"
   else
-    flux_bench_port="${RED_ARROW}   Flux bench is not listening"
+    flux_bench_port="${RED_ARROW}   Flux Bench is not listening"
   fi
 
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
@@ -326,6 +316,26 @@ function check_daemon_service(){
   else
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is not installed"
   fi
+}
+
+#checks last 100 lines of daemon log file for errors or failed entries
+function check_daemon_log2(){
+  if [[ -f $DAEMON_LOG_DIR ]]; then
+    daemon_log=${RED_ARROW}   $(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
+    if [[ -z $daemon_log  ]]; then
+      daemon_log="${GREEN_ARROW}   No Daemon Errors logged"
+    fi
+  else
+    daemon_log="${GREEN_ARROW}   No Daemon Errors logged"
+  fi
+}
+
+function check_bench_log(){
+if [[ -f $BENCH_DIR_LOG ]]; then
+      bench_log=${RED_ARROW}   $(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
+    else
+      bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
+fi
 }
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
