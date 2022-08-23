@@ -53,11 +53,11 @@ BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 
-BENCH_LOG_DIR='benchmark_debug_error.log'
-DAEMON_LOG_DIR='/.flux/debug.log'
-#DAEMON_LOG_DIR='flux_daemon_debug_error.log'
+BENCH_LOG_DIR="/home/$USER/.fluxbenchmark/debug.log"
+#BENCH_LOG_DIR='benchmark_debug_error.log'
+DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
 WATCHDOG_LOG_DIR='~/watchdog/watchdog_error.log'
-FLUX_LOG_DIR='$HOME/zelflux/debug.log'
+FLUX_LOG_DIR="$HOME/zelflux/debug.log"
 
 #variables to draw windows
 show_bench='1'
@@ -137,7 +137,8 @@ function update (){
   #'n' shows node screen
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
-    bench_log=$(tail -5 $BENCH_LOG_DIR)
+    #show last time lines of failed benchmarks
+    bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
     show_node='0'
     show_daemon='0'
     show_bench='1'
@@ -150,7 +151,7 @@ function update (){
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
-    #daemon_log=$(tail -5 $DAEMON_LOG_DIR)
+    #check last 100 lines of daemon debug log for error of failed
     daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
     show_node='0'
     show_daemon='1'
