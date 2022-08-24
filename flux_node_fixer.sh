@@ -53,13 +53,13 @@ COIN_CLI='flux-cli'
 BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
-
 FLUX_DIR='zelflux'
-BENCH_LOG_DIR="/home/$USER/.fluxbenchmark/debug.log"
-#BENCH_LOG_DIR='benchmark_debug_error.log'
+
+
+BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
-WATCHDOG_LOG_DIR='~/watchdog/watchdog_error.log'
-FLUX_LOG_DIR="$HOME/zelflux/debug.log"
+WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
+FLUX_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
 
 docker_service_status=""
 mongodb_service_status=""
