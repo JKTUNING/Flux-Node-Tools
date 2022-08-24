@@ -40,6 +40,7 @@ DASH_BENCH_PORT_TITLE='FLUX BENCHMARK PORT'
 
 DASH_NODE_TITLE='FLUX NODE INFO'
 DASH_NODE_PORT_TITLE='FLUX NODE PORTS'
+DASH_NODE_SERVICE_TITLE='FLUX NODE SERVICES'
 
 DASH_DAEMON_TITLE='FLUX DAEMON INFO'
 DASH_DAEMON_PORT_TITLE='FLUX DAEMON PORT'
@@ -62,6 +63,7 @@ FLUX_LOG_DIR="$HOME/zelflux/debug.log"
 docker_service_status=""
 mongodb_service_status=""
 daemon_service_status=""
+flux_process_status=""
 
 
 #variables to draw windows
@@ -245,6 +247,8 @@ function flux_node_info(){\
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
   echo -e "$mongodb_port"
+  make_header "$DASH_NODE_SERVICE_TITLE" "$BLUE"
+  echo -e "$flux_process_status"
   echo -e "$mongodb_service_status"
   echo -e "$docker_service_status"
   make_header
@@ -316,6 +320,20 @@ function check_daemon_service(){
   else
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is not installed"
   fi
+}
+
+#check if pm2 flux process is running
+function check_pm2_flux_service(){
+  local pm2_status_check=$(pm2 info flux 2>/dev/null | grep 'status')
+
+  if [[ $pm2_status_check == *"online"* ]]; then
+    flux_process_status="${GREEN_ARROW}   Flux PM2 process is running"
+  elif [[ $pm2_status_check == *"offline"* ]]; then
+    flux_process_status="${RED_ARROW}   Flux PM2 process is offline"
+  else
+    flux_process_status="${RED_ARROW}   Flux PM2 process not found"
+  fi
+
 }
 
 #checks last 100 lines of daemon log file for errors or failed entries
@@ -414,6 +432,7 @@ function main_terminal(){
 check_docker_service
 check_mongodb_service
 check_daemon_service
+check_pm2_flux_service
 main_terminal
 
 
