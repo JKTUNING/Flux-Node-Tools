@@ -54,6 +54,7 @@ BENCH_CLI='fluxbench-cli'
 CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 
+FLUX_DIR='zelflux'
 BENCH_LOG_DIR="/home/$USER/.fluxbenchmark/debug.log"
 #BENCH_LOG_DIR='benchmark_debug_error.log'
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
@@ -125,9 +126,10 @@ mongodb_port=""
 flux_bench_port=""
 flux_daemon_port=""
 flux_ip_check=""
+flux_node_version_check=""
 
 local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-
+flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json)
 
 #log variables
 daemon_log=""
@@ -247,6 +249,7 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
+  echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
   echo -e "$flux_api_port"
@@ -381,6 +384,16 @@ function check_ip(){
   fi
 }
 
+function check_version(){
+  ## grab current version requirements from the pacakge.json and compare to current node version
+  flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
+  if [[ "$flux_required_version" == "$flux_node_version" ]]; then
+    flux_node_version_check="${GREEN_ARROW}   You have the required version $flux_node_version"
+  else
+    flux_node_version_check="${RED_ARROW}   You do not have the required version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
+  fi
+}
+
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
 #If text is provided it will be centered and if a second color argument is provided it will have that color
 function make_header(){
@@ -456,6 +469,7 @@ check_mongodb_service
 check_daemon_service
 check_pm2_flux_service
 check_ip
+check_version
 main_terminal
 
 
