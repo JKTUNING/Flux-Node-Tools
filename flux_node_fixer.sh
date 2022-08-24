@@ -124,6 +124,10 @@ flux_ui_port=""
 mongodb_port=""
 flux_bench_port=""
 flux_daemon_port=""
+flux_ip_check=""
+
+local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
+
 
 #log variables
 daemon_log=""
@@ -244,6 +248,7 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
+  echo -e "$flux_ip_check"
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
   echo -e "$mongodb_port"
@@ -359,6 +364,23 @@ function check_benchmark_log(){
   fi
 }
 
+function check_ip(){
+  WANIP=$(curl --silent -m 15 https://api.ipify.org | tr -dc '[:alnum:].')
+  if [[ "$WANIP" == "" ]]; then
+    WANIP=$(curl --silent -m 15 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
+  else
+  WANIP=$(curl --silent -m 15 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
+  fi
+
+  local_device_ip=$(ip a list $local_device | grep -o $WANIP)
+
+  if [[ "$WANIP" == "$local_device_ip" ]]; then
+    flux_ip_check="${GREEN_ARROW}   Public IP matches device IP"
+  else
+    flux_ip_check="${RED_ARROW}   Public IP does NOT match device IP"
+  fi
+}
+
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
 #If text is provided it will be centered and if a second color argument is provided it will have that color
 function make_header(){
@@ -433,6 +455,7 @@ check_docker_service
 check_mongodb_service
 check_daemon_service
 check_pm2_flux_service
+check_ip
 main_terminal
 
 
