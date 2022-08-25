@@ -215,8 +215,6 @@ function check_port_info()
   fi
 }
 
-check_port_info
-
 function flux_daemon_info(){
   clear
   sleep 0.25
@@ -457,13 +455,14 @@ function main_terminal(){
         flux_node_info
       elif [[ $show_bench == '1' ]]; then
         flux_benchmark_info
+        check_bench
       fi
     fi
     update
   done
 }
 
-
+check_port_info
 check_docker_service
 check_mongodb_service
 check_daemon_service
@@ -483,24 +482,15 @@ main_terminal
 #   fi
 # }
 
-# function check_bench() {
-#   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
-#     echo -e "Flux node benchmark        -    ${RED}$flux_bench_status${NC}"
-#     read -p 'would you like to check for updates and restart benchmarks? (y/n) ' userInput
-#     if [ $userInput == 'n' ]; then
-#       echo 'user does not want to restart benchmarks'
-#     else
-#       echo 'user would like to restart benchmarks'
-#       flux_update_benchmarks
-#     fi
-#   elif [[ $flux_bench_benchmark == "running" ]]; then
-#     echo -e "${BLUE}node benchmarks running ... ${NC}"
-#   elif [[ $flux_bench_benchmark == "dos" ]]; then
-#     echo -e "${RED}node in denial of service state${NC}"
-#   else
-#     echo -e "Flux node benchmark        -    ${GREEN}$flux_bench_benchmark${NC}"
-#   fi
-# }
+function check_bench() {
+  if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
+    if whiptail --title "Benchmarks Failed" --yesno "Would you like to restart your node benchmarks?" 8 60; then
+      flux_update_benchmarks
+    else
+      whiptail --msgbox "User would not like to restart benchmarks" 10 60;
+    fi
+  fi
+}
 
 # function check_back(){
 #   if [[ $flux_bench_back != *"connected"* ]];
@@ -531,7 +521,8 @@ main_terminal
 #   #sleep 5
 # }
 
-# function flux_update_benchmarks(){
-#   node_os_update
-#   #$BENCH_CLI restartnodebenchmarks
-# }
+function flux_update_benchmarks(){
+  echo -e "starting node benchmarks"
+  #node_os_update
+  #$BENCH_CLI restartnodebenchmarks
+}
