@@ -78,48 +78,57 @@ show_commands='0'
 # variable to see if the terminal size has changed
 redraw_term='1'
 
-#gets fluxbench version info
-flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
+#Function to collect all benchmark information for display
+function get_flux_bench_info(){
+  #gets fluxbench version info
+  flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
 
-#gets fluxbench info
-flux_bench_details=$($BENCH_CLI getstatus)
-flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
-flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
-flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details")
+  #gets fluxbench info
+  flux_bench_details=$($BENCH_CLI getstatus)
+  flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
+  flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
+  flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details")
 
-#gets blockchain info
-flux_daemon_details=$($COIN_CLI getinfo)
-flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details")
-flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details")
-flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details")
-flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details")
-flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details")
-flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
+  #gets flux node benchmark info
+  flux_bench_stats=$($BENCH_CLI getbenchmarks)
+  flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats")
+  flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats")
+  flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats")
+  flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats")
+  flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats")
+  flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats")
+  flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats")
+  flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats")
+  flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats")
+  flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
+  flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
+  flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
+  flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
+}
 
-#gets flux node info
-flux_node_details=$($COIN_CLI getzelnodestatus)
-flux_node_status=$(jq -r '.status' <<<"$flux_node_details")
-flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details")
-flux_node_added_height=$(jq -r '.added_height' <<<"$flux_node_details")
-flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
-flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
-flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
+function get_flux_blockchain_info(){
+  #gets blockchain info
+  flux_daemon_details=$($COIN_CLI getinfo)
+  flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details")
+  flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details")
+  flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details")
+  flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details")
+  flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details")
+  flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
+}
 
-#gets flux node benchmark info
-flux_bench_stats=$($BENCH_CLI getbenchmarks)
-flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats")
-flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats")
-flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats")
-flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats")
-flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats")
-flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats")
-flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats")
-flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats")
-flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats")
-flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
-flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
-flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
-flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
+function get_flux_node_info(){
+  #gets flux node info
+  flux_node_details=$($COIN_CLI getzelnodestatus)
+  flux_node_status=$(jq -r '.status' <<<"$flux_node_details")
+  flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details")
+  flux_node_added_height=$(jq -r '.added_height' <<<"$flux_node_details")
+  flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
+  flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
+  flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
+}
+
+
 
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
@@ -544,6 +553,9 @@ function main_terminal(){
   done
 }
 
+get_flux_bench_info
+get_flux_blockchain_info
+get_flux_node_info
 check_port_info
 check_docker_service
 check_mongodb_service
