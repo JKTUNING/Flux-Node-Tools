@@ -106,6 +106,7 @@ function get_flux_bench_info(){
   flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
 }
 
+## Function to collect flux block chain daemon data
 function get_flux_blockchain_info(){
   #gets blockchain info
   flux_daemon_details=$($COIN_CLI getinfo)
@@ -117,6 +118,7 @@ function get_flux_blockchain_info(){
   flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
 }
 
+## Function to get flux node data
 function get_flux_node_info(){
   #gets flux node info
   flux_node_details=$($COIN_CLI getzelnodestatus)
@@ -127,8 +129,6 @@ function get_flux_node_info(){
   flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
 }
-
-
 
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
@@ -330,7 +330,7 @@ function show_available_commands(){
   echo -e "$BLUE_CIRCLE   'd'            -    Show Flux Daemon Info"
   echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
   echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
-  echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntuo Operating System"
+  echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   make_header
