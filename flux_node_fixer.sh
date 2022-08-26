@@ -46,6 +46,8 @@ DASH_DAEMON_TITLE='FLUX DAEMON INFO'
 DASH_DAEMON_PORT_TITLE='FLUX DAEMON PORT'
 DASH_DAEMON_ERROR_TITLE='FLUX DAEMON ERROR LOG'
 
+DASH_COMMANDS_TITLE='APPLICATION COMMANDS'
+
 WINDOW_WIDTH=$(tput cols)
 WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
@@ -71,6 +73,7 @@ flux_process_status=""
 show_bench='1'
 show_daemon='0'
 show_node='0'
+show_commands='0'
 
 # variable to see if the terminal size has changed
 redraw_term='1'
@@ -146,18 +149,22 @@ function update (){
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
   #'d' shows daemon screen and the last 5 lines of daemon error log
   #'n' shows node screen
+  #'u' shows ubuntu operating system update screen
+  #'c' shows available commands
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
     show_node='0'
     show_daemon='0'
     show_bench='1'
+    show_commands='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
     show_node='1'
     show_daemon='0'
     show_bench='0'
+    show_commands='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
@@ -165,6 +172,18 @@ function update (){
     show_node='0'
     show_daemon='1'
     show_bench='0'
+    show_commands='0'
+    redraw_term='1'
+    sleep 0.1
+  elif [[ $userInput == 'u' ]]; then
+    node_os_update
+    sleep 0.1
+    redraw_term='1'
+  elif [[ $userInput == 'c' ]]; then
+    show_node='0'
+    show_daemon='0'
+    show_bench='0'
+    show_commands='1'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
@@ -261,7 +280,7 @@ function flux_node_info(){\
   navigation
 }
 
-function flux_benchmark_info(){\
+function flux_benchmark_info(){
   clear
   sleep 0.25
   make_header "$DASH_BENCH_TITLE" "$BLUE"
@@ -294,6 +313,21 @@ function flux_benchmark_info(){\
   fi
   navigation
 }
+
+function show_available_commands(){
+  clear
+  sleep 0.25
+  make_header "$DASH_COMMANDS_TITLE" "$BLUE"
+  echo -e "$BLUE_CIRCLE   'd'            -    Show Flux Daemon Info"
+  echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
+  echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
+  echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntuo Operating System"
+  echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
+  echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
+  make_header
+  navigation
+}
+
 
 # check to see if docker service is running
 function check_docker_service(){
@@ -427,7 +461,7 @@ function make_header(){
 
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
-  echo -e "         d for daemon info | b for benchmarks | n for node | q to quit         " 
+  echo -e "d - daemon | b - benchmarks | n - node | q - quit | c - commands" 
 }
 
 #checks the current window size and compares it to the last windows size to see if we need to redraw the term
@@ -439,6 +473,52 @@ function check_term_resize(){
   fi
 }
 
+function check_bench() {
+  if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
+    if whiptail --title "Benchmarks Failed" --yesno "Would you like to restart your node benchmarks?" 8 60; then
+      flux_update_benchmarks
+    else
+      whiptail --msgbox "User would not like to restart benchmarks" 8 60;
+    fi
+  fi
+}
+
+function check_back(){
+  if [[ $flux_bench_back != *"connected"* ]]; then
+    if whiptail --title "Flux Back Status Not Connected" --yesno "Would you like to update and restart the flux daemon and node?" 8 60; then
+      flux_update_service
+    else
+      whiptail --msgbox "User would not like to update and restart flux daemon and flux node" 8 60;
+    fi
+  fi
+}
+
+function node_os_update(){
+  if whiptail --title "Ubuntu Operating System Update" --yesno "Would you like to update the operating system?" 8 60; then
+      sudo apt-get update -y && sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
+    else
+      whiptail --msgbox "User would not like to update the operating system" 8 60;
+    fi
+ 
+}
+
+function flux_update_service(){
+  echo -e "${RED}   Stopping Node Daemon Service"
+  #sudo systemctl stop zelcash
+  sleep 2
+  echo -e "${RED}   Starting Node Daemon Service"
+  #sudo systemctl start zelcash
+  sleep 5
+  echo -e "${RED}   Restarting Flux Service"
+  #pm2 restart flux
+  sleep 2
+}
+
+function flux_update_benchmarks(){
+  echo -e "starting node benchmarks"
+  redraw_term='1'
+  #$BENCH_CLI restartnodebenchmarks
+}
 
 function main_terminal(){
  
@@ -452,10 +532,12 @@ function main_terminal(){
       if [[ $show_daemon == '1' ]]; then
         flux_daemon_info
       elif [[ $show_node == '1' ]]; then
+        check_back
         flux_node_info
       elif [[ $show_bench == '1' ]]; then
         flux_benchmark_info
-        check_bench
+      elif [[ $show_commands == '1' ]]; then
+        show_available_commands
       fi
     fi
     update
@@ -470,59 +552,3 @@ check_pm2_flux_service
 check_ip
 check_version
 main_terminal
-
-
-
-# function check_status() {
-#   if [[ $flux_bench_flux_status == "online" ]];
-#   then
-#     echo -e "Flux node status           -    ${GREEN}ONLINE${NC}"
-#   else
-#     echo -e "Flux node status           -    ${RED}OFFLINE${NC}"
-#   fi
-# }
-
-function check_bench() {
-  if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") ]]; then
-    if whiptail --title "Benchmarks Failed" --yesno "Would you like to restart your node benchmarks?" 8 60; then
-      flux_update_benchmarks
-    else
-      whiptail --msgbox "User would not like to restart benchmarks" 10 60;
-    fi
-  fi
-}
-
-# function check_back(){
-#   if [[ $flux_bench_back != *"connected"* ]];
-#   then
-#     echo -e "Flux back status           -    ${RED}DISCONNECTED${NC}"
-#     read -p 'would you like to check for updates and restart flux-back? (y/n) ' userInput
-#     if [ $userInput == 'n' ]; then
-#       echo -e "${RED}user does not want to restart flux back${NC}"
-#     else
-#       echo -e "${BLUE}user would like to update and restart flux-back${NC}"
-#       echo 'updating ... '
-#       flux_update_restart
-#     fi
-#   else
-#     echo -e "Flux back status           -    ${GREEN}CONNECTED${NC}"
-#   fi
-# }
-
-# function node_os_update(){
-#   sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
-# }
-
-# function flux_update_service(){
-#   node_os_update
-#   #sudo systemctl stop flux
-#   #sleep 2
-#   #sudo systemctl start flux
-#   #sleep 5
-# }
-
-function flux_update_benchmarks(){
-  echo -e "starting node benchmarks"
-  #node_os_update
-  #$BENCH_CLI restartnodebenchmarks
-}
