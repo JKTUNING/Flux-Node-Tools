@@ -130,6 +130,11 @@ function get_flux_node_info(){
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
 }
 
+#calculated block height since last confirmed
+function get_blocks_since_last_confirmed(){
+  blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
+}
+
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
 flux_api_port=""
@@ -147,9 +152,6 @@ flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json)
 daemon_log=""
 bench_log=""
 flux_log=""
-
-#calculated block height since last confirmed
-blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
 
 function update (){
   local userInput
@@ -556,6 +558,7 @@ function main_terminal(){
 get_flux_bench_info
 get_flux_blockchain_info
 get_flux_node_info
+get_blocks_since_last_confirmed
 check_port_info
 check_docker_service
 check_mongodb_service
