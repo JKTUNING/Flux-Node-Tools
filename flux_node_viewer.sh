@@ -431,7 +431,7 @@ function check_version(){
   ## grab current version requirements from the pacakge.json and compare to current node version
   flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
-    flux_node_version_check="${GREEN_ARROW}   You have the required version $flux_node_version"
+    flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
   else
     flux_node_version_check="${RED_ARROW}   You do not have the required version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
   fi
