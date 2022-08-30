@@ -81,53 +81,53 @@ redraw_term='1'
 #Function to collect all benchmark information for display
 function get_flux_bench_info(){
   #gets fluxbench version info
-  flux_bench_version=$(($BENCH_CLI getinfo) | jq -r '.version')
+  flux_bench_version=$(($BENCH_CLI getinfo) 2>/dev/null | jq -r '.version' 2>/dev/null)
 
   #gets fluxbench info
-  flux_bench_details=$($BENCH_CLI getstatus)
-  flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details")
-  flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details")
-  flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details")
+  flux_bench_details=$($BENCH_CLI getstatus 2>/dev/null)
+  flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details" 2>/dev/null)
+  flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details" 2>/dev/null)
+  flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details" 2>/dev/null)
 
   #gets flux node benchmark info
-  flux_bench_stats=$($BENCH_CLI getbenchmarks)
-  flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats")
-  flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats")
-  flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats")
-  flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats")
-  flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats")
-  flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats")
-  flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats")
-  flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats")
-  flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats")
-  flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats")
-  flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats")
-  flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats")
-  flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats")
+  flux_bench_stats=$($BENCH_CLI getbenchmarks 2>/dev/null)
+  flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats" 2>/dev/null)
 }
 
 ## Function to collect flux block chain daemon data
 function get_flux_blockchain_info(){
   #gets blockchain info
-  flux_daemon_details=$($COIN_CLI getinfo)
-  flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details")
-  flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details")
-  flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details")
-  flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details")
-  flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details")
-  flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details")
+  flux_daemon_details=$($COIN_CLI getinfo 2>/dev/null)
+  flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details" 2>/dev/null)
+  flux_daemon_protocol_version=$(jq -r '.protocolversion' <<<"$flux_daemon_details" 2>/dev/null)
+  flux_daemon_block_height=$(jq -r '.blocks' <<<"$flux_daemon_details" 2>/dev/null)
+  flux_daemon_connections=$(jq -r '.connections' <<<"$flux_daemon_details" 2>/dev/null)
+  flux_daemon_difficulty=$(jq -r '.difficulty' <<<"$flux_daemon_details" 2>/dev/null)
+  flux_daemon_error=$(jq -r '.error' <<<"$flux_daemon_details" 2>/dev/null)
 }
 
 ## Function to get flux node data
 function get_flux_node_info(){
   #gets flux node info
-  flux_node_details=$($COIN_CLI getzelnodestatus)
-  flux_node_status=$(jq -r '.status' <<<"$flux_node_details")
-  flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details")
-  flux_node_added_height=$(jq -r '.added_height' <<<"$flux_node_details")
-  flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details")
-  flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details")
-  flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details")
+  flux_node_details=$($COIN_CLI getzelnodestatus 2>/dev/null)
+  flux_node_status=$(jq -r '.status' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_collateral=$(jq -r '.collateral' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_added_height=$(jq -r '.added_height' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details" 2>/dev/null)
 }
 
 #calculated block height since last confirmed
@@ -146,7 +146,7 @@ flux_ip_check=""
 flux_node_version_check=""
 
 local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json)
+flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json 2>/dev/null)
 
 #log variables
 daemon_log=""
@@ -342,9 +342,9 @@ function show_available_commands(){
 
 # check to see if docker service is running
 function check_docker_service(){
-  if systemctl --type=service --state=running --quiet |grep docker >/dev/null 2>&1; then
+  if systemctl --type=service --state=running --quiet 2>/dev/null |grep docker >/dev/null 2>&1; then
     docker_service_status="${GREEN_ARROW}   Docker Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet |grep docker >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep docker >/dev/null 2>&1; then
     docker_service_status="${RED_ARROW}   Docker Service is ${RED}inactive${NC}"
   else
     docker_service_status="${RED_ARROW}   Docker Service is ${RED}not installed${NC}"
@@ -353,9 +353,9 @@ function check_docker_service(){
 
 #check to see if mongoDB service is running
 function check_mongodb_service(){
-  if systemctl --type=service --state=running --quiet |grep mongod >/dev/null 2>&1; then
+  if systemctl --type=service --state=running --quiet 2>/dev/null |grep mongod >/dev/null 2>&1; then
     mongodb_service_status="${GREEN_ARROW}   MongoDB Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet |grep mongod >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep mongod >/dev/null 2>&1; then
     mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}inactive${NC}"
   else
     mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}not installed${NC}"
@@ -364,9 +364,9 @@ function check_mongodb_service(){
 
 #check to ese if Daemon Service is running
 function check_daemon_service(){
-  if systemctl --type=service --state=running --quiet |grep zelcash >/dev/null 2>&1; then
+  if systemctl --type=service --state=running --quiet 2>/dev/null |grep zelcash >/dev/null 2>&1; then
     daemon_service_status="${GREEN_ARROW}   Flux Daemon Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet |grep zelcash >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep zelcash >/dev/null 2>&1; then
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}inactive${NC}"
   else
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}not installed${NC}"
