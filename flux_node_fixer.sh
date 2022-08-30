@@ -213,19 +213,19 @@ function check_port_info()
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
     mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
   else
-    mongodb_port="${RED_ARROW}   MongoDB is not listening"
+    mongodb_port="${RED_ARROW}   MongoDB is ${RED}not listening${NC}"
   fi
 
   if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
     flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port ${GREEN}16125${NC}"
   else
-    flux_daemon_port="${RED_ARROW}   Flux Daemon is not listening"
+    flux_daemon_port="${RED_ARROW}   Flux Daemon is ${RED}not listening${NC}"
   fi
 
    if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
     flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
   else
-    flux_bench_port="${RED_ARROW}   Flux Bench is not listening"
+    flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
   fi
 
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
@@ -235,13 +235,13 @@ function check_port_info()
   if [[ $api_port != "" ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
   else
-    flux_api_port="${RED_ARROW}   Flux API is not listening"
+    flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
   fi
 
   if [[ $ui_port != "" ]]; then
     flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
   else
-    flux_ui_port="${RED_ARROW}   Flux UI is not listening"
+    flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
   fi
 }
 
@@ -343,33 +343,33 @@ function show_available_commands(){
 # check to see if docker service is running
 function check_docker_service(){
   if systemctl --type=service --state=running --quiet |grep docker >/dev/null 2>&1; then
-    docker_service_status="${GREEN_ARROW}   Docker Service is running"
+    docker_service_status="${GREEN_ARROW}   Docker Service is ${GREEN}running${NC}"
   elif systemctl --type=service --state=failed --quiet |grep docker >/dev/null 2>&1; then
-    docker_service_status="${RED_ARROW}   Docker Service is inactive"
+    docker_service_status="${RED_ARROW}   Docker Service is ${RED}inactive${NC}"
   else
-    docker_service_status="${RED_ARROW}   Docker Service is not installed"
+    docker_service_status="${RED_ARROW}   Docker Service is ${RED}not installed${NC}"
   fi
 }
 
 #check to see if mongoDB service is running
 function check_mongodb_service(){
   if systemctl --type=service --state=running --quiet |grep mongod >/dev/null 2>&1; then
-    mongodb_service_status="${GREEN_ARROW}   MongoDB Service is running"
+    mongodb_service_status="${GREEN_ARROW}   MongoDB Service is ${GREEN}running${NC}"
   elif systemctl --type=service --state=failed --quiet |grep mongod >/dev/null 2>&1; then
-    mongodb_service_status="${RED_ARROW}   MongoDB Service is inactive"
+    mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}inactive${NC}"
   else
-    mongodb_service_status="${RED_ARROW}   MongoDB Service is not installed"
+    mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}not installed${NC}"
   fi
 }
 
 #check to ese if Daemon Service is running
 function check_daemon_service(){
   if systemctl --type=service --state=running --quiet |grep zelcash >/dev/null 2>&1; then
-    daemon_service_status="${GREEN_ARROW}   Flux Daemon Service is running"
+    daemon_service_status="${GREEN_ARROW}   Flux Daemon Service is ${GREEN}running${NC}"
   elif systemctl --type=service --state=failed --quiet |grep zelcash >/dev/null 2>&1; then
-    daemon_service_status="${RED_ARROW}   Flux Daemon Service is inactive"
+    daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}inactive${NC}"
   else
-    daemon_service_status="${RED_ARROW}   Flux Daemon Service is not installed"
+    daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}not installed${NC}"
   fi
 }
 
@@ -378,11 +378,11 @@ function check_pm2_flux_service(){
   local pm2_status_check=$(pm2 info flux 2>/dev/null | grep 'status')
 
   if [[ $pm2_status_check == *"online"* ]]; then
-    flux_process_status="${GREEN_ARROW}   Flux PM2 process is running"
+    flux_process_status="${GREEN_ARROW}   Flux PM2 process is ${GREEN}running${NC}"
   elif [[ $pm2_status_check == *"offline"* ]]; then
-    flux_process_status="${RED_ARROW}   Flux PM2 process is offline"
+    flux_process_status="${RED_ARROW}   Flux PM2 process is ${RED}offline${NC}"
   else
-    flux_process_status="${RED_ARROW}   Flux PM2 process not found"
+    flux_process_status="${RED_ARROW}   Flux PM2 process ${RED}not found${NC}"
   fi
 
 }
@@ -421,9 +421,9 @@ function check_ip(){
   local_device_ip=$(ip a list $local_device | grep -o $WANIP)
 
   if [[ "$WANIP" == "$local_device_ip" ]]; then
-    flux_ip_check="${GREEN_ARROW}   Public IP matches device IP"
+    flux_ip_check="${GREEN_ARROW}   Public IP ${GREEN}matches${NC} device IP"
   else
-    flux_ip_check="${RED_ARROW}   Public IP does NOT match device IP"
+    flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
   fi
 }
 
