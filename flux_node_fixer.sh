@@ -211,19 +211,19 @@ function check_port_info()
   #echo -e "$listen_ports"
   
   if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
-    mongodb_port="${GREEN_ARROW}   MongoDB is listening on port 27017"
+    mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
   else
     mongodb_port="${RED_ARROW}   MongoDB is not listening"
   fi
 
   if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
-    flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port 16125"
+    flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port ${GREEN}16125${NC}"
   else
     flux_daemon_port="${RED_ARROW}   Flux Daemon is not listening"
   fi
 
    if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
-    flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port 16224"
+    flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
   else
     flux_bench_port="${RED_ARROW}   Flux Bench is not listening"
   fi
@@ -233,13 +233,13 @@ function check_port_info()
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
   if [[ $api_port != "" ]]; then
-    flux_api_port="${GREEN_ARROW}   Flux API Listening on $api_port"
+    flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
   else
     flux_api_port="${RED_ARROW}   Flux API is not listening"
   fi
 
   if [[ $ui_port != "" ]]; then
-    flux_ui_port="${GREEN_ARROW}   Flux UI Listening on $ui_port"
+    flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
   else
     flux_ui_port="${RED_ARROW}   Flux UI is not listening"
   fi
