@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "checking required packages ..."
+echo -e "checking required packages ... "
 
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
@@ -554,6 +554,8 @@ function main_terminal(){
     update
   done
 }
+
+echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
 get_flux_bench_info
 get_flux_blockchain_info
