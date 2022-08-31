@@ -390,7 +390,7 @@ function check_pm2_flux_service(){
 #checks last 100 lines of daemon log file for errors or failed entries
 function check_daemon_log(){
   if [[ -f $DAEMON_LOG_DIR ]]; then
-    daemon_log=${RED_ARROW}   $(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
+    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a 'error|failed')
     if [[ $daemon_log == "" ]]; then
       daemon_log="${GREEN_ARROW}   No Daemon Errors logged"
     fi
@@ -401,7 +401,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_DIR_LOG ]]; then
-    bench_log=${RED_ARROW}   $(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
+    bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
