@@ -19,7 +19,7 @@ echo "user selected server $userInput for testing"
 serverIndex=()
 
 #amount of time we want the wget function to run
-downloadTime='8'
+downloadTime='5'
 downloadFileSize=0
 
 for server in 5 6 7 8 9 10 11 12
@@ -91,8 +91,8 @@ count=0
         #printf "$i\n"
         bestTime=$i
         bestServer=${serverIndex[$count]}
-        echo "${fileSizes[$count]} Mb"
-        echo "${downloadSpeed[$count]} Mb/s"
+        #echo "${fileSizes[$count]} Mb"
+        #echo "${downloadSpeed[$count]} Mb/s"
      fi
      ((count++))
  done
