@@ -57,6 +57,20 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
+if ! [ -f /usr/local/bin/flux-cli ]; then
+  echo -e "${RED}flux-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
+
+if ! [ -f /usr/local/bin/fluxbench-cli ]; then
+  echo -e "${RED}fluxbench-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
+
 
 BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
