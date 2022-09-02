@@ -24,6 +24,8 @@ BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
 
+version='Flux Node Viewer 1.0.0'
+
 WRENCH='\xF0\x9F\x94\xA7'
 #BLUE_CIRCLE='\xF0\x9F\x94\xB5'
 RED_ARROW="${RED}\xE2\x96\xB6${NC}  "
@@ -57,19 +59,19 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
-if ! [ -f /usr/local/bin/flux-cli ]; then
-  echo -e "${RED}flux-cli tool not installed${NC}"
-  echo -e "${RED}application will exit in 5 seconds ...${NC}"
-  sleep 5
-  exit
-fi
+# if ! [ -f /usr/local/bin/flux-cli ]; then
+#   echo -e "${RED}flux-cli tool not installed${NC}"
+#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
+#   sleep 5
+#   exit
+# fi
 
-if ! [ -f /usr/local/bin/fluxbench-cli ]; then
-  echo -e "${RED}fluxbench-cli tool not installed${NC}"
-  echo -e "${RED}application will exit in 5 seconds ...${NC}"
-  sleep 5
-  exit
-fi
+# if ! [ -f /usr/local/bin/fluxbench-cli ]; then
+#   echo -e "${RED}fluxbench-cli tool not installed${NC}"
+#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
+#   sleep 5
+#   exit
+# fi
 
 
 BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
@@ -272,12 +274,10 @@ function flux_daemon_info(){
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
-  make_header
 
   if [[ $daemon_log != "" ]]; then
     make_header "$DASH_DAEMON_ERROR_TITLE" "$RED"
     echo -e "$daemon_log"
-    make_header
   fi
   navigation
 }
@@ -303,7 +303,6 @@ function flux_node_info(){\
   echo -e "$flux_process_status"
   echo -e "$mongodb_service_status"
   echo -e "$docker_service_status"
-  make_header
   navigation
 }
 
@@ -331,13 +330,12 @@ function flux_benchmark_info(){
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
   make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
   echo -e "$flux_bench_port"
-  make_header
 
   if [[ $bench_log != "" ]]; then
     make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
     echo -e "$bench_log"
-    make_header
   fi
+ 
   navigation
 }
 
@@ -351,7 +349,6 @@ function show_available_commands(){
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
-  make_header
   navigation
 }
 
@@ -488,6 +485,7 @@ function make_header(){
 
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
+   make_header "$version"
   echo -e "d - daemon | b - benchmarks | n - node | q - quit | c - commands" 
 }
 
