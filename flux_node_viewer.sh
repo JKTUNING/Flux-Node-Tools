@@ -75,9 +75,9 @@ fi
 
 
 BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
-DAEMON_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
+DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
 WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
-FLUX_LOG_DIR="/home/$USER/.flux/debug.log"
+FLUX_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
 
 docker_service_status=""
 mongodb_service_status=""
