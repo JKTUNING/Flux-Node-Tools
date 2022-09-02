@@ -59,19 +59,19 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
-# if ! [ -f /usr/local/bin/flux-cli ]; then
-#   echo -e "${RED}flux-cli tool not installed${NC}"
-#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
-#   sleep 5
-#   exit
-# fi
+if ! [ -f /usr/local/bin/flux-cli ]; then
+  echo -e "${RED}flux-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
 
-# if ! [ -f /usr/local/bin/fluxbench-cli ]; then
-#   echo -e "${RED}fluxbench-cli tool not installed${NC}"
-#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
-#   sleep 5
-#   exit
-# fi
+if ! [ -f /usr/local/bin/fluxbench-cli ]; then
+  echo -e "${RED}fluxbench-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
 
 
 BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
@@ -349,6 +349,7 @@ function show_available_commands(){
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
+  make_title
   navigation
 }
 
@@ -485,8 +486,13 @@ function make_header(){
 
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
-   make_header "$version"
+  make_header
   echo -e "d - daemon | b - benchmarks | n - node | q - quit | c - commands" 
+}
+
+#this function simply prints the version at the top of the page
+function make_title(){
+  make_header "$version" "$BLUE"
 }
 
 #checks the current window size and compares it to the last windows size to see if we need to redraw the term
