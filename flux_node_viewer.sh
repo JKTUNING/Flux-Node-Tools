@@ -133,6 +133,7 @@ function get_flux_node_info(){
 #calculated block height since last confirmed
 function get_blocks_since_last_confirmed(){
   blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
+  maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
 }
 
 # get a list of the LISTEN ports
@@ -277,6 +278,7 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
+  echo -e "$BLUE_CIRCLE   Node Maintenance Window       -    $maint_window mins"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
