@@ -59,6 +59,7 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
+# RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
 # if ! [ -f /usr/local/bin/flux-cli ]; then
 #   echo -e "${RED}flux-cli tool not installed${NC}"
 #   echo -e "${RED}application will exit in 5 seconds ...${NC}"
@@ -442,7 +443,7 @@ function check_ip(){
 }
 
 function check_version(){
-  ## grab current version requirements from the pacakge.json and compare to current node version
+  ## grab current version requirements from the flux api and compare to current node version
   #flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   flux_required_version=$(curl -sS --max-time 10 https://api.runonflux.io/flux/version | jq -r '.data')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
@@ -450,6 +451,15 @@ function check_version(){
   else
     flux_node_version_check="${RED_ARROW}   You do not have the required version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
   fi
+}
+
+# grab current node counts from https://api.runonflux.io/daemon/getzelnodecount
+function check_total_nodes(){
+  local nodeInfo=$(curl -sS --max-time 10 https://api.runonflux.io/daemon/getzelnodecount | jq -r '.data')
+  total_nodes=$(jq -r '.total' <<<"$nodeInfo" 2>/dev/null)
+  cumulus_nodes=$(jq -r '."cumulus-enabled"' <<<"$nodeInfo" 2>/dev/null)
+  nimbus_nodes=$(jq -r '."nimbus-enabled"' <<<"$nodeInfo" 2>/dev/null)
+  stratus_nodes=$(jq -r '."stratus-enabled"' <<<"$nodeInfo" 2>/dev/null)
 }
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
