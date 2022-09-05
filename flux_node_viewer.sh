@@ -59,19 +59,19 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
-if ! [ -f /usr/local/bin/flux-cli ]; then
-  echo -e "${RED}flux-cli tool not installed${NC}"
-  echo -e "${RED}application will exit in 5 seconds ...${NC}"
-  sleep 5
-  exit
-fi
+# if ! [ -f /usr/local/bin/flux-cli ]; then
+#   echo -e "${RED}flux-cli tool not installed${NC}"
+#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
+#   sleep 5
+#   exit
+# fi
 
-if ! [ -f /usr/local/bin/fluxbench-cli ]; then
-  echo -e "${RED}fluxbench-cli tool not installed${NC}"
-  echo -e "${RED}application will exit in 5 seconds ...${NC}"
-  sleep 5
-  exit
-fi
+# if ! [ -f /usr/local/bin/fluxbench-cli ]; then
+#   echo -e "${RED}fluxbench-cli tool not installed${NC}"
+#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
+#   sleep 5
+#   exit
+# fi
 
 
 BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
@@ -443,7 +443,8 @@ function check_ip(){
 
 function check_version(){
   ## grab current version requirements from the pacakge.json and compare to current node version
-  flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
+  #flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
+  flux_required_version=$(curl -sS --max-time 10 https://api.runonflux.io/flux/version | jq -r '.data')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
     flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
   else
