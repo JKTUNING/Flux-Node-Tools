@@ -559,7 +559,7 @@ function check_term_resize(){
 # checks to see if the benchmarks pass and asks to restart the benchmarks
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
-    if [[ $flux_bench_stats_error == *"Flux OS is not working properly"* ]]; then
+    if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
       whiptail -- title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Flux OS is not working properly - please check to make sure your ports are properly forwarded in your router" 8 60;
     else
       if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
