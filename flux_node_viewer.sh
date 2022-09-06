@@ -353,6 +353,7 @@ function flux_benchmark_info(){
   navigation
 }
 
+#show available commands for the application
 function show_available_commands(){
   clear
   sleep 0.25
