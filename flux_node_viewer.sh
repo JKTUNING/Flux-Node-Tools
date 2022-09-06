@@ -556,9 +556,10 @@ function check_term_resize(){
   fi
 }
 
+# checks to see if the benchmarks pass and asks to restart the benchmarks
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
-    if whiptail --title "Benchmarks Failed" --yesno "Would you like to restart your node benchmarks?" 8 60; then
+    if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
       flux_update_benchmarks
     else
       whiptail --msgbox "User would not like to restart benchmarks" 8 60;
@@ -576,6 +577,7 @@ function check_back(){
   fi
 }
 
+# Update Ubuntu OS
 function node_os_update(){
   if whiptail --title "Ubuntu Operating System Update" --yesno "Would you like to update the operating system?" 8 60; then
       sudo apt-get update -y && sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
@@ -585,22 +587,25 @@ function node_os_update(){
  
 }
 
+# restart daemon service and restart FluxOS
 function flux_update_service(){
-  echo -e "${RED}   Stopping Node Daemon Service"
+  echo -e "${RED}   Stopping Node Daemon Service ... waiting 5 seconds ...${NC}"
   #sudo systemctl stop zelcash
-  sleep 2
-  echo -e "${RED}   Starting Node Daemon Service"
+  sleep 5
+  echo -e "${RED}   Starting Node Daemon Service ... waiting 5 seconds ...${NC}"
   #sudo systemctl start zelcash
   sleep 5
-  echo -e "${RED}   Restarting Flux Service"
+  echo -e "${RED}   Restarting Flux Service ... waiting 5 seconds ...${NC}"
   #pm2 restart flux
-  sleep 2
+  sleep 5
 }
 
+# restart the node benchmarks if failed/toasted or empty
 function flux_update_benchmarks(){
-  echo -e "starting node benchmarks"
+  echo -e "${RED}starting node benchmarks ... please allow approx 5 mins for benchmarks to complete${NC}"
   redraw_term='1'
-  #$BENCH_CLI restartnodebenchmarks
+  $BENCH_CLI restartnodebenchmarks
+  sleep 5
 }
 
 function main_terminal(){
@@ -618,6 +623,7 @@ function main_terminal(){
         check_back
         flux_node_info
       elif [[ $show_bench == '1' ]]; then
+        check_bench
         flux_benchmark_info
       elif [[ $show_commands == '1' ]]; then
         show_available_commands
