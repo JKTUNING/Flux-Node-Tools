@@ -91,6 +91,7 @@ show_bench='1'
 show_daemon='0'
 show_node='0'
 show_commands='0'
+show_flux_node_details='0'
 
 # variable to see if the terminal size has changed
 redraw_term='1'
@@ -187,6 +188,7 @@ function update (){
     show_daemon='0'
     show_bench='1'
     show_commands='0'
+    show_flux_node_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
@@ -194,6 +196,7 @@ function update (){
     show_daemon='0'
     show_bench='0'
     show_commands='0'
+    show_flux_node_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
@@ -202,6 +205,7 @@ function update (){
     show_daemon='1'
     show_bench='0'
     show_commands='0'
+    show_flux_node_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'u' ]]; then
@@ -213,6 +217,15 @@ function update (){
     show_daemon='0'
     show_bench='0'
     show_commands='1'
+    show_flux_node_details='0'
+    redraw_term='1'
+    sleep 0.1
+  elif [[ $userInput == 't' ]]; then
+    show_node='0'
+    show_daemon='0'
+    show_bench='0'
+    show_commands='0'
+    show_flux_node_details='1'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
@@ -283,7 +296,7 @@ function flux_daemon_info(){
   navigation
 }
 
-function flux_node_info(){\
+function flux_node_info(){
   clear
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
@@ -293,7 +306,7 @@ function flux_node_info(){\
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
-  echo -e "$BLUE_CIRCLE   Node Maintenance Window       -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
@@ -350,7 +363,24 @@ function show_available_commands(){
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
+  echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   make_title
+  navigation
+}
+
+
+# show the flux network node details
+function show_network_node_details(){
+  clear
+  echo -e "${GREEN}   Checking flux network node details${NC}"
+  check_total_nodes
+  clear
+  sleep 0.25
+  make_header "FLUX NETWORK NODE DETAILS" "$BLUE"
+  echo -e "$BLUE_CIRCLE   Total nodes                  -    $total_nodes"
+  echo -e "$BLUE_CIRCLE   Cumulus nodes                -    $cumulus_nodes"
+  echo -e "$BLUE_CIRCLE   Nimbus nodes                 -    $nimbus_nodes"
+  echo -e "$BLUE_CIRCLE   Stratus nodes                -    $stratus_nodes"
   navigation
 }
 
@@ -580,6 +610,8 @@ function main_terminal(){
         flux_benchmark_info
       elif [[ $show_commands == '1' ]]; then
         show_available_commands
+      elif [[ $show_flux_node_details == '1' ]]; then
+        show_network_node_details
       fi
     fi
     update
