@@ -372,8 +372,10 @@ function show_available_commands(){
 # show the flux network node details
 function show_network_node_details(){
   clear
-  echo -e "${GREEN}   Checking flux network node details${NC}"
+  echo -e "${GREEN}   Checking flux network node details ...${NC}"
   check_total_nodes
+  echo -e "${GREEN}   Checking flux price details ...${NC}"
+  check_flux_price
   clear
   sleep 0.25
   make_header "FLUX NETWORK NODE DETAILS" "$BLUE"
@@ -381,6 +383,8 @@ function show_network_node_details(){
   echo -e "$BLUE_CIRCLE   Cumulus nodes                -    $cumulus_nodes"
   echo -e "$BLUE_CIRCLE   Nimbus nodes                 -    $nimbus_nodes"
   echo -e "$BLUE_CIRCLE   Stratus nodes                -    $stratus_nodes"
+  
+  echo -e "$BLUE_CIRCLE   Flux Price                   -    $flux_price"
   navigation
 }
 
@@ -490,6 +494,12 @@ function check_total_nodes(){
   cumulus_nodes=$(jq -r '."cumulus-enabled"' <<<"$nodeInfo" 2>/dev/null)
   nimbus_nodes=$(jq -r '."nimbus-enabled"' <<<"$nodeInfo" 2>/dev/null)
   stratus_nodes=$(jq -r '."stratus-enabled"' <<<"$nodeInfo" 2>/dev/null)
+}
+
+# check current flux price
+function check_flux_price(){
+  local currencyInfo=$(curl -sS --max-time 10 https://explorer.runonflux.io/api/currency | jq -r '.data' | jq -r '.rate')
+  flux_price=$(printf "%.3f" $currencyInfo)
 }
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
