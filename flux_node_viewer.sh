@@ -559,11 +559,16 @@ function check_term_resize(){
 # checks to see if the benchmarks pass and asks to restart the benchmarks
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
-    if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
-      flux_update_benchmarks
+    if [[ $flux_bench_stats_error == *"Flux OS is not working properly"* ]]; then
+      whiptail -- title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Flux OS is not working properly - please check to make sure your ports are properly forwarded in your router" 8 60;
     else
-      whiptail --msgbox "User would not like to restart benchmarks" 8 60;
+      if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
+        flux_update_benchmarks
+      else
+        whiptail --msgbox "User would not like to restart benchmarks" 8 60;
+      fi
     fi
+    
   fi
 }
 
@@ -600,7 +605,7 @@ function flux_update_service(){
   sleep 5
 }
 
-# restart the node benchmarks if failed/toasted or empty
+# restart the node benchmarks if failed/toaster or empty
 function flux_update_benchmarks(){
   echo -e "${RED}starting node benchmarks ... please allow approx 5 mins for benchmarks to complete${NC}"
   redraw_term='1'
