@@ -59,6 +59,8 @@ CONFIG_FILE='flux.conf'
 BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
+PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
+
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
 # if ! [ -f /usr/local/bin/flux-cli ]; then
 #   echo -e "${RED}flux-cli tool not installed${NC}"
@@ -644,14 +646,14 @@ function flux_update_benchmarks(){
 
 # function to check flux ports are open to external world
 function check_external_ports(){
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
   if [[ -z $checkPort ]]; then
     external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
   else
     external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is ${GREEN}open${NC}"
   fi
 
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
    if [[ -z $checkPort ]]; then
     external_flux_api_port="${RED_ARROW} Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
     
