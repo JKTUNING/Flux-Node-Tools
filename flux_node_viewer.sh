@@ -529,6 +529,13 @@ function check_external_ports(){
   fi
 }
 
+#check to see if upnp is enabled and ports routed for LANIP
+function check_upnp(){
+  LANIP=$(hostname -I | awk '{print $1}')
+  #upnp_status=$(upnpc -l | grep $LANIP)
+  #echo -e $upnp_status
+}
+
 function check_version(){
   ## grab current version requirements from the flux api and compare to current node version
   #flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
