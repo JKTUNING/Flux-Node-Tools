@@ -183,6 +183,8 @@ function update (){
   #'n' shows node screen
   #'u' shows ubuntu operating system update screen
   #'c' shows available commands
+  #'t' shows flux network node details
+  #'p' shows external flux ports
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
