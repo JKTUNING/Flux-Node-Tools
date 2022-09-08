@@ -590,8 +590,8 @@ function check_term_resize(){
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
     if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
-      if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60;
-        echo -e ${GREEN}checking external flux ports ... ${NC}
+      if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60; then
+        echo -e "${GREEN}checking external flux ports ... ${NC}"
         show_external_port_info
       fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
