@@ -590,7 +590,10 @@ function check_term_resize(){
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
     if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
-      whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Flux OS is not working properly - please check to make sure your ports are properly forwarded in your router" 8 60;
+      if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60;
+        echo -e ${GREEN}checking external flux ports ... ${NC}
+        show_external_port_info
+      fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
       whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Hardware requirements not met for node tier!" 8 60;
     else
