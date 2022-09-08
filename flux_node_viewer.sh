@@ -252,46 +252,6 @@ function update (){
   fi
 }
 
-#this function checks for listen ports using lsof
-function check_port_info()
-{
-  #echo -e "$listen_ports"
-  
-  if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
-    mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
-  else
-    mongodb_port="${RED_ARROW}   MongoDB is ${RED}not listening${NC}"
-  fi
-
-  if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
-    flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port ${GREEN}16125${NC}"
-  else
-    flux_daemon_port="${RED_ARROW}   Flux Daemon is ${RED}not listening${NC}"
-  fi
-
-   if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
-    flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
-  else
-    flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
-  fi
-
-  #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
-  api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
-  ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
-
-  if [[ $api_port != "" ]]; then
-    flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
-  else
-    flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
-  fi
-
-  if [[ $ui_port != "" ]]; then
-    flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
-  else
-    flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
-  fi
-}
-
 function flux_daemon_info(){
   clear
   sleep 0.25
@@ -420,7 +380,6 @@ function show_external_port_info(){
   navigation
 }
 
-
 # check to see if docker service is running
 function check_docker_service(){
   if systemctl --type=service --state=running --quiet 2>/dev/null |grep docker >/dev/null 2>&1; then
@@ -491,6 +450,7 @@ function check_benchmark_log(){
   fi
 }
 
+#check node external IP address and compare it to device IP address
 function check_ip(){
   WANIP=$(curl --silent -m 15 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
@@ -505,6 +465,65 @@ function check_ip(){
     flux_ip_check="${GREEN_ARROW}   Public IP ${GREEN}matches${NC} device IP"
   else
     flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
+  fi
+}
+
+#this function checks for listen ports using lsof
+function check_port_info()
+{
+  #echo -e "$listen_ports"
+  
+  if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
+    mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
+  else
+    mongodb_port="${RED_ARROW}   MongoDB is ${RED}not listening${NC}"
+  fi
+
+  if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
+    flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port ${GREEN}16125${NC}"
+  else
+    flux_daemon_port="${RED_ARROW}   Flux Daemon is ${RED}not listening${NC}"
+  fi
+
+   if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
+    flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
+  else
+    flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
+  fi
+
+  #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
+  api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
+  ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
+
+  if [[ $api_port != "" ]]; then
+    flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
+  else
+    flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
+  fi
+
+  if [[ $ui_port != "" ]]; then
+    flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
+  else
+    flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
+  fi
+}
+
+# function to check flux ports are open to external world
+# Only checks Flux UI port and Flux API Port at this time
+function check_external_ports(){
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
+  if [[ -z $checkPort ]]; then
+    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
+  else
+    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is ${GREEN}open${NC}"
+  fi
+
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
+   if [[ -z $checkPort ]]; then
+    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
+    
+  else
+    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is ${GREEN}open${NC}"
   fi
 }
 
@@ -646,24 +665,6 @@ function flux_update_benchmarks(){
   redraw_term='1'
   $BENCH_CLI restartnodebenchmarks
   sleep 5
-}
-
-# function to check flux ports are open to external world
-function check_external_ports(){
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
-  if [[ -z $checkPort ]]; then
-    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
-  else
-    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is ${GREEN}open${NC}"
-  fi
-
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
-   if [[ -z $checkPort ]]; then
-    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
-    
-  else
-    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is ${GREEN}open${NC}"
-  fi
 }
 
 function main_terminal(){
