@@ -646,17 +646,17 @@ function flux_update_benchmarks(){
 function check_external_ports(){
   checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
   if [[ -z $checkPort ]]; then
-    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is closed - please check your network settings"
+    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
   else
-    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is open"
+    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is ${GREEN}open${NC}"
   fi
 
   checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
    if [[ -z $checkPort ]]; then
-    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is closed - please check your network settings"
+    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
     
   else
-    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is open"
+    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is ${GREEN}open${NC}"
   fi
 }
 
