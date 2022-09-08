@@ -189,6 +189,7 @@ function update (){
     show_bench='1'
     show_commands='0'
     show_flux_node_details='0'
+    show_external_port_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
@@ -197,6 +198,7 @@ function update (){
     show_bench='0'
     show_commands='0'
     show_flux_node_details='0'
+    show_external_port_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
@@ -206,6 +208,7 @@ function update (){
     show_bench='0'
     show_commands='0'
     show_flux_node_details='0'
+    show_external_port_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'u' ]]; then
@@ -218,6 +221,7 @@ function update (){
     show_bench='0'
     show_commands='1'
     show_flux_node_details='0'
+    show_external_port_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 't' ]]; then
@@ -226,6 +230,16 @@ function update (){
     show_bench='0'
     show_commands='0'
     show_flux_node_details='1'
+    show_external_port_details='0'
+    redraw_term='1'
+    sleep 0.1
+    elif [[ $userInput == 'p' ]]; then
+    show_node='0'
+    show_daemon='0'
+    show_bench='0'
+    show_commands='0'
+    show_flux_node_details='0'
+    show_external_port_details='1'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
@@ -386,6 +400,19 @@ function show_network_node_details(){
   echo -e "$BLUE_CIRCLE   Stratus nodes                -    $stratus_nodes"
   
   echo -e "$BLUE_CIRCLE   Flux Price                   -    $flux_price"
+  navigation
+}
+
+#show external port info
+function show_external_port_info(){
+  clear
+  echo -e "${GREEN}   Checking external flux ports ...${NC}"
+  check_external_ports
+  clear
+  sleep 0.25
+  make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
+  echo -e "$external_flux_ui_port"
+  echo -e "$external_flux_api_port"
   navigation
 }
 
@@ -614,6 +641,24 @@ function flux_update_benchmarks(){
   sleep 5
 }
 
+# function to check flux ports are open to external world
+function check_external_ports(){
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
+  if [[ -z $checkPort ]]; then
+    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is closed - please check your network settings"
+  else
+    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is open"
+  fi
+
+  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" https://ports.yougetsignal.com/check-port.php | grep 'open on')
+   if [[ -z $checkPort ]]; then
+    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is closed - please check your network settings"
+    
+  else
+    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is open"
+  fi
+}
+
 function main_terminal(){
  
   while true; do
@@ -635,6 +680,8 @@ function main_terminal(){
         show_available_commands
       elif [[ $show_flux_node_details == '1' ]]; then
         show_network_node_details
+      elif [[ $show_external_port_details == '1' ]]; then
+        show_external_port_info
       fi
     fi
     update
