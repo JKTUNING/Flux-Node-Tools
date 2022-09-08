@@ -409,6 +409,7 @@ function show_network_node_details(){
 #show external port info
 function show_external_port_info(){
   clear
+  sleep 0.25
   echo -e "${GREEN}   Checking external flux ports ...${NC}"
   check_external_ports
   clear
