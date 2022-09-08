@@ -379,6 +379,7 @@ function show_available_commands(){
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
+  echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
   make_title
   navigation
 }
