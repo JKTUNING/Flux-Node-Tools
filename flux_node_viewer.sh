@@ -277,6 +277,11 @@ function flux_daemon_info(){
 function flux_node_info(){
   clear
   sleep 0.25
+  echo -e "${GREEN}   Checking external flux ports ...${NC}"
+  check_external_ports
+  echo -e "${GREEN}   Checking UPNP details ...${NC}"
+  check_upnp
+  clear
   make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
@@ -291,6 +296,11 @@ function flux_node_info(){
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
   echo -e "$mongodb_port"
+  make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
+  echo -e "$external_flux_ui_port"
+  echo -e "$external_flux_api_port"
+  make_header "FLUX UPNP DETAILS" "$BLUE"
+  echo -e "$upnp_status"
   make_header "$DASH_NODE_SERVICE_TITLE" "$BLUE"
   echo -e "$flux_process_status"
   echo -e "$mongodb_service_status"
@@ -381,7 +391,7 @@ function show_external_port_info(){
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
-  make_header "FLUX UPNP DETAILS"
+  make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
   navigation
 }
@@ -519,17 +529,17 @@ function check_port_info()
 function check_external_ports(){
   checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
   if [[ -z $checkPort ]]; then
-    external_flux_ui_port="${RED_ARROW} Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
+    external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
   else
-    external_flux_ui_port="${GREEN_ARROW} Flux UI Port $ui_port is ${GREEN}open${NC}"
+    external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
   fi
 
   checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
    if [[ -z $checkPort ]]; then
-    external_flux_api_port="${RED_ARROW} Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
+    external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
     
   else
-    external_flux_api_port="${GREEN_ARROW} Flux API Port $api_port is ${GREEN}open${NC}"
+    external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
   fi
 }
 
@@ -541,9 +551,9 @@ function check_upnp(){
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
   if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
-    upnp_status="${GREEN_ARROW} UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+    upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
   else
-    upnp_status="${RED_ARROW} UPNP ${RED}disabled${NC} on $LANIP UI port $ui_port and API port $api_port"
+    upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on $LANIP UI port $ui_port and API port $api_port"
   fi
 }
 
@@ -609,7 +619,7 @@ function make_header(){
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
   make_header
-  echo -e "d - daemon | b - benchmarks | n - node | q - quit | c - commands" 
+  echo -e "d - daemon | b - benchmarks | n - node | p - ports | q - quit | c - commands" 
 }
 
 #this function simply prints the version at the top of the page
