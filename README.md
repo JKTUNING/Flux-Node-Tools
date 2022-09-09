@@ -1,6 +1,11 @@
 # Flux Node Viewer
 
-Flux Node Viewer is a tool to view your node's benchmarks, view node status, view daemon status and update the node OS.
+Flux Node Viewer is a tool to view your node's benchmarks, view node status, view daemon status, external ports and update the node OS.
+
+Required packages - checks and installs if missing
+- jq
+- lsof
+- miniupnpc
 
 ### Run Flux Node Viewer from the terminal you can use this command
 
