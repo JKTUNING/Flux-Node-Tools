@@ -282,6 +282,7 @@ function flux_node_info(){
   echo -e "${GREEN}   Checking UPNP details ...${NC}"
   check_upnp
   clear
+  sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
