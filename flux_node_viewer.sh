@@ -554,7 +554,7 @@ function check_upnp(){
   if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
     upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
   else
-    upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on $LANIP UI port $ui_port and API port $api_port"
+    upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
   fi
 }
 
