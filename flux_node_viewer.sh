@@ -374,11 +374,15 @@ function show_external_port_info(){
   sleep 0.25
   echo -e "${GREEN}   Checking external flux ports ...${NC}"
   check_external_ports
+  echo -e "${GREEN}   Checking UPNP details ...${NC}"
+  check_upnp
   clear
   sleep 0.25
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
+  make_header "FLUX UPNP DETAILS"
+  echo -e "$upnp_status"
   navigation
 }
 
@@ -475,19 +479,19 @@ function check_port_info()
 {
   #echo -e "$listen_ports"
   
-  if [[ $listen_ports = *'27017'* && $listen_ports = *'mongod'* ]]; then
+  if [[ $listen_ports == *'27017'* && $listen_ports == *'mongod'* ]]; then
     mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
   else
     mongodb_port="${RED_ARROW}   MongoDB is ${RED}not listening${NC}"
   fi
 
-  if [[ $listen_ports = *'16125'* && $listen_ports = *'fluxd'* ]]; then
+  if [[ $listen_ports == *'16125'* && $listen_ports == *'fluxd'* ]]; then
     flux_daemon_port="${GREEN_ARROW}   Flux Daemon is listening on port ${GREEN}16125${NC}"
   else
     flux_daemon_port="${RED_ARROW}   Flux Daemon is ${RED}not listening${NC}"
   fi
 
-   if [[ $listen_ports = *'16224'* && $listen_ports = *'bench'* ]]; then
+   if [[ $listen_ports == *'16224'* && $listen_ports == *'bench'* ]]; then
     flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
   else
     flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
@@ -530,10 +534,17 @@ function check_external_ports(){
 }
 
 #check to see if upnp is enabled and ports routed for LANIP
+#requires installation of miniupnpc 
 function check_upnp(){
   LANIP=$(hostname -I | awk '{print $1}')
-  #upnp_status=$(upnpc -l | grep $LANIP)
-  #echo -e $upnp_status
+  upnp_check=""
+  upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
+
+  if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
+    upnp_status="${GREEN_ARROW} UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+  else
+    upnp_status="${RED_ARROW} UPNP ${RED}disabled${NC} on $LANIP UI port $ui_port and API port $api_port"
+  fi
 }
 
 function check_version(){
