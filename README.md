@@ -1,6 +1,11 @@
 # Flux Node Viewer
 
-Flux Node Viewer is a tool to view your node's benchmarks, view node status, view daemon status and update the node OS.
+Flux Node Viewer is a tool to view your node's benchmarks, view node status, view daemon status, external ports and update the node OS.
+
+Required packages - checks and installs if missing
+- jq
+- lsof
+- miniupnpc
 
 ### Run Flux Node Viewer from the terminal you can use this command
 
@@ -13,7 +18,13 @@ bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/mai
 
 ---
 #### View Node details, maintenance windows and port settings
+Showing UPNP enabled and ports open externally (multi-node setup)
+
 ![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189262741-f0bf489c-3476-4b7d-95f2-af72a044131a.PNG)
+
+Showing UPNP disabled and ports open externally (single node and port forwarding)
+
+![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189269343-2efc0d58-5d6b-424a-b815-74e690b5e823.PNG)
 
 ---
 #### View Node Daemon details and blockchain info
