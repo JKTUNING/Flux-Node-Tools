@@ -1,14 +1,26 @@
 #!/bin/bash
 
-echo -e "checking required packages ... "
+#colors
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+BLUE="\\033[38;5;27m"
+SEA="\\033[38;5;49m"
+NC='\033[0m'
+
+echo -e ""
+echo -e "${SEA}starting flux node viewer ..."
+echo -e ""
+echo -e "${BLUE}checking required packages ... ${NC}"
 
 if ! dpkg -s miniupnpc 2>/dev/null | grep "ok installed" >/dev/null 2>&1; then
-  echo -e "UPNPC not installed ... installing miniupnpc"
+  echo -e "UPNPC ${RED}not installed${NC} ... installing miniupnpc"
+  sleep 2
   sudo apt install miniupnpc -y
 fi
 
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
+  sleep 2
   sudo apt install jq -y
 
   if ! jq --version >/dev/null 2>&1; then
@@ -18,16 +30,10 @@ if ! jq --version >/dev/null 2>&1; then
 fi
 
 if ! lsof -v > /dev/null 2>&1; then
-  echo -e "lsof not found ... installing lsof"
+  echo -e "${RED}lsof not found ... installing lsof${NC}"
+  sleep 2
   sudo apt-get install lsof -y
 fi
-
-#colors
-GREEN='\033[1;32m'
-RED='\033[1;31m'
-BLUE="\\033[38;5;27m"
-SEA="\\033[38;5;49m"
-NC='\033[0m'
 
 version='Flux Node Viewer 1.0.0'
 
