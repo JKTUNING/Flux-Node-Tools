@@ -12,8 +12,8 @@ bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/mai
 ![Flux Viewer Bench](https://user-images.githubusercontent.com/26805518/187343437-0a203bd0-5a34-4f27-a986-93aa4b4380bc.PNG)
 
 ---
-#### View Node details and maintenance windows
-![Flux Viewer Node](https://user-images.githubusercontent.com/26805518/188040555-59057a4c-0cd5-4d3f-b64f-794053bd744b.PNG)
+#### View Node details, maintenance windows and port settings
+![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189262741-f0bf489c-3476-4b7d-95f2-af72a044131a.PNG)
 
 ---
 #### View Node Daemon details and blockchain info
