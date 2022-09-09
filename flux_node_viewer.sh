@@ -2,6 +2,11 @@
 
 echo -e "checking required packages ... "
 
+if ! dpkg -s miniupnpc 2>/dev/null | grep "ok installed" >/dev/null 2>&1; then
+  echo -e "UPNPC not installed ... installing miniupnpc"
+  sudo apt install miniupnpc -y
+fi
+
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
   sudo apt install jq -y
