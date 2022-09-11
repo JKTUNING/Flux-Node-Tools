@@ -633,11 +633,11 @@ function check_flux_price(){
 }
 
 # grab current kda address from user config file in zelflux directory
+#check node_kda_address on the node api side
+#check user_kda_address in the user config file
 function check_kda_address(){
-  #check kda address on the node api side
+  
   node_kda_address=$(curl -sS --max-time 10 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
-
-  #check kda address in the user config file
   user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
 
   if [[ "$node_kda_address" == "" ]]; then
