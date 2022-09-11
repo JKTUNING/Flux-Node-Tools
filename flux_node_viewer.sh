@@ -202,6 +202,7 @@ function update (){
   #'c' shows available commands
   #'t' shows flux network node details
   #'p' shows external flux ports
+  #'k' shows node kda details (address)
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
@@ -211,6 +212,7 @@ function update (){
     show_commands='0'
     show_flux_node_details='0'
     show_external_port_details='0'
+    show_node_kda_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
@@ -220,6 +222,7 @@ function update (){
     show_commands='0'
     show_flux_node_details='0'
     show_external_port_details='0'
+    show_node_kda_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
@@ -230,6 +233,7 @@ function update (){
     show_commands='0'
     show_flux_node_details='0'
     show_external_port_details='0'
+    show_node_kda_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'u' ]]; then
@@ -243,6 +247,7 @@ function update (){
     show_commands='1'
     show_flux_node_details='0'
     show_external_port_details='0'
+    show_node_kda_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 't' ]]; then
@@ -252,6 +257,7 @@ function update (){
     show_commands='0'
     show_flux_node_details='1'
     show_external_port_details='0'
+    show_node_kda_details='0'
     redraw_term='1'
     sleep 0.1
     elif [[ $userInput == 'p' ]]; then
@@ -261,6 +267,17 @@ function update (){
     show_commands='0'
     show_flux_node_details='0'
     show_external_port_details='1'
+    show_node_kda_details='0'
+    redraw_term='1'
+    sleep 0.1
+    elif [[ $userInput == 'k' ]]; then
+    show_node='0'
+    show_daemon='0'
+    show_bench='0'
+    show_commands='0'
+    show_flux_node_details='0'
+    show_external_port_details='0'
+    show_node_kda_details='1'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
@@ -411,6 +428,20 @@ function show_external_port_info(){
   echo -e "$external_flux_api_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
+  navigation
+}
+
+#show node kda address info
+function show_node_kda_tile(){
+  clear
+  sleep 0.25
+  echo -e "${GREEN}   checking node kda details ...${NC}"
+  check_kda_address
+  sleep 0.25
+  clear
+  make_header "FLUX NODE KDA DETAILS" "$BLUE"
+  echo -e "$BLUE_CIRCLE   NODE KDA ADDRESS                -    $node_kda_address"
+  echo -e "$BLUE_CIRCLE   USER KDA ADDRESS                -    $user_kda_address"
   navigation
 }
 
@@ -601,6 +632,23 @@ function check_flux_price(){
   flux_price=$(printf "%.3f" $currencyInfo)
 }
 
+# grab current kda address from user config file in zelflux directory
+function check_kda_address(){
+  #check kda address on the node api side
+  node_kda_address=$(curl -sS --max-time 10 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
+
+  #check kda address in the user config file
+  user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
+
+  if [[ "$node_kda_address" == "" ]]; then
+    node_kda_address="node kda address ${RED}not found${NC}"
+  fi
+
+  if [[ "$user_kda_address" == "" ]]; then
+    user_kda_address="user kda address ${RED}not found${NC} in zelflux config"
+  fi
+}
+
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
 #If text is provided it will be centered and if a second color argument is provided it will have that color
 function make_header(){
@@ -738,6 +786,8 @@ function main_terminal(){
         show_network_node_details
       elif [[ $show_external_port_details == '1' ]]; then
         show_external_port_info
+      elif [[ $show_node_kda_details == '1' ]]; then
+        show_node_kda_tile
       fi
     fi
     update
