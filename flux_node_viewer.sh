@@ -636,7 +636,7 @@ function check_flux_price(){
 #check node_kda_address on the node api side
 #check user_kda_address in the user config file
 function check_kda_address(){
-  
+  LANIP=$(hostname -I | awk '{print $1}')
   node_kda_address=$(curl -sS --max-time 10 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
   user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
 
