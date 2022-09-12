@@ -288,7 +288,7 @@ function update (){
   fi
 }
 
-function flux_daemon_info(){
+function show_flux_daemon_info_tile(){
   clear
   sleep 0.25
   make_header "$DASH_DAEMON_TITLE" "$BLUE"
@@ -308,7 +308,7 @@ function flux_daemon_info(){
   navigation
 }
 
-function flux_node_info(){
+function show_flux_node_info_tile(){
   clear
   sleep 0.25
   echo -e "${GREEN}   Checking external flux ports ...${NC}"
@@ -343,7 +343,7 @@ function flux_node_info(){
   navigation
 }
 
-function flux_benchmark_info(){
+function show_flux_benchmark_info_tile(){
   clear
   sleep 0.25
   make_header "$DASH_BENCH_TITLE" "$BLUE"
@@ -377,7 +377,7 @@ function flux_benchmark_info(){
 }
 
 #show available commands for the application
-function show_available_commands(){
+function show_available_commands_tile(){
   clear
   sleep 0.25
   make_header "$DASH_COMMANDS_TITLE" "$BLUE"
@@ -395,7 +395,7 @@ function show_available_commands(){
 
 
 # show the flux network node details
-function show_network_node_details(){
+function show_network_node_details_tile(){
   clear
   echo -e "${GREEN}   Checking flux network node details ...${NC}"
   check_total_nodes
@@ -414,7 +414,7 @@ function show_network_node_details(){
 }
 
 #show external port info
-function show_external_port_info(){
+function show_external_port_info_tile(){
   clear
   sleep 0.25
   echo -e "${GREEN}   Checking external flux ports ...${NC}"
@@ -437,8 +437,8 @@ function show_node_kda_tile(){
   sleep 0.25
   echo -e "${GREEN}   checking node kda details ...${NC}"
   check_kda_address
-  sleep 0.25
   clear
+  sleep 0.25
   make_header "FLUX NODE KDA DETAILS" "$BLUE"
   echo -e "$BLUE_CIRCLE   NODE KDA ADDRESS                -    $node_kda_address"
   echo -e "$BLUE_CIRCLE   USER KDA ADDRESS                -    $user_kda_address"
@@ -640,6 +640,38 @@ function check_kda_address(){
   node_kda_address=$(curl -sS --max-time 10 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
   user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
 
+  while true; do
+    if [[ "$node_kda_address" == "" || "$user_kda_address" == "" ]]; then
+      if whiptail --title "KDA ADDRESS" --yesno "Node KDA Address Not Found - would you like to update it?" 8 60; then
+        kda_input=$(whiptail --inputbox "Enter your kadena address (chain 0)" 8 60 3>&1 1>&2 2>&3)
+
+        if whiptail --title "Verify Address" --yesno "Is the Kadena address entered correct? \n$kda_input" 8 60; then
+          kda_address="kadena:$kda_input?chainid=0"
+
+          #make sure the file exist first before trying to update or add kda address
+          if [[ -f /home/$USER/zelflux/config/userconfig.js ]]; then
+            if [[ $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") != "" ]]; then
+              sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
+              if [[ $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) != "" ]]; then
+                whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60;
+                user_kda_address=kda_address
+              fi
+            else
+              sudo sed -i -e "/zelid/a"$'\\\n'"kadena: '$kda_address',"$'\n' "/home/$USER/zelflux/config/userconfig.js"
+              whiptail --title "Add KDA Address" --msgbox "KDA Address Added successfully" 8 60;
+              user_kda_address=kda_address
+            fi
+          else
+            whiptail --title "CONFIG NOT FOUND" --msgbox "userconfig.js file not found - KDA Address not updated" 8 60;
+          fi
+          break
+        fi
+      else
+        break
+      fi
+    fi
+  done
+
   if [[ "$node_kda_address" == "" ]]; then
     node_kda_address="node kda address ${RED}not found${NC}"
   fi
@@ -647,6 +679,7 @@ function check_kda_address(){
   if [[ "$user_kda_address" == "" ]]; then
     user_kda_address="user kda address ${RED}not found${NC} in zelflux config"
   fi
+
 }
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
@@ -708,7 +741,7 @@ function check_bench() {
     if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
       if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60; then
         echo -e "${GREEN}checking external flux ports ... ${NC}"
-        show_external_port_info
+        show_external_port_info_tile
       fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
       whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Hardware requirements not met for node tier!" 8 60;
@@ -773,19 +806,19 @@ function main_terminal(){
 
     if [[ $redraw_term == '1' ]]; then
       if [[ $show_daemon == '1' ]]; then
-        flux_daemon_info
+        show_flux_daemon_info_tile
       elif [[ $show_node == '1' ]]; then
         check_back
-        flux_node_info
+        show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
-        check_bench
-        flux_benchmark_info
+        #check_bench
+        show_flux_benchmark_info_tile
       elif [[ $show_commands == '1' ]]; then
-        show_available_commands
+        show_available_commands_tile
       elif [[ $show_flux_node_details == '1' ]]; then
-        show_network_node_details
+        show_network_node_details_tile
       elif [[ $show_external_port_details == '1' ]]; then
-        show_external_port_info
+        show_external_port_info_tile
       elif [[ $show_node_kda_details == '1' ]]; then
         show_node_kda_tile
       fi
