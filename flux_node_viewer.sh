@@ -653,7 +653,7 @@ function check_kda_address(){
             if [[ $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") != "" ]]; then
               #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
-              #sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
+              #sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/    kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
               if [[ $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) != "" ]]; then
                 whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60;
                 user_kda_address=kda_address
@@ -661,7 +661,7 @@ function check_kda_address(){
             else
               #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
-              #sudo sed -i -e "/zelid/a"$'\\\n'"kadena: '$kda_address',"$'\n' "/home/$USER/zelflux/config/userconfig.js"
+              #sudo sed -i -e "/zelid/a"$'\\\n'"    kadena: '$kda_address',"$'\n' "/home/$USER/zelflux/config/userconfig_backup.js"
               whiptail --title "Add KDA Address" --msgbox "KDA Address Added successfully" 8 60;
               user_kda_address=kda_address
             fi
