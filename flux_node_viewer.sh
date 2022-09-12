@@ -659,6 +659,7 @@ function check_kda_address(){
                 user_kda_address=kda_address
               fi
             else
+              #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
               #sudo sed -i -e "/zelid/a"$'\\\n'"kadena: '$kda_address',"$'\n' "/home/$USER/zelflux/config/userconfig.js"
               whiptail --title "Add KDA Address" --msgbox "KDA Address Added successfully" 8 60;
@@ -672,6 +673,8 @@ function check_kda_address(){
       else
         break
       fi
+    else
+      break
     fi
   done
 
