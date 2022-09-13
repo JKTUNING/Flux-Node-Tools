@@ -103,7 +103,7 @@ docker_service_status=""
 mongodb_service_status=""
 daemon_service_status=""
 flux_process_status=""
-
+flux_node_dos=""
 
 #variables to draw windows
 show_bench='1'
@@ -323,6 +323,10 @@ function show_flux_node_info_tile(){
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
+  if [[ "$flux_node_status" == "DOS" ]]; then
+    check_flux_dos_list
+    echo -e $flux_node_dos
+  fi
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
   echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
@@ -581,14 +585,14 @@ function check_port_info()
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
+  checkPort=$(curl --silent --max-time 5 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
   if [[ -z $checkPort ]]; then
     external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
   else
     external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
   fi
 
-  checkPort=$(curl --silent --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
+  checkPort=$(curl --silent --max-time 5 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
    if [[ -z $checkPort ]]; then
     external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
     
@@ -614,7 +618,7 @@ function check_upnp(){
 function check_version(){
   ## grab current version requirements from the flux api and compare to current node version
   #flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
-  flux_required_version=$(curl -sS --max-time 10 https://api.runonflux.io/flux/version | jq -r '.data')
+  flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
     flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
   else
@@ -624,7 +628,7 @@ function check_version(){
 
 # grab current node counts from https://api.runonflux.io/daemon/getzelnodecount
 function check_total_nodes(){
-  local nodeInfo=$(curl -sS --max-time 10 https://api.runonflux.io/daemon/getzelnodecount | jq -r '.data')
+  local nodeInfo=$(curl -sS --max-time 5 https://api.runonflux.io/daemon/getzelnodecount | jq -r '.data')
   total_nodes=$(jq -r '.total' <<<"$nodeInfo" 2>/dev/null)
   cumulus_nodes=$(jq -r '."cumulus-enabled"' <<<"$nodeInfo" 2>/dev/null)
   nimbus_nodes=$(jq -r '."nimbus-enabled"' <<<"$nodeInfo" 2>/dev/null)
@@ -633,8 +637,20 @@ function check_total_nodes(){
 
 # check current flux price
 function check_flux_price(){
-  local currencyInfo=$(curl -sS --max-time 10 https://explorer.runonflux.io/api/currency | jq -r '.data' | jq -r '.rate')
+  local currencyInfo=$(curl -sS --max-time 5 https://explorer.runonflux.io/api/currency | jq -r '.data' | jq -r '.rate')
   flux_price=$(printf "%.3f" $currencyInfo)
+}
+
+# check flux DoS List
+function check_flux_dos_list(){
+  get_flux_node_info
+  local dosList=$(curl -sS --max-time 5 https://api.runonflux.io/daemon/getdoslist | jq .[] | grep "$flux_node_collateral" -A5 -B1)
+
+  #if node collateral in the DoS list then show number of blocks left
+  if [[ "$dosList" != "" ]]; then
+    local dosTime=$(jq -r '."eligible_in"' <<<"$dosList" 2>/dev/null)
+    flux_node_dos="${RED_ARROW}   Node in DoS for ${RED}$dosTime${NC} blocks${NC}"
+  fi
 }
 
 # grab current kda address from user config file in zelflux directory
@@ -642,7 +658,7 @@ function check_flux_price(){
 #check user_kda_address in the user config file
 function check_kda_address(){
   LANIP=$(hostname -I | awk '{print $1}')
-  node_kda_address=$(curl -sS --max-time 10 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
+  node_kda_address=$(curl -sS --max-time 5 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
   user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
 
   while true; do
