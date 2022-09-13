@@ -812,11 +812,17 @@ function main_terminal(){
 
     if [[ $redraw_term == '1' ]]; then
       if [[ $show_daemon == '1' ]]; then
+        get_flux_blockchain_info
+        check_daemon_log
         show_flux_daemon_info_tile
       elif [[ $show_node == '1' ]]; then
-        check_back
+        get_flux_node_info
+        get_blocks_since_last_confirmed
+        #check_back
         show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
+        get_flux_bench_info
+        check_benchmark_log
         #check_bench
         show_flux_benchmark_info_tile
       elif [[ $show_commands == '1' ]]; then
@@ -835,10 +841,10 @@ function main_terminal(){
 
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
-get_flux_bench_info
-get_flux_blockchain_info
-get_flux_node_info
-get_blocks_since_last_confirmed
+#get_flux_bench_info
+#get_flux_blockchain_info
+#get_flux_node_info
+#get_blocks_since_last_confirmed
 check_port_info
 check_docker_service
 check_mongodb_service
