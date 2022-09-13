@@ -114,6 +114,26 @@ show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
 
+# get a list of the LISTEN ports
+listen_ports=$(sudo lsof -i -n | grep LISTEN)
+flux_api_port=""
+flux_ui_port=""
+mongodb_port=""
+flux_bench_port=""
+flux_daemon_port=""
+flux_ip_check=""
+flux_node_version_check=""
+
+#get local device name
+local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
+#get node version on device
+flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json 2>/dev/null)
+
+#log variables
+daemon_log=""
+bench_log=""
+flux_log=""
+
 # variable to see if the terminal size has changed
 redraw_term='1'
 
@@ -176,24 +196,6 @@ function get_blocks_since_last_confirmed(){
   blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
   maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
 }
-
-# get a list of the LISTEN ports
-listen_ports=$(sudo lsof -i -n | grep LISTEN)
-flux_api_port=""
-flux_ui_port=""
-mongodb_port=""
-flux_bench_port=""
-flux_daemon_port=""
-flux_ip_check=""
-flux_node_version_check=""
-
-local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json 2>/dev/null)
-
-#log variables
-daemon_log=""
-bench_log=""
-flux_log=""
 
 function update (){
   local userInput
