@@ -395,10 +395,11 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
   echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
-  echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
+  echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
+  echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
 }
