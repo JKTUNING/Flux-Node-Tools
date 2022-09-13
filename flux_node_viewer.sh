@@ -111,6 +111,8 @@ show_daemon='0'
 show_node='0'
 show_commands='0'
 show_flux_node_details='0'
+show_external_port_details='0'
+show_node_kda_details='0'
 
 # variable to see if the terminal size has changed
 redraw_term='1'
@@ -397,6 +399,7 @@ function show_available_commands_tile(){
 # show the flux network node details
 function show_network_node_details_tile(){
   clear
+  sleep 0.25
   echo -e "${GREEN}   Checking flux network node details ...${NC}"
   check_total_nodes
   echo -e "${GREEN}   Checking flux price details ...${NC}"
