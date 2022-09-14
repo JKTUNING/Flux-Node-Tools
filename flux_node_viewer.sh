@@ -296,6 +296,8 @@ function update (){
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'f' ]]; then
+    clear
+    sleep 0.25
     show_node_fix_tile
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
@@ -833,8 +835,9 @@ function flux_update_service(){
 
 #show node fixer tile - whiptail options to restart services/benchmarks and processes
 function show_node_fix_tile(){
-  whiptail --title "How to select option on next screen" --msgbox "Please use 'space bar' to select item\n\nUse 'TAB' then arrow keys to submit or cancel" 10 60
-  userOption=$(whiptail --title "Pleaes choose a control option" --radiolist "Choose options: " 15 60 10 \
+  if [[ -z $1 ]]; then
+    whiptail --title "How to select option on next screen" --msgbox "Please use 'space bar' to select item\n\nUse 'TAB' then arrow keys to submit or cancel" 10 60
+    userOption=$(whiptail --title "Pleaes choose a control option" --radiolist "Choose options: " 15 60 10 \
 			"1"   "Restart Node Benchmarks      " OFF \
       "2"   "Stop Benchmark               " OFF \
       "3"   "Start Benchmark Service      " OFF \
@@ -845,6 +848,11 @@ function show_node_fix_tile(){
       "8"   "Stop watchdog                " OFF \
       "9"   "Start watchdog               " OFF \
       "10"  "Restart watchdog             " OFF 3>&1 1>&2 2>&3 )
+  else
+    if [[ $1 -gt 0 ]] && [[ $1 -lt 11 ]]; then
+      userOption="$1"
+    fi
+  fi 
 
   # could use case switch here
   if [[ "$userOption" == "1" ]]; then
@@ -867,87 +875,77 @@ function show_node_fix_tile(){
     flux_watchdog_start
   elif [[ "$userOption" == "10" ]]; then
     flux_watchdog_restart
-  else
-    redraw_term='1'
   fi
+
+  redraw_term='1'
 }
 
 # restart the node benchmarks
 function flux_update_benchmarks(){
-  echo -e "${RED}starting node benchmarks ... please allow approx 5 mins for benchmarks to complete${NC}"
-  redraw_term='1'
+  echo -e "${GREEN}starting${NC} node benchmarks ... please allow approx 5 mins for benchmarks to complete"
   #$BENCH_CLI restartnodebenchmarks
   sleep 5
 }
 
 # stop the node benchmarks
 function flux_stop_benchmarks(){
-  echo -e "${RED}stopping node benchmarks ... ${NC}"
-  redraw_term='1'
+  echo -e "${RED}stopping${NC} node benchmarks ... "
   #BENCH_CLI stop
   sleep 3
 }
 
 # start the node benchmarks
 function flux_start_benchmarks(){
-  echo -e "${RED}restarting node benchmark service ... please allow approx 5 minutes to complete ${NC}"
-  redraw_term='1'
+  echo -e "${GREEN}restarting${NC} node benchmark service ... please allow approx 5 minutes to complete"
   #sudo systemctl restart zelcash
   sleep 5
 }
 
 # stop the flux node OS
 function flux_stop(){
-  echo -e "${RED}pm2 stopping flux node os service ... ${NC}"
-  redraw_term='1'
+  echo -e "pm2 ${RED}stopping${NC} flux node os service ... "
   #pm2 stop flux
   sleep 5
 }
 
 # start the flux node OS
 function flux_start(){
-  echo -e "${RED}pm2 stopping flux node os service ... ${NC}"
-  redraw_term='1'
+  echo -e "pm2 ${GREEN}starting${NC} flux node os service ... "
   #pm2 start flux
   sleep 5
 }
 
 # stop the flux daemon
 function flux_daemon_stop(){
-  echo -e "${RED}stopping flux daemon service ... ${NC}"
-  redraw_term='1'
+  echo -e "${RED}stopping${NC} flux daemon service ... "
   #sudo systemctl stop zelcash
   sleep 5
 }
 
 # start flux daemon
 function flux_daemon_start(){
-  echo -e "${RED}starting flux daemon service ... ${NC}"
-  redraw_term='1'
+  echo -e "${GREEN}starting${NC} flux daemon service ... "
   #sudo systemctl start zelcash
   sleep 5
 }
 
 # stop watchdog
 function flux_watchdog_stop(){
-  echo -e "${RED}pm2 stopping flux watchdog service ... ${NC}"
-  redraw_term='1'
+  echo -e "pm2 ${RED}stopping${NC} flux watchdog service ..."
   #pm2 stop watchdog
   sleep 3
 }
 
 # start watchdog
 function flux_watchdog_start(){
-  echo -e "${RED}pm2 starting flux watchdog service ... ${NC}"
-  redraw_term='1'
+  echo -e "pm2 ${GREEN}starting${NC} flux watchdog service ... "
   #pm2 start watchdog --watch
   sleep 3
 }
 
 # restart watchdog
 function flux_watchdog_restart(){
-  echo -e "${RED}pm2 re-starting flux watchdog service ... ${NC}"
-  redraw_term='1'
+  echo -e "pm2 ${GREEN}re-starting${NC} flux watchdog service ..."
   #pm2 reload watchdog --watch
   sleep 3
 }
