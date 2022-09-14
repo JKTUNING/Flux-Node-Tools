@@ -15,13 +15,13 @@ echo -e "${BLUE}checking required packages ... ${NC}"
 if ! dpkg -s miniupnpc 2>/dev/null | grep "ok installed" >/dev/null 2>&1; then
   echo -e "UPNPC ${RED}not installed${NC} ... installing miniupnpc"
   sleep 2
-  sudo apt install miniupnpc -y
+  sudo apt install miniupnpc -y >/dev/null 2>&1
 fi
 
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
   sleep 2
-  sudo apt install jq -y
+  sudo apt install jq -y >/dev/null 2>&1
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
@@ -32,7 +32,7 @@ fi
 if ! lsof -v > /dev/null 2>&1; then
   echo -e "${RED}lsof not found ... installing lsof${NC}"
   sleep 2
-  sudo apt-get install lsof -y
+  sudo apt-get install lsof -y >/dev/null 2>&1
 fi
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
