@@ -411,6 +411,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
+  echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
@@ -832,7 +833,8 @@ function flux_update_service(){
 
 #show node fixer tile - whiptail options to restart services/benchmarks and processes
 function show_node_fix_tile(){
-  userOption=$(whiptail --title "Choose option: " --radiolist "Choose options: " 15 60 10 \
+  whiptail --title "How to select option on next screen" --msgbox "Please use 'space bar' to select item\n\nUse 'TAB' then arrow keys to submit or cancel" 10 60
+  userOption=$(whiptail --title "Pleaes choose a control option" --radiolist "Choose options: " 15 60 10 \
 			"1"   "Restart Node Benchmarks      " OFF \
       "2"   "Stop Benchmark               " OFF \
       "3"   "Start Benchmark Service      " OFF \
@@ -844,8 +846,7 @@ function show_node_fix_tile(){
       "9"   "Start watchdog               " OFF \
       "10"  "Restart watchdog             " OFF 3>&1 1>&2 2>&3 )
 
-  #whiptail --title "Fix Option" --msgbox "$userOption" 10 60
-
+  # could use case switch here
   if [[ "$userOption" == "1" ]]; then
     flux_update_benchmarks
   elif [[ "$userOption" == "2" ]]; then
@@ -869,7 +870,6 @@ function show_node_fix_tile(){
   else
     redraw_term='1'
   fi
-  
 }
 
 # restart the node benchmarks
