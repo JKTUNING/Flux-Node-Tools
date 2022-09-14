@@ -113,6 +113,7 @@ show_commands='0'
 show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
+show_node_fix_details='0'
 
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
@@ -209,6 +210,7 @@ function update (){
   #'t' shows flux network node details
   #'p' shows external flux ports
   #'k' shows node kda details (address)
+  #'f' shows fucntions to manage node services
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
@@ -219,6 +221,7 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
@@ -229,6 +232,7 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
@@ -240,6 +244,7 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'u' ]]; then
@@ -254,6 +259,7 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 't' ]]; then
@@ -264,6 +270,7 @@ function update (){
     show_flux_node_details='1'
     show_external_port_details='0'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
     elif [[ $userInput == 'p' ]]; then
@@ -274,6 +281,7 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='1'
     show_node_kda_details='0'
+    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
     elif [[ $userInput == 'k' ]]; then
@@ -284,7 +292,11 @@ function update (){
     show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='1'
+    show_node_fix_details='0'
     redraw_term='1'
+    sleep 0.1
+  elif [[ $userInput == 'f' ]]; then
+    show_node_fix_tile
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
     clear
@@ -818,12 +830,126 @@ function flux_update_service(){
   sleep 5
 }
 
-# restart the node benchmarks if failed/toaster or empty
+#show node fixer tile - whiptail options to restart services/benchmarks and processes
+function show_node_fix_tile(){
+  userOption=$(whiptail --title "Choose option: " --radiolist "Choose options: " 15 60 10 \
+			"1"   "Restart Node Benchmarks      " OFF \
+      "2"   "Stop Benchmark               " OFF \
+      "3"   "Start Benchmark Service      " OFF \
+      "4"   "Stop Flux                    " OFF \
+      "5"   "Start Flux                   " OFF \
+			"6"   "Stop Flux Daemon             " OFF \
+      "7"   "Start Flux Daemon            " OFF \
+      "8"   "Stop watchdog                " OFF \
+      "9"   "Start watchdog               " OFF \
+      "10"  "Restart watchdog             " OFF 3>&1 1>&2 2>&3 )
+
+  #whiptail --title "Fix Option" --msgbox "$userOption" 10 60
+
+  if [[ "$userOption" == "1" ]]; then
+    flux_update_benchmarks
+  elif [[ "$userOption" == "2" ]]; then
+    flux_stop_benchmarks
+  elif [[ "$userOption" == "3" ]]; then
+    flux_start_benchmarks
+  elif [[ "$userOption" == "4" ]]; then
+    flux_stop
+  elif [[ "$userOption" == "5" ]]; then
+    flux_start
+  elif [[ "$userOption" == "6" ]]; then
+    flux_daemon_stop
+  elif [[ "$userOption" == "7" ]]; then
+    flux_daemon_start
+  elif [[ "$userOption" == "8" ]]; then
+    flux_watchdog_stop
+  elif [[ "$userOption" == "9" ]]; then
+    flux_watchdog_start
+  elif [[ "$userOption" == "10" ]]; then
+    flux_watchdog_restart
+  else
+    redraw_term='1'
+  fi
+  
+}
+
+# restart the node benchmarks
 function flux_update_benchmarks(){
   echo -e "${RED}starting node benchmarks ... please allow approx 5 mins for benchmarks to complete${NC}"
   redraw_term='1'
-  $BENCH_CLI restartnodebenchmarks
+  #$BENCH_CLI restartnodebenchmarks
   sleep 5
+}
+
+# stop the node benchmarks
+function flux_stop_benchmarks(){
+  echo -e "${RED}stopping node benchmarks ... ${NC}"
+  redraw_term='1'
+  #BENCH_CLI stop
+  sleep 3
+}
+
+# start the node benchmarks
+function flux_start_benchmarks(){
+  echo -e "${RED}restarting node benchmark service ... please allow approx 5 minutes to complete ${NC}"
+  redraw_term='1'
+  #sudo systemctl restart zelcash
+  sleep 5
+}
+
+# stop the flux node OS
+function flux_stop(){
+  echo -e "${RED}pm2 stopping flux node os service ... ${NC}"
+  redraw_term='1'
+  #pm2 stop flux
+  sleep 5
+}
+
+# start the flux node OS
+function flux_start(){
+  echo -e "${RED}pm2 stopping flux node os service ... ${NC}"
+  redraw_term='1'
+  #pm2 start flux
+  sleep 5
+}
+
+# stop the flux daemon
+function flux_daemon_stop(){
+  echo -e "${RED}stopping flux daemon service ... ${NC}"
+  redraw_term='1'
+  #sudo systemctl stop zelcash
+  sleep 5
+}
+
+# start flux daemon
+function flux_daemon_start(){
+  echo -e "${RED}starting flux daemon service ... ${NC}"
+  redraw_term='1'
+  #sudo systemctl start zelcash
+  sleep 5
+}
+
+# stop watchdog
+function flux_watchdog_stop(){
+  echo -e "${RED}pm2 stopping flux watchdog service ... ${NC}"
+  redraw_term='1'
+  #pm2 stop watchdog
+  sleep 3
+}
+
+# start watchdog
+function flux_watchdog_start(){
+  echo -e "${RED}pm2 starting flux watchdog service ... ${NC}"
+  redraw_term='1'
+  #pm2 start watchdog --watch
+  sleep 3
+}
+
+# restart watchdog
+function flux_watchdog_restart(){
+  echo -e "${RED}pm2 re-starting flux watchdog service ... ${NC}"
+  redraw_term='1'
+  #pm2 reload watchdog --watch
+  sleep 3
 }
 
 function main_terminal(){
@@ -838,15 +964,22 @@ function main_terminal(){
       if [[ $show_daemon == '1' ]]; then
         get_flux_blockchain_info
         check_daemon_log
+        check_daemon_service
+        check_port_info
         show_flux_daemon_info_tile
       elif [[ $show_node == '1' ]]; then
         get_flux_node_info
         get_blocks_since_last_confirmed
+        check_pm2_flux_service
+        check_docker_service
+        check_mongodb_service
+        check_port_info
         #check_back
         show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
         get_flux_bench_info
         check_benchmark_log
+        check_port_info
         #check_bench
         show_flux_benchmark_info_tile
       elif [[ $show_commands == '1' ]]; then
@@ -869,11 +1002,11 @@ echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 #get_flux_blockchain_info
 #get_flux_node_info
 #get_blocks_since_last_confirmed
-check_port_info
-check_docker_service
-check_mongodb_service
-check_daemon_service
-check_pm2_flux_service
+#check_port_info
+#check_docker_service
+#check_mongodb_service
+#check_daemon_service
+#check_pm2_flux_service
 check_ip
 check_version
 main_terminal
