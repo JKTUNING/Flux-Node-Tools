@@ -850,18 +850,34 @@ function flux_update_service(){
 #show node fixer tile - whiptail options to restart services/benchmarks and processes
 function show_node_fix_tile(){
   if [[ -z $1 ]]; then
-    whiptail --title "How to select option on next screen" --msgbox "Please use 'space bar' to select item\n\nUse 'TAB' then arrow keys to submit or cancel" 10 60
-    userOption=$(whiptail --title "Pleaes choose a control option" --radiolist "Choose options: " 15 60 10 \
-      "1"   "Restart Node Benchmarks      " OFF \
-      "2"   "Stop Benchmark               " OFF \
-      "3"   "Start Benchmark Service      " OFF \
-      "4"   "Stop Flux                    " OFF \
-      "5"   "Start Flux                   " OFF \
-      "6"   "Stop Flux Daemon             " OFF \
-      "7"   "Start Flux Daemon            " OFF \
-      "8"   "Stop watchdog                " OFF \
-      "9"   "Start watchdog               " OFF \
-      "10"  "Restart watchdog             " OFF 3>&1 1>&2 2>&3 )
+    
+    # choose a node control menu option
+    menuOption=$(whiptail --title "Choose Node Control" --menu "Choose an option:" 12 60 4 \
+    "Flux Bench Controls" "" \
+    "Flux OS Controls" "" \
+    "Flux Daemon Controls" "" \
+    "Flux Watchdog Controls" "" 3>&1 1>&2 2>&3 )
+
+    # show submenu optoins for node controls
+    if [[ "$menuOption" == "Flux Bench Controls" ]]; then
+      userOption=$(whiptail --title "Flux Bench Controls" --menu "Choose an option: " 12 60 3 \
+      "1"   "Restart Node Benchmarks      " \
+      "2"   "Stop Benchmark               " \
+      "3"   "Start Benchmark Service      " 3>&1 1>&2 2>&3 )
+    elif [[ "$menuOption" == "Flux OS Controls" ]]; then
+      userOption=$(whiptail --title "Flux OS Controls" --menu "Choose option: " 10 60 2 \
+      "4"   "Stop Flux                    " \
+      "5"   "Start Flux                   " 3>&1 1>&2 2>&3 )
+    elif [[ "$menuOption" == "Flux Daemon Controls" ]]; then
+      userOption=$(whiptail --title "Flux Daemon Controls" --menu "Choose option: " 10 60 2 \
+      "6"   "Stop Flux Daemon             " \
+      "7"   "Start Flux Daemon            " 3>&1 1>&2 2>&3 )
+    elif [[ "$menuOption" == "Flux Watchdog Controls" ]]; then
+      userOption=$(whiptail --title "Watchdog Controls" --menu "Choose option: " 12 60 3 \
+      "8"   "Stop watchdog                " \
+      "9"   "Start watchdog               " \
+      "10"  "Restart watchdog             " 3>&1 1>&2 2>&3 )
+    fi
   else
     if [[ $1 -gt 0 ]] && [[ $1 -lt 11 ]]; then
       userOption="$1"
@@ -890,7 +906,6 @@ function show_node_fix_tile(){
   elif [[ "$userOption" == "10" ]]; then
     flux_watchdog_restart
   fi
-
   redraw_term='1'
 }
 
