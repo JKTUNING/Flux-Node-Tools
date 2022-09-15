@@ -10,6 +10,7 @@ Flux Node Viewer is a tool to help node ops using a CLI GUI for easy viewing.
 - Update the node OS
 - Verify KDA address
 - Restart Node Services
+- View Flux Logs
 
 Required packages - checks and installs if missing
 - jq
