@@ -312,6 +312,8 @@ function update (){
   elif [[ $userInput == 'q' ]]; then
     clear
     exit
+  elif [[ $userInput == 'l' ]]; then
+    bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
   else
     redraw_term='0'
   fi
