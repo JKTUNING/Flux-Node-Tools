@@ -115,6 +115,8 @@ show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
 
+checking_ports='0'
+
 # get a list of the LISTEN ports
 listen_ports=$(sudo lsof -i -n | grep LISTEN)
 flux_api_port=""
@@ -297,8 +299,15 @@ function update (){
     sleep 0.1
   elif [[ $userInput == 'f' ]]; then
     clear
-    sleep 0.25
-    show_node_fix_tile
+    get_flux_bench_info
+    if [[ $checking_ports != '1' ]]; then
+      sleep 0.25
+      check_bench
+      sleep 0.1
+      check_back
+      sleep 0.1
+      show_node_fix_tile
+    fi
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
     clear
@@ -456,6 +465,7 @@ function show_external_port_info_tile(){
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
   navigation
+  checking_ports='0'
 }
 
 #show node kda address info
@@ -786,6 +796,7 @@ function check_bench() {
     if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
       if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60; then
         echo -e "${GREEN}checking external flux ports ... ${NC}"
+        checking_ports='1'
         show_external_port_info_tile
       fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
@@ -800,6 +811,7 @@ function check_bench() {
   fi
 }
 
+#check flux back
 function check_back(){
   if [[ $flux_bench_back != *"connected"* ]]; then
     if whiptail --title "Flux Back Status Not Connected" --yesno "Would you like to update and restart the flux daemon and node?" 8 60; then
@@ -822,15 +834,17 @@ function node_os_update(){
 
 # restart daemon service and restart FluxOS
 function flux_update_service(){
-  echo -e "${RED}   Stopping Node Daemon Service ... waiting 5 seconds ...${NC}"
-  #sudo systemctl stop zelcash
-  sleep 5
-  echo -e "${RED}   Starting Node Daemon Service ... waiting 5 seconds ...${NC}"
-  #sudo systemctl start zelcash
-  sleep 5
-  echo -e "${RED}   Restarting Flux Service ... waiting 5 seconds ...${NC}"
-  #pm2 restart flux
-  sleep 5
+  #stop daemon
+  flux_daemon_stop
+
+  #start daemon
+  flux_daemon_start
+
+  #stop flux
+  flux_stop
+
+  #start flux
+  flux_start
 }
 
 #show node fixer tile - whiptail options to restart services/benchmarks and processes
@@ -838,12 +852,12 @@ function show_node_fix_tile(){
   if [[ -z $1 ]]; then
     whiptail --title "How to select option on next screen" --msgbox "Please use 'space bar' to select item\n\nUse 'TAB' then arrow keys to submit or cancel" 10 60
     userOption=$(whiptail --title "Pleaes choose a control option" --radiolist "Choose options: " 15 60 10 \
-			"1"   "Restart Node Benchmarks      " OFF \
+      "1"   "Restart Node Benchmarks      " OFF \
       "2"   "Stop Benchmark               " OFF \
       "3"   "Start Benchmark Service      " OFF \
       "4"   "Stop Flux                    " OFF \
       "5"   "Start Flux                   " OFF \
-			"6"   "Stop Flux Daemon             " OFF \
+      "6"   "Stop Flux Daemon             " OFF \
       "7"   "Start Flux Daemon            " OFF \
       "8"   "Stop watchdog                " OFF \
       "9"   "Start watchdog               " OFF \
