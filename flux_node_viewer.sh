@@ -213,6 +213,7 @@ function update (){
   #'p' shows external flux ports
   #'k' shows node kda details (address)
   #'f' shows fucntions to manage node services
+  #'l' shows Mowat's tmux log view pane
   #'q' will quit
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
@@ -312,6 +313,10 @@ function update (){
   elif [[ $userInput == 'q' ]]; then
     clear
     exit
+  elif [[ $userInput == 'l' ]]; then
+    whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
+    # Mowats script to run tmux to view flux logs
+    bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
   else
     redraw_term='0'
   fi
@@ -423,6 +428,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
+  echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
