@@ -363,6 +363,7 @@ function show_flux_node_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
   echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Node Uptime                  -    $flux_uptime"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
@@ -423,12 +424,12 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
   echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
-  echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
+  echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
@@ -838,6 +839,17 @@ function node_os_update(){
  
 }
 
+# Gets the node's uptime in minutes
+function get_flux_uptime(){
+  #curl local node IP's API port for uptime -s (silent) -S(show error)
+  local get_uptime=$(curl -sS --max-time 5 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
+  flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
+
+  if [[ $flux_uptime == ""]]; then
+    flux_uptime="0 mins"
+  fi
+}
+
 # restart daemon service and restart FluxOS
 function flux_update_service(){
   #stop daemon
@@ -1007,6 +1019,7 @@ function main_terminal(){
         check_docker_service
         check_mongodb_service
         check_port_info
+        get_flux_uptime
         #check_back
         show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
@@ -1043,3 +1056,5 @@ echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 check_ip
 check_version
 main_terminal
+
+#flux_external_available=$(curl -i -H "Accept: application/json" "https://api.runonflux.io/flux/checkfluxavailability/$WANIP" | grep 'success')
