@@ -349,6 +349,8 @@ function show_flux_node_info_tile(){
   check_external_ports
   echo -e "${GREEN}   Checking UPNP details ...${NC}"
   check_upnp
+  echo -e "${GREEN}   Checking node uptime ...${NC}"
+  get_flux_uptime
   clear
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
@@ -1019,7 +1021,6 @@ function main_terminal(){
         check_docker_service
         check_mongodb_service
         check_port_info
-        get_flux_uptime
         #check_back
         show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
