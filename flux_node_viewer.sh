@@ -845,7 +845,7 @@ function get_flux_uptime(){
   local get_uptime=$(curl -sS --max-time 5 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
   flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
 
-  if [[ $flux_uptime == ""]]; then
+  if [[ $flux_uptime == "" ]]; then
     flux_uptime="0 mins"
   fi
 }
