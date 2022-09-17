@@ -844,6 +844,7 @@ function node_os_update(){
 # Gets the node's uptime in minutes
 function get_flux_uptime(){
   #curl local node IP's API port for uptime -s (silent) -S(show error)
+  #converts seconds to minutes .. d/h/m/s will come at some point 
   local get_uptime=$(curl -sS --max-time 5 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
   flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
 
