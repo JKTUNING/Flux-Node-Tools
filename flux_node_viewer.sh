@@ -6,6 +6,7 @@ RED='\033[1;31m'
 BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
+TAB='  '
 
 echo -e ""
 echo -e "${SEA}starting flux node viewer ..."
@@ -44,10 +45,12 @@ fi
 version='Flux Node Viewer 1.0.0'
 
 WRENCH='\xF0\x9F\x94\xA7'
-#BLUE_CIRCLE='\xF0\x9F\x94\xB5'
+#BLUE_HEADER='\xF0\x9F\x94\xB5'
 RED_ARROW="${RED}\xE2\x96\xB6${NC}  "
 GREEN_ARROW="${GREEN}\xE2\x96\xB6${NC}  "
 BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}  "
+BLUE_HEADER="${BLUE}\xE2\x96\xB6${NC}  "
+
 
 _HLINE="\xE2\x94\x80"
 _VLINE="\xE2\x94\x82"
@@ -777,19 +780,22 @@ function make_header(){
       output="${output}${_HLINE}"
     done
   else
-    inputLength=${#1}
-    halfInputLength=$(bc <<<"$inputLength / 2")
-    HEADER_TEXT_START=$((WINDOW_HALF_WIDTH-halfInputLength))
-    HEADER_TEXT_STOP=$((HEADER_TEXT_START+inputLength))
-    for (( c=1; c<=$WINDOW_WIDTH; c++ ))
-    do 
-      if [[ $c -lt $HEADER_TEXT_START || $c -gt $HEADER_TEXT_STOP ]]; then
-        output="${output}${NC}${_HLINE}"
-      else
-        offset=$((c-HEADER_TEXT_START))
-        output="${output}${2}${1:offset:1}"
-      fi
-    done
+    #output="${_HLINE}${_HLINE}${_HLINE}${_HLINE}${_HLINE}${_HLINE}$2$1${NC}${_HLINE}${_HLINE}${_HLINE}${_HLINE}${_HLINE}${_HLINE}"
+    #output="----$2$1${NC}----"
+    output="${WRENCH}      $2$1${NC}"
+    # inputLength=${#1}
+    # halfInputLength=$(bc <<<"$inputLength / 2")
+    # HEADER_TEXT_START=$((WINDOW_HALF_WIDTH-halfInputLength))
+    # HEADER_TEXT_STOP=$((HEADER_TEXT_START+inputLength))
+    # for (( c=1; c<=$WINDOW_WIDTH; c++ ))
+    # do 
+    #   if [[ $c -lt $HEADER_TEXT_START || $c -gt $HEADER_TEXT_STOP ]]; then
+    #     output="${output}${NC}${_HLINE}"
+    #   else
+    #     offset=$((c-HEADER_TEXT_START))
+    #     output="${output}${2}${1:offset:1}"
+    #   fi
+    # done
   fi
 
   echo -e ${output}
