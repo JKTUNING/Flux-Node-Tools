@@ -127,6 +127,14 @@ flux_daemon_port=""
 flux_ip_check=""
 flux_node_version_check=""
 
+#initialize flux node variables to avoid null
+flux_node_status=""
+flux_node_collateral=""
+flux_node_added_height=""
+flux_node_confirmed_height=""
+flux_node_last_confirmed_height=""
+flux_node_last_paid_height=""
+
 #get local device name
 local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
 #get node version on device
@@ -196,8 +204,12 @@ function get_flux_node_info(){
 function get_blocks_since_last_confirmed(){
   ## require daemon block height to must get blockchain info
   get_flux_blockchain_info
-  blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
-  maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
+  if [[ ! -z $flux_node_last_confirmed_height ]] ; then
+    blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
+    maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
+  else
+    maint_window='0'
+  fi
 }
 
 function update (){
@@ -645,10 +657,14 @@ function check_upnp(){
   upnp_check=""
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
-  if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
-    upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+  if [[ $ui_port != "" && $api_port != "" ]]; then
+    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
+      upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+    else
+      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
+    fi
   else
-    upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
+      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port not listening"
   fi
 }
 
