@@ -207,7 +207,7 @@ function get_flux_node_info(){
 function get_blocks_since_last_confirmed(){
   ## require daemon block height to must get blockchain info
   get_flux_blockchain_info
-  if [[ ! -z $flux_node_last_confirmed_height ]] ; then
+  if [[ ! -z $flux_node_last_confirmed_height && $flux_node_last_confirmed_height != "null" ]] ; then
     blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
     maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
   else
