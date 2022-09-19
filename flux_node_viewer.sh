@@ -564,7 +564,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_DIR_LOG ]]; then
-    bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a -wi 'failed')
+    bench_log=$(tail -100 $BENCH_LOG_DIR| egrep -a -wi 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
