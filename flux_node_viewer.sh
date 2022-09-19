@@ -659,7 +659,7 @@ function check_upnp(){
 
   if [[ $ui_port != "" && $api_port != "" ]]; then
     if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
-      upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+      upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and registered for Flux UI $ui_port and Flux API $api_port ports"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
     fi
@@ -670,8 +670,8 @@ function check_upnp(){
 
 function check_version(){
   ## grab current version requirements from the flux api and compare to current node version
-  #flux_required_version=$(curl -sS --max-time 10 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
-  flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
+  #flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
+  flux_required_version=$(curl -sS --max-time 5 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
     flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
   else
