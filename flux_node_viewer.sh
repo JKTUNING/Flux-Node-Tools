@@ -127,6 +127,14 @@ flux_daemon_port=""
 flux_ip_check=""
 flux_node_version_check=""
 
+#initialize flux node variables to avoid null
+flux_node_status=""
+flux_node_collateral=""
+flux_node_added_height=""
+flux_node_confirmed_height=""
+flux_node_last_confirmed_height=""
+flux_node_last_paid_height=""
+
 #get local device name
 local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
 #get node version on device
@@ -196,8 +204,12 @@ function get_flux_node_info(){
 function get_blocks_since_last_confirmed(){
   ## require daemon block height to must get blockchain info
   get_flux_blockchain_info
-  blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
-  maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
+  if [[ ! -z $flux_node_last_confirmed_height ]] ; then
+    blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
+    maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
+  else
+    maint_window='0'
+  fi
 }
 
 function update (){
@@ -349,6 +361,8 @@ function show_flux_node_info_tile(){
   check_external_ports
   echo -e "${GREEN}   Checking UPNP details ...${NC}"
   check_upnp
+  echo -e "${GREEN}   Checking node uptime ...${NC}"
+  get_flux_uptime
   clear
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
@@ -363,6 +377,7 @@ function show_flux_node_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
   echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
   echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Node Uptime                  -    $flux_uptime"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
@@ -423,12 +438,12 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
   echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
-  echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
+  echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
@@ -549,7 +564,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_DIR_LOG ]]; then
-    bench_log=$(tail -10 $BENCH_LOG_DIR| egrep -a -wi 'failed')
+    bench_log=$(tail -100 $BENCH_LOG_DIR| egrep -a -wi 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
@@ -642,10 +657,14 @@ function check_upnp(){
   upnp_check=""
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
-  if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
-    upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+  if [[ $ui_port != "" && $api_port != "" ]]; then
+    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
+      upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and working for Flux UI and Flux API Ports"
+    else
+      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
+    fi
   else
-    upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
+      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port not listening"
   fi
 }
 
@@ -836,6 +855,18 @@ function node_os_update(){
       whiptail --msgbox "User would not like to update the operating system" 8 60;
     fi
  
+}
+
+# Gets the node's uptime in minutes
+function get_flux_uptime(){
+  #curl local node IP's API port for uptime -s (silent) -S(show error)
+  #converts seconds to minutes .. d/h/m/s will come at some point 
+  local get_uptime=$(curl -sS --max-time 5 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
+  flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
+
+  if [[ $flux_uptime == "" ]]; then
+    flux_uptime="0 mins"
+  fi
 }
 
 # restart daemon service and restart FluxOS
@@ -1043,3 +1074,5 @@ echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 check_ip
 check_version
 main_terminal
+
+#flux_external_available=$(curl -i -H "Accept: application/json" "https://api.runonflux.io/flux/checkfluxavailability/$WANIP" | grep 'success')
