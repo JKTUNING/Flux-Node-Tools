@@ -121,7 +121,7 @@ show_node_fix_details='0'
 checking_ports='0'
 
 # get a list of the LISTEN ports
-listen_ports=$(sudo lsof -i -n | grep LISTEN)
+# listen_ports=$(sudo lsof -i -n | grep LISTEN)
 flux_api_port=""
 flux_ui_port=""
 mongodb_port=""
@@ -597,7 +597,7 @@ function check_ip(){
 #this function checks for listen ports using lsof
 function check_port_info()
 {
-  #echo -e "$listen_ports"
+  listen_ports=$(sudo lsof -i -n | grep LISTEN)
   
   if [[ $listen_ports == *'27017'* && $listen_ports == *'mongod'* ]]; then
     mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
