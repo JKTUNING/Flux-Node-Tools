@@ -46,6 +46,11 @@ Showing UPNP disabled and ports open externally (single node and port forwarding
 #### Mowat's Flux Log Viewer
 ![Mowats_Log_View](https://user-images.githubusercontent.com/26805518/191159063-05e2ab0c-5fd1-469d-a367-0886fe5ea476.jpg)
 
+#### Flux Node Controls
+Stop, Start and Restart common flux node services
+![Node Control Options](https://user-images.githubusercontent.com/26805518/191159696-cf87a1e0-a828-4da6-bc7e-4f77567efe9a.jpg)
+
+
 #### Available Commands
 ![commands](https://user-images.githubusercontent.com/26805518/191159246-0c87a455-cd8a-40ed-b00f-91e8462f923d.jpg)
 
