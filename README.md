@@ -24,13 +24,13 @@ bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/mai
 ```
 ---
 #### View Node Bench marks and error logs
-![Flux Viewer Bench](https://user-images.githubusercontent.com/26805518/187343437-0a203bd0-5a34-4f27-a986-93aa4b4380bc.PNG)
+![bench_view](https://user-images.githubusercontent.com/26805518/191158716-6e5dbfd0-74a9-45f8-b772-97437ce033dc.jpg)
 
 ---
 #### View Node details, maintenance windows and port settings
 Showing UPNP enabled and ports open externally (multi-node setup)
 
-![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189262741-f0bf489c-3476-4b7d-95f2-af72a044131a.PNG)
+![node_view](https://user-images.githubusercontent.com/26805518/191158849-fc70492c-e843-48ed-86f0-329ec5806d49.jpg)
 
 Showing UPNP disabled and ports open externally (single node and port forwarding)
 
@@ -38,9 +38,19 @@ Showing UPNP disabled and ports open externally (single node and port forwarding
 
 ---
 #### View Node Daemon details and blockchain info
-![Flux Viewer Daemon](https://user-images.githubusercontent.com/26805518/187343491-06e3c8b1-d0fc-4104-9398-38b90074a784.PNG)
+![daemon_view](https://user-images.githubusercontent.com/26805518/191158914-2a17c292-dab4-40c4-bdd6-e557668e666e.jpg)
+
+#### Check External Ports
+![check_external_ports](https://user-images.githubusercontent.com/26805518/191159161-c30fed55-361a-4f1d-8ec3-df8917851954.jpg)
+
+#### Mowat's Flux Log Viewer
+![Mowats_Log_View](https://user-images.githubusercontent.com/26805518/191159063-05e2ab0c-5fd1-469d-a367-0886fe5ea476.jpg)
+
+#### Available Commands
+![commands](https://user-images.githubusercontent.com/26805518/191159246-0c87a455-cd8a-40ed-b00f-91e8462f923d.jpg)
 
 ---
+
 # Find Best Server Script
 
 chmod 755 find_best_server.sh
