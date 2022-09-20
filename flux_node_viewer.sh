@@ -97,7 +97,7 @@ PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
 # fi
 
 
-BENCH_LOG_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
+BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
 WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
 FLUX_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
@@ -566,8 +566,8 @@ function check_daemon_log(){
 }
 
 function check_benchmark_log(){
-  if [[ -f $BENCH_DIR_LOG ]]; then
-    bench_log=$(tail -100 $BENCH_LOG_DIR| egrep -a -wi 'failed')
+  if [[ -f $BENCH_LOG_FILE_DIR ]]; then
+    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR| egrep -a -wi 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
