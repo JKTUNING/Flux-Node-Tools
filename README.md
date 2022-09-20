@@ -23,11 +23,11 @@ Required packages - checks and installs if missing
 bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)
 ```
 ---
-#### View Node Bench marks and error logs
+#### View Node Benchmarks and Error Logs
 ![bench_view](https://user-images.githubusercontent.com/26805518/191158716-6e5dbfd0-74a9-45f8-b772-97437ce033dc.jpg)
 
 ---
-#### View Node details, maintenance windows and port settings
+#### View Node Details, Maintenance Windows and Port Settings
 Showing UPNP enabled and ports open externally (multi-node setup)
 
 ![node_view](https://user-images.githubusercontent.com/26805518/191158849-fc70492c-e843-48ed-86f0-329ec5806d49.jpg)
@@ -37,7 +37,7 @@ Showing UPNP disabled and ports open externally (single node and port forwarding
 ![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189269343-2efc0d58-5d6b-424a-b815-74e690b5e823.PNG)
 
 ---
-#### View Node Daemon details and blockchain info
+#### View Node Daemon Details and Blockchain Info
 ![daemon_view](https://user-images.githubusercontent.com/26805518/191158914-2a17c292-dab4-40c4-bdd6-e557668e666e.jpg)
 
 #### Check External Ports
