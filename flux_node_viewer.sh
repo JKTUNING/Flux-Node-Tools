@@ -825,13 +825,13 @@ function check_term_resize(){
 function check_bench() {
   if [[ ($flux_bench_benchmark == "failed") || ($flux_bench_benchmark == "toaster") || ($flux_bench_benchmark == "") ]]; then
     if [[ $flux_bench_stats_error == *"FluxOS is not working properly"* ]]; then
-      if whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60; then
+      if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Flux OS is not working properly - would you like to check external ports?" 8 60; then
         echo -e "${GREEN}checking external flux ports ... ${NC}"
         checking_ports='1'
         show_external_port_info_tile
       fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
-      whiptail --title ""Benchmarks Failed - $flux_bench_benchmark"" --msgbox "Hardware requirements not met for node tier!" 8 60;
+      whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --msgbox "$flux_bench_stats_error" 8 60;
     else
       if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
         flux_update_benchmarks
@@ -955,70 +955,70 @@ function show_node_fix_tile(){
 # restart the node benchmarks
 function flux_update_benchmarks(){
   echo -e "${GREEN}starting${NC} node benchmarks ... please allow approx 5 mins for benchmarks to complete"
-  #$BENCH_CLI restartnodebenchmarks
+  $BENCH_CLI restartnodebenchmarks
   sleep 5
 }
 
 # stop the node benchmarks
 function flux_stop_benchmarks(){
   echo -e "${RED}stopping${NC} node benchmarks ... "
-  #BENCH_CLI stop
+  BENCH_CLI stop
   sleep 3
 }
 
 # start the node benchmarks
 function flux_start_benchmarks(){
   echo -e "${GREEN}restarting${NC} node benchmark service ... please allow approx 5 minutes to complete"
-  #sudo systemctl restart zelcash
+  sudo systemctl restart zelcash
   sleep 5
 }
 
 # stop the flux node OS
 function flux_stop(){
   echo -e "pm2 ${RED}stopping${NC} flux node os service ... "
-  #pm2 stop flux
+  pm2 stop flux
   sleep 5
 }
 
 # start the flux node OS
 function flux_start(){
   echo -e "pm2 ${GREEN}starting${NC} flux node os service ... "
-  #pm2 start flux
+  pm2 start flux
   sleep 5
 }
 
 # stop the flux daemon
 function flux_daemon_stop(){
   echo -e "${RED}stopping${NC} flux daemon service ... "
-  #sudo systemctl stop zelcash
+  sudo systemctl stop zelcash
   sleep 5
 }
 
 # start flux daemon
 function flux_daemon_start(){
   echo -e "${GREEN}starting${NC} flux daemon service ... "
-  #sudo systemctl start zelcash
+  sudo systemctl start zelcash
   sleep 5
 }
 
 # stop watchdog
 function flux_watchdog_stop(){
   echo -e "pm2 ${RED}stopping${NC} flux watchdog service ..."
-  #pm2 stop watchdog
+  pm2 stop watchdog
   sleep 3
 }
 
 # start watchdog
 function flux_watchdog_start(){
   echo -e "pm2 ${GREEN}starting${NC} flux watchdog service ... "
-  #pm2 start watchdog --watch
+  pm2 start watchdog --watch
   sleep 3
 }
 
 # restart watchdog
 function flux_watchdog_restart(){
   echo -e "pm2 ${GREEN}re-starting${NC} flux watchdog service ..."
-  #pm2 reload watchdog --watch
+  pm2 reload watchdog --watch
   sleep 3
 }
 
