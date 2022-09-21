@@ -109,7 +109,7 @@ flux_process_status=""
 flux_node_dos=""
 
 #variables to draw windows
-show_bench='1'
+show_bench='0'
 show_daemon='0'
 show_node='0'
 show_commands='0'
@@ -117,6 +117,16 @@ show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
+
+if [[ $1 == "node" ]]; then
+  show_node='1'
+elif [[ $1 == "bench" ]]; then
+  show_bench='1'
+elif [[ $1 == "daemon" ]]; then
+  show_daemon='1'
+else
+  show_bench='1'
+fi
 
 checking_ports='0'
 
