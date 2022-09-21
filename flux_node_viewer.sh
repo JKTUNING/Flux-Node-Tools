@@ -372,7 +372,7 @@ function show_flux_node_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   if [[ "$flux_node_status" == "DOS" ]]; then
     check_flux_dos_list
-    echo -e $flux_node_dos
+    echo -e "$flux_node_dos"
   fi
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
   echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
