@@ -118,14 +118,18 @@ show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
 
-if [[ $1 == "node" ]]; then
-  show_node='1'
-elif [[ $1 == "bench" ]]; then
-  show_bench='1'
-elif [[ $1 == "daemon" ]]; then
-  show_daemon='1'
+if [ -z "$1" ]; then
+   show_bench='1'
 else
-  show_bench='1'
+  if [[ $1 == "node" ]]; then
+    show_node='1'
+  elif [[ $1 == "bench" ]]; then
+    show_bench='1'
+  elif [[ $1 == "daemon" ]]; then
+    show_daemon='1'
+  else
+    show_bench='1'
+  fi
 fi
 
 checking_ports='0'
