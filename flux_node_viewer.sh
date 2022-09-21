@@ -1080,6 +1080,9 @@ echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 check_ip
 check_version
 
+# allow for user input to go right to desired tile
+# allow arguments are 
+# - node, bench, daemon, port
 if [ -z "$1" ]; then
    show_bench='1'
 else
@@ -1089,6 +1092,8 @@ else
     show_bench='1'
   elif [[ $1 == "daemon" ]]; then
     show_daemon='1'
+  elif [[ $1 == "ports" ]]; then
+    show_external_port_details='1'
   else
     show_bench='1'
   fi
