@@ -396,6 +396,7 @@ function show_flux_node_info_tile(){
   echo -e "$flux_process_status"
   echo -e "$mongodb_service_status"
   echo -e "$docker_service_status"
+  echo -e "$watchdog_process_status"
   navigation
 }
 
@@ -549,6 +550,19 @@ function check_pm2_flux_service(){
     flux_process_status="${RED_ARROW}   Flux PM2 process is ${RED}offline${NC}"
   else
     flux_process_status="${RED_ARROW}   Flux PM2 process ${RED}not found${NC}"
+  fi
+}
+
+#check pm2 watchdog process is running
+function check_pm2_flux_watchdog_service(){
+  local pm2_watchdog_status_check=$(pm2 info watchdog 2>/dev/null | grep 'status')
+
+  if [[ $pm2_status_check == *"online"* ]]; then
+    watchdog_process_status="${GREEN_ARROW}   Flux Watchdog PM2 process is ${GREEN}running${NC}"
+  elif [[ $pm2_status_check == *"offline"* ]]; then
+    watchdog_process_status="${RED_ARROW}   Flux Watchdog PM2 process is ${RED}offline${NC}"
+  else
+    watchdog_process_status="${RED_ARROW}   Flux Watchdog PM2 process ${RED}not found${NC}"
   fi
 
 }
@@ -1043,6 +1057,7 @@ function main_terminal(){
         check_pm2_flux_service
         check_docker_service
         check_mongodb_service
+        check_pm2_flux_watchdog_service
         check_port_info
         #check_back
         show_flux_node_info_tile
@@ -1082,7 +1097,7 @@ check_version
 
 # allow for user input to go right to desired tile
 # allow arguments are 
-# - node, bench, daemon, port
+# - node, bench, daemon, ports
 if [ -z "$1" ]; then
    show_bench='1'
 else
