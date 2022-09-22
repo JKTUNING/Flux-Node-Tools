@@ -106,6 +106,7 @@ docker_service_status=""
 mongodb_service_status=""
 daemon_service_status=""
 flux_process_status=""
+watchdog_process_status=""
 flux_node_dos=""
 
 #variables to draw windows
@@ -558,11 +559,11 @@ function check_pm2_flux_watchdog_service(){
   local pm2_watchdog_status_check=$(pm2 info watchdog 2>/dev/null | grep 'status')
 
   if [[ $pm2_watchdog_status_check == *"online"* ]]; then
-    watchdog_process_status="${GREEN_ARROW}   Flux Watchdog PM2 process is ${GREEN}running${NC}"
+    watchdog_process_status="${GREEN_ARROW}   Watchdog PM2 process is ${GREEN}running${NC}"
   elif [[ $pm2_watchdog_status_check == *"offline"* ]]; then
-    watchdog_process_status="${RED_ARROW}   Flux Watchdog PM2 process is ${RED}offline${NC}"
+    watchdog_process_status="${RED_ARROW}   Watchdog PM2 process is ${RED}offline${NC}"
   else
-    watchdog_process_status="${RED_ARROW}   Flux Watchdog PM2 process ${RED}not found${NC}"
+    watchdog_process_status="${RED_ARROW}   Watchdog PM2 process ${RED}not found${NC}"
   fi
 
 }
