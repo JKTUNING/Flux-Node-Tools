@@ -11,6 +11,15 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 
+# add alias to bashrc so you can just call fluxnodeview from CLI
+if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
+  echo "alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'" | sudo tee -a /etc/bash.bashrc
+  source /etc/bash.bashrc
+fi
+
+clear
+sleep 0.5
+
 echo -e ""
 echo -e "${SEA}starting flux node viewer ..."
 echo -e ""
@@ -38,12 +47,6 @@ if ! lsof -v > /dev/null 2>&1; then
   echo -e "${RED}lsof not found ... installing lsof${NC}"
   sleep 2
   sudo apt-get install lsof -y >/dev/null 2>&1
-fi
-
-# add alias to bashrc so you can just call fluxnodeview from CLI
-if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
-  echo "alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'" | sudo tee -a /etc/bash.bashrc
-  source /etc/bash.bashrc
 fi
 
 version='Flux Node Viewer 1.0.0'
