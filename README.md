@@ -17,11 +17,12 @@ Required packages - checks and installs if missing
 - lsof
 - miniupnpc
 
-### Run Flux Node Viewer from the terminal you can use this command
+### Run Flux Node Viewer from the terminal you can use this command and subsequentyly the alias afterwards
 
 ```
 bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)
 ```
+- `fluxnodeview` - alias for quick launch after first use of script
 ---
 #### View Node Benchmarks and Error Logs
 ![bench_view](https://user-images.githubusercontent.com/26805518/191158716-6e5dbfd0-74a9-45f8-b772-97437ce033dc.jpg)
