@@ -1086,6 +1086,19 @@ function main_terminal(){
   done
 }
 
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+
+function ctrl_c() {
+  clear
+  echo -e "exiting .. clearing history ..."
+  sleep 1.5
+  set -o history
+  clear
+  sleep 0.5
+  exit
+}
+
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
 #get_flux_bench_info
