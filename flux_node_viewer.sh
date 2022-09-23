@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +o history
+
 #colors
 GREEN='\033[1;32m'
 RED='\033[1;31m'
@@ -26,6 +28,7 @@ if ! jq --version >/dev/null 2>&1; then
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
+    set -o history
     exit
   fi
 fi
@@ -328,6 +331,7 @@ function update (){
     sleep 0.1
   elif [[ $userInput == 'q' ]]; then
     clear
+    set -o history
     exit
   elif [[ $userInput == 'l' ]]; then
     whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
