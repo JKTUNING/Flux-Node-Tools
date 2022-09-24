@@ -918,11 +918,12 @@ function show_node_fix_tile(){
   if [[ -z $1 ]]; then
     
     # choose a node control menu option
-    menuOption=$(whiptail --title "Choose Node Control" --menu "Choose an option:" 12 60 4 \
+    menuOption=$(whiptail --title "Choose Node Control" --menu "Choose an option:" 12 60 5 \
     "Flux Bench Controls" "" \
     "Flux OS Controls" "" \
     "Flux Daemon Controls" "" \
-    "Flux Watchdog Controls" "" 3>&1 1>&2 2>&3 )
+    "Flux Watchdog Controls" "" \
+    "Flux PM2 Monitor" "" 3>&1 1>&2 2>&3 )
 
     # show submenu optoins for node controls
     if [[ "$menuOption" == "Flux Bench Controls" ]]; then
@@ -943,6 +944,8 @@ function show_node_fix_tile(){
       "8"   "Stop watchdog                " \
       "9"   "Start watchdog               " \
       "10"  "Restart watchdog             " 3>&1 1>&2 2>&3 )
+    elif [[ "$menuOption" == "Flux PM2 Monitor" ]]; then
+        pm2 monit 2>/dev/null
     fi
   else
     if [[ $1 -gt 0 ]] && [[ $1 -lt 11 ]]; then
