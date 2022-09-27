@@ -617,6 +617,7 @@ function check_flux_log(){
     if [[ $flux_log == "" ]]; then
       flux_log="${GREEN_ARROW}   No common flux errors logged"
     fi
+  else
     flux_log="${GREEN_ARROW}   No flux errors logged"
   fi
 }
