@@ -348,11 +348,15 @@ function update (){
 
 function show_flux_daemon_info_tile(){
   clear
+  echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
+  check_current_blockheight
+  clear
   sleep 0.25
   make_header "$DASH_DAEMON_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
   echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
   echo -e "$BLUE_CIRCLE   Flux daemon block height     -    $flux_daemon_block_height"
+  echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
@@ -898,6 +902,25 @@ function get_flux_uptime(){
   fi
 }
 
+# Get api network blockheight
+function check_current_blockheight(){
+  local api_current_height=$(curl -sk -m 5 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+
+  if [[ $flux_daemon_block_height == "" ]]; then
+      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      - ${RED}N/A${NC}"
+  else
+    if [[ "$api_current_height" != "0" ]]; then
+      if [[ $flux_daemon_block_height == $api_current_height ]]; then
+        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      - ${GREEN}Synced${NC}"
+      else
+        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      - ${RED}NOT Synced${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
+      fi
+    else
+       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      - ${RED}N/A${NC}"
+    fi
+  fi
+}
+
 # restart daemon service and restart FluxOS
 function flux_update_service(){
   #stop daemon
@@ -945,6 +968,7 @@ function show_node_fix_tile(){
       "9"   "Start watchdog               " \
       "10"  "Restart watchdog             " 3>&1 1>&2 2>&3 )
     elif [[ "$menuOption" == "Flux PM2 Monitor" ]]; then
+        #display pm2 monitor helpful for viewing watchdog actions every 4 minutes
         pm2 monit 2>/dev/null
     fi
   else
