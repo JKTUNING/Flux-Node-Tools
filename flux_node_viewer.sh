@@ -70,6 +70,7 @@ DASH_BENCH_PORT_TITLE='FLUX BENCHMARK PORT'
 DASH_NODE_TITLE='FLUX NODE INFO'
 DASH_NODE_PORT_TITLE='FLUX NODE PORTS'
 DASH_NODE_SERVICE_TITLE='FLUX NODE SERVICES'
+DASH_NODE_FLUX_LOG_TITLE="FLUX OS ERROR LOG"
 
 DASH_DAEMON_TITLE='FLUX DAEMON INFO'
 DASH_DAEMON_PORT_TITLE='FLUX DAEMON PORT'
@@ -410,6 +411,12 @@ function show_flux_node_info_tile(){
   echo -e "$mongodb_service_status"
   echo -e "$docker_service_status"
   echo -e "$watchdog_process_status"
+
+  if [[ $flux_log != "" ]]; then
+    make_header "$DASH_NODE_FLUX_LOG_TITLE" "$RED"
+    echo -e "$flux_log"
+  fi
+
   navigation
 }
 
@@ -594,12 +601,23 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
-    bench_log=$(tail -25 $BENCH_LOG_FILE_DIR| egrep -a -wi 'failed')
+    bench_log=$(tail -25 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
   else
     bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
+  fi
+}
+
+#check Flux Error file
+function check_flux_log(){
+  if [[ -f $FLUX_LOG_DIR ]]; then
+    flux_log=$(tail -100 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met")
+    if [[ $flux_log == "" ]]; then
+      flux_log="${GREEN_ARROW}   No common flux errors logged"
+    fi
+    flux_log="${GREEN_ARROW}   No flux errors logged"
   fi
 }
 
@@ -1095,6 +1113,7 @@ function main_terminal(){
         check_mongodb_service
         check_pm2_flux_watchdog_service
         check_port_info
+        check_flux_log
         #check_back
         show_flux_node_info_tile
       elif [[ $show_bench == '1' ]]; then
