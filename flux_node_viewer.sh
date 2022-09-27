@@ -907,16 +907,16 @@ function check_current_blockheight(){
   local api_current_height=$(curl -sk -m 5 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
 
   if [[ $flux_daemon_block_height == "" ]]; then
-      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -   ${RED}N/A${NC}"
+      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -     ${RED}N/A${NC}"
   else
     if [[ "$api_current_height" != "0" ]]; then
       if [[ $flux_daemon_block_height == $api_current_height ]]; then
-        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -   ${GREEN}Synced${NC}"
+        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -     ${GREEN}Synced${NC}"
       else
-        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -   ${RED}NOT Synced${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
+        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -     ${RED}NOT Synced${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
       fi
     else
-       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
+       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -      ${RED}N/A${NC}"
     fi
   fi
 }
