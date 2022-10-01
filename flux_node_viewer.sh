@@ -401,7 +401,7 @@ function show_flux_node_info_tile(){
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
   if [[ $dhcp_status != "" ]]; then
-    echo -e "${RED_ARROW}   $dhcp_status"
+    echo -e "${RED_ARROW}   $dhcp_status${NC}"
   fi
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
@@ -950,7 +950,7 @@ function check_current_blockheight(){
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
   if [[ "$dhcpCheck" != "" ]]; then
-    dhcp_status="${RED}   DHCP DETECTED .. CHECK TO MAKE SURE NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
+    dhcp_status="${RED}DHCP DETECTED .. CHECK NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
 
