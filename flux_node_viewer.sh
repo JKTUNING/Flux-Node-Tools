@@ -20,17 +20,6 @@ fi
 clear
 sleep 0.5
 
-#check for dhcp with ip r 
-function check_dhcp_enable(){
-  local dhcpCheck=$(ip r | grep dhcp)
-  if [[ "$dhcpCheck" != "" ]]; then
-    echo -e "${RED}   DHCP DETECTED .. CHECK TO MAKE SURE NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
-    sleep 5
-  fi
-}
-
-check_dhcp_enable
-
 echo -e ""
 echo -e "${SEA}starting flux node viewer ..."
 echo -e ""
@@ -385,6 +374,8 @@ function show_flux_daemon_info_tile(){
 function show_flux_node_info_tile(){
   clear
   sleep 0.25
+  # check dhcp first
+  check_dhcp_enable 
   echo -e "${GREEN}   Checking external flux ports ...${NC}"
   check_external_ports
   echo -e "${GREEN}   Checking UPNP details ...${NC}"
@@ -409,6 +400,9 @@ function show_flux_node_info_tile(){
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
+  if [[ $dhcp_status != "" ]]; then
+    echo -e "$dhcp_status"
+  fi
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
   echo -e "$mongodb_port"
@@ -948,6 +942,15 @@ function check_current_blockheight(){
     else
        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
     fi
+  fi
+}
+
+
+#check for dhcp with ip r 
+function check_dhcp_enable(){
+  local dhcpCheck=$(ip r | grep dhcp)
+  if [[ "$dhcpCheck" != "" ]]; then
+    dhcp_status="${RED}   DHCP DETECTED .. CHECK TO MAKE SURE NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
 
