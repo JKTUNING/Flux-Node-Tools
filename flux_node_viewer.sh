@@ -20,6 +20,20 @@ fi
 clear
 sleep 0.5
 
+#check for dhcp with ip r 
+function check_dhcp_enable(){
+  local dhcpCheck=$(ip r | grep dhcp)
+  echo $dhcpCheck
+  if [[ "$dhcpCheck" != "" ]]; then
+    echo -e "${RED_ARROW}   DHCP DETECTED .. CHECK TO MAKE SURE NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER"
+  # else
+  #   echo -e "${GREEN_ARROW} STATIC IP ENABLED"
+  sleep 5
+  fi
+}
+
+check_dhcp_enable
+
 echo -e ""
 echo -e "${SEA}starting flux node viewer ..."
 echo -e ""
@@ -939,6 +953,7 @@ function check_current_blockheight(){
     fi
   fi
 }
+
 
 # restart daemon service and restart FluxOS
 function flux_update_service(){
