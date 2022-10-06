@@ -29,13 +29,15 @@ bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/mai
 
 ---
 #### View Node Details, Maintenance Windows and Port Settings
-Showing UPNP enabled and ports open externally (multi-node setup)
+Showing UPNP enabled and ports open externally (multi-node setup).
 
 ![node_view](https://user-images.githubusercontent.com/26805518/191158849-fc70492c-e843-48ed-86f0-329ec5806d49.jpg)
 
 Showing UPNP disabled and ports open externally (single node and port forwarding)
 
-![Flux Viewer Node Ports](https://user-images.githubusercontent.com/26805518/189269343-2efc0d58-5d6b-424a-b815-74e690b5e823.PNG)
+ This image allow shows a DHCP message advising the user to check that their node's Local IP addrress is static on their router.
+
+![Flux Node View - Node Tile](https://user-images.githubusercontent.com/26805518/194196085-9e212127-bad6-4363-adcf-33cb675895aa.PNG)
 
 ---
 #### View Node Daemon Details and Blockchain Info
