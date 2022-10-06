@@ -4,6 +4,7 @@
 set +o history
 
 #colors
+YELLOW='\033[0;33m'
 GREEN='\033[1;32m'
 RED='\033[1;31m'
 BLUE="\\033[38;5;27m"
@@ -52,12 +53,10 @@ fi
 version='Flux Node Viewer 1.0.0'
 
 WRENCH='\xF0\x9F\x94\xA7'
-#BLUE_HEADER='\xF0\x9F\x94\xB5'
 RED_ARROW="${RED}\xE2\x96\xB6${NC}  "
 GREEN_ARROW="${GREEN}\xE2\x96\xB6${NC}  "
 BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}  "
 BLUE_HEADER="${BLUE}\xE2\x96\xB6${NC}  "
-
 
 _HLINE="\xE2\x94\x80"
 _VLINE="\xE2\x94\x82"
@@ -103,7 +102,6 @@ PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
 #   sleep 5
 #   exit
 # fi
-
 
 BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
@@ -950,7 +948,7 @@ function check_current_blockheight(){
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
   if [[ "$dhcpCheck" != "" ]]; then
-    dhcp_status="${RED}DHCP DETECTED .. CHECK NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
+    dhcp_status="${YELLOW}DHCP DETECTED .. CHECK NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
 
