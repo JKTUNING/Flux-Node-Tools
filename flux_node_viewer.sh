@@ -53,6 +53,7 @@ fi
 version='Flux Node Viewer 1.0.0'
 
 WRENCH='\xF0\x9F\x94\xA7'
+YELLOW_ARROW="${YELLOW}\xE2\x96\xB6${NC}  "
 RED_ARROW="${RED}\xE2\x96\xB6${NC}  "
 GREEN_ARROW="${GREEN}\xE2\x96\xB6${NC}  "
 BLUE_CIRCLE="${SEA}\xE2\x96\xB6${NC}  "
@@ -399,7 +400,7 @@ function show_flux_node_info_tile(){
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
   if [[ $dhcp_status != "" ]]; then
-    echo -e "${RED_ARROW}   $dhcp_status${NC}"
+    echo -e "${YELLOW_ARROW}   $dhcp_status${NC}"
   fi
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
@@ -604,7 +605,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
-    bench_log=$(tail -25 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed')
+    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed')
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
