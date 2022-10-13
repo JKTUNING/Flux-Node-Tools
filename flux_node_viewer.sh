@@ -446,6 +446,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
+  echo -e "$BLUE_CIRCLE   'i'            -    Docker Container Details"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
@@ -510,7 +511,6 @@ function show_docker_tile(){
   clear
   sleep 0.25
   echo -e "${GREEN}   checking docker image details ...${NC}"
-  sleep 3
   check_docker_images
   clear
   sleep .25
