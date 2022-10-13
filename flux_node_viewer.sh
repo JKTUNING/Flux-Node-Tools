@@ -518,12 +518,15 @@ function show_docker_tile(){
   echo -e "$running_docker_containers"
   make_header "DEAD DOCKER CONTAINER DETAILS" "$YELLOW"
   echo -e "$dead_docker_containers"
+  make_header "DANGLING DOCKER IMAGES DETAILS" "$YELLOW"
+  echo -e "$dangling_docker_images"
   navigation
 }
 
 function check_docker_images(){
-  running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}")
+  running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}" 2>/dev/null)
   dead_docker_containers=$(docker ps --filter status=exited --filter status=dead 2>/dev/null)
+  dangling_docker_images=$(docker images --filter dangling=true 2>/dev/null)
 }
 
 # check to see if docker service is running
