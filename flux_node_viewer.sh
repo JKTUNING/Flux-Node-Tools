@@ -515,12 +515,14 @@ function show_docker_tile(){
   clear
   sleep .25
   make_header "DOCKER IMAGE DETAILS" "$BLUE"
-  echo -e $prune_docker_containers
+  echo -e $running_docker_containers
+  echo -e $dead_docker_containers
   navigation
 }
 
 function check_docker_images(){
-  prune_docker_containers=$(docker ps --filter status=exited --filter status=dead -q 2>/dev/null)
+  running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}")
+  dead_docker_containers=$(docker ps --filter status=exited --filter status=dead 2>/dev/null)
 }
 
 # check to see if docker service is running
