@@ -225,12 +225,14 @@ function get_blocks_since_last_confirmed(){
 
 function update (){
   local userInput
+  local noInput
 
   read -s -n 1 -t 1 userInput
   if [[ -z $userInput ]]; then
-    $userInput=$last_user_input
+    noInput=1
+    userInput="$last_user_input"
   else
-    $last_user_input=$userInput
+    last_user_input=$userInput
   fi
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
   #'d' shows daemon screen and the last 5 lines of daemon error log
@@ -252,40 +254,35 @@ function update (){
   show_node_kda_details='0'
   show_node_fix_details='0'
   redraw_term='0'
+
+  if [[ $noInput != 1 ]]; then
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k')
+    for i in "${valid_input[@]}"; do
+      if [[ $userInput == $i ]]; then
+        redraw_term='1'
+        sleep 0.1
+      fi
+    done
+  fi
+
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
     show_bench='1'
-    redraw_term='1'
-    sleep 0.1
   elif [[ $userInput == 'n' ]]; then
     show_node='1'
-    redraw_term='1'
-    sleep 0.1
   elif [[ $userInput == 'd' ]]; then
     check_daemon_log
     show_daemon='1'
-    redraw_term='1'
-    sleep 0.1
   elif [[ $userInput == 'u' ]]; then
     node_os_update
-    sleep 0.1
-    redraw_term='1'
   elif [[ $userInput == 'c' ]]; then
     show_commands='1'
-    redraw_term='1'
-    sleep 0.1
   elif [[ $userInput == 't' ]]; then
     show_flux_node_details='1'
-    redraw_term='1'
-    sleep 0.1
-    elif [[ $userInput == 'p' ]]; then
+  elif [[ $userInput == 'p' ]]; then
     show_external_port_details='1'
-    redraw_term='1'
-    sleep 0.1
-    elif [[ $userInput == 'k' ]]; then
+  elif [[ $userInput == 'k' ]]; then
     show_node_kda_details='1'
-    redraw_term='1'
-    sleep 0.1
   elif [[ $userInput == 'f' ]]; then
     clear
     get_flux_bench_info
