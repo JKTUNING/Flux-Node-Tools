@@ -125,6 +125,8 @@ show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
+show_docker_image_details='0'
+term_resize='0'
 last_user_input=''
 checking_ports='0'
 
@@ -237,6 +239,7 @@ function update (){
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
   #'d' shows daemon screen and the last 5 lines of daemon error log
   #'n' shows node screen
+  #'i' docker image details
   #'u' shows ubuntu operating system update screen
   #'c' shows available commands
   #'t' shows flux network node details
@@ -249,62 +252,72 @@ function update (){
   show_daemon='0'
   show_bench='0'
   show_commands='0'
+  show_docker='0'
   show_flux_node_details='0'
   show_external_port_details='0'
   show_node_kda_details='0'
   show_node_fix_details='0'
-  redraw_term='0'
+  show_docker_image_details='0'
+
+  if [[ $term_resize != '1' ]]; then
+    redraw_term='0'
+  else
+    redraw_term='1'
+    noInput='0'
+  fi
 
   if [[ $noInput != 1 ]]; then
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
         sleep 0.1
       fi
     done
-  fi
-
-  if [[ $userInput == 'b' ]]; then
-    check_benchmark_log
-    show_bench='1'
-  elif [[ $userInput == 'n' ]]; then
-    show_node='1'
-  elif [[ $userInput == 'd' ]]; then
-    check_daemon_log
-    show_daemon='1'
-  elif [[ $userInput == 'u' ]]; then
-    node_os_update
-  elif [[ $userInput == 'c' ]]; then
-    show_commands='1'
-  elif [[ $userInput == 't' ]]; then
-    show_flux_node_details='1'
-  elif [[ $userInput == 'p' ]]; then
-    show_external_port_details='1'
-  elif [[ $userInput == 'k' ]]; then
-    show_node_kda_details='1'
-  elif [[ $userInput == 'f' ]]; then
-    clear
-    get_flux_bench_info
-    if [[ $checking_ports != '1' ]]; then
-      sleep 0.25
-      check_bench
+ 
+    if [[ $userInput == 'b' ]]; then
+      check_benchmark_log
+      show_bench='1'
+    elif [[ $userInput == 'n' ]]; then
+      show_node='1'
+    elif [[ $userInput == 'd' ]]; then
+      check_daemon_log
+      show_daemon='1'
+    elif [[ $userInput == 'i' ]]; then
+      show_docker='1'
+    elif [[ $userInput == 'u' ]]; then
+      node_os_update
+    elif [[ $userInput == 'c' ]]; then
+      show_commands='1'
+    elif [[ $userInput == 't' ]]; then
+      show_flux_node_details='1'
+    elif [[ $userInput == 'p' ]]; then
+      show_external_port_details='1'
+    elif [[ $userInput == 'k' ]]; then
+      show_node_kda_details='1'
+    elif [[ $userInput == 'f' ]]; then
+      clear
+      get_flux_bench_info
+      if [[ $checking_ports != '1' ]]; then
+        sleep 0.25
+        check_bench
+        sleep 0.1
+        check_back
+        sleep 0.1
+        show_node_fix_tile
+      fi
       sleep 0.1
-      check_back
-      sleep 0.1
-      show_node_fix_tile
+    elif [[ $userInput == 'q' ]]; then
+      clear
+      set -o history
+      exit
+    elif [[ $userInput == 'l' ]]; then
+      whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
+      # Mowats script to run tmux to view flux logs
+      bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
+    else
+      redraw_term='0'
     fi
-    sleep 0.1
-  elif [[ $userInput == 'q' ]]; then
-    clear
-    set -o history
-    exit
-  elif [[ $userInput == 'l' ]]; then
-    whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
-    # Mowats script to run tmux to view flux logs
-    bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
-  else
-    redraw_term='0'
   fi
 }
 
@@ -491,6 +504,23 @@ function show_node_kda_tile(){
   echo -e "$BLUE_CIRCLE   NODE KDA ADDRESS                -    $node_kda_address"
   echo -e "$BLUE_CIRCLE   USER KDA ADDRESS                -    $user_kda_address"
   navigation
+}
+
+function show_docker_tile(){
+  clear
+  sleep 0.25
+  echo -e "${GREEN}   checking docker image details ...${NC}"
+  sleep 3
+  check_docker_images
+  clear
+  sleep .25
+  make_header "DOCKER IMAGE DETAILS" "$BLUE"
+  echo -e $prune_docker_containers
+  navigation
+}
+
+function check_docker_images(){
+  prune_docker_containers=$(docker ps --filter status=exited --filter status=dead -q 2>/dev/null)
 }
 
 # check to see if docker service is running
@@ -829,7 +859,9 @@ function check_term_resize(){
   local currentWidth
   currentWidth=$(tput cols)
   if [[ $WINDOW_WIDTH -ne $currentWidth  ]]; then
-    redraw_term='1'
+    term_resize='1'
+  else
+    term_resize='0'
   fi
 }
 
@@ -1099,6 +1131,9 @@ function main_terminal(){
         check_port_info
         #check_bench
         show_flux_benchmark_info_tile
+      elif [[ $show_docker == '1' ]]; then
+        check_docker_images
+        show_docker_tile
       elif [[ $show_commands == '1' ]]; then
         show_available_commands_tile
       elif [[ $show_flux_node_details == '1' ]]; then
