@@ -225,14 +225,11 @@ function get_blocks_since_last_confirmed(){
 
 function update (){
   local userInput
-  # check to see if userInput is empty
 
   read -s -n 1 -t 1 userInput
   if [[ -z $userInput ]]; then
-    # if userInput is empty, then prompt the user to enter a value
     $userInput=$last_user_input
   else
-    # if userInput is not empty, then set the last_user_input variable
     $last_user_input=$userInput
   fi
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
