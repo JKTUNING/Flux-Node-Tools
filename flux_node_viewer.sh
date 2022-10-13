@@ -514,9 +514,10 @@ function show_docker_tile(){
   check_docker_images
   clear
   sleep .25
-  make_header "DOCKER IMAGE DETAILS" "$BLUE"
-  echo -e $running_docker_containers
-  echo -e $dead_docker_containers
+  make_header "RUNNING DOCKER CONTAINER DETAILS" "$BLUE"
+  echo -e "$running_docker_containers"
+  make_header "DEAD DOCKER CONTAINER DETAILS" "$YELLOW"
+  echo -e "$dead_docker_containers"
   navigation
 }
 
