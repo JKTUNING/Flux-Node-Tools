@@ -125,7 +125,7 @@ show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
-
+last_user_input=''
 checking_ports='0'
 
 # get a list of the LISTEN ports
@@ -227,6 +227,11 @@ function update (){
   local userInput
 
   read -s -n 1 -t 1 userInput
+  if [[ -z $userInput ]]; then
+    $userInput=$last_user_input
+  else
+    $last_user_input=$userInput
+  fi
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
   #'d' shows daemon screen and the last 5 lines of daemon error log
   #'n' shows node screen
@@ -238,39 +243,27 @@ function update (){
   #'f' shows fucntions to manage node services
   #'l' shows Mowat's tmux log view pane
   #'q' will quit
+  show_node='0'
+  show_daemon='0'
+  show_bench='0'
+  show_commands='0'
+  show_flux_node_details='0'
+  show_external_port_details='0'
+  show_node_kda_details='0'
+  show_node_fix_details='0'
+  redraw_term='0'
   if [[ $userInput == 'b' ]]; then
     check_benchmark_log
-    show_node='0'
-    show_daemon='0'
     show_bench='1'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'n' ]]; then
     show_node='1'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'd' ]]; then
     check_daemon_log
-    show_node='0'
     show_daemon='1'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'u' ]]; then
@@ -278,47 +271,19 @@ function update (){
     sleep 0.1
     redraw_term='1'
   elif [[ $userInput == 'c' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
     show_commands='1'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 't' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
     show_flux_node_details='1'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
     elif [[ $userInput == 'p' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
     show_external_port_details='1'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
     elif [[ $userInput == 'k' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
     show_node_kda_details='1'
-    show_node_fix_details='0'
     redraw_term='1'
     sleep 0.1
   elif [[ $userInput == 'f' ]]; then
