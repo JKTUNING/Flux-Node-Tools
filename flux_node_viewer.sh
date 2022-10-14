@@ -538,12 +538,12 @@ function show_node_kda_tile(){
 
 function show_docker_tile(){
   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   checking docker image details ...${NC}"
     check_docker_images
   fi
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   checking docker image details ...${NC}"
-  check_docker_images
+ 
   clear
   sleep .25
   make_header "RUNNING DOCKER CONTAINER DETAILS" "$BLUE"
@@ -552,6 +552,7 @@ function show_docker_tile(){
   echo -e "$dead_docker_containers"
   make_header "DANGLING DOCKER IMAGES DETAILS" "$YELLOW"
   echo -e "$dangling_docker_images"
+  prune_docker
   navigation
 }
 
@@ -559,6 +560,30 @@ function check_docker_images(){
   running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}" 2>/dev/null)
   dead_docker_containers=$(docker ps --filter status=exited --filter status=dead 2>/dev/null)
   dangling_docker_images=$(docker images --filter dangling=true 2>/dev/null)
+}
+
+function prune_docker(){
+  local userInput
+
+  if [[ $($dead_docker_containers | egrep -a -wi 'exited|dead') != "" ]]; then
+    read -p 'Would you like to prune your dead or exited docker containers ?(Y/N) ' userInput
+
+    if  [[ $userInput = 'y' ]]; then
+      echo -e "${GREEN} removing dead and exited docker containers ... "
+      docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
+      sleep 1
+    fi
+  fi
+
+  if [[ $($dangling_docker_images | grep 'ago') != "" ]]; then
+    read -p 'Would you like to prune your dangling docker images ?(Y/N) ' userInput
+
+    if  [[ $userInput = 'y' ]]; then
+      echo -e "${GREEN} removing dangling docker images... "
+      docker rmi $(docker images --filter dangling=true -q)
+      sleep 1
+    fi
+  fi
 }
 
 # check to see if docker service is running
