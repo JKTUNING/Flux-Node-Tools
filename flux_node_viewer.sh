@@ -248,6 +248,7 @@ function update(){
   #'d' shows daemon screen and the last 5 lines of daemon error log
   #'n' shows node screen
   #'i' docker image details
+  #'o' docker prune command
   #'u' shows ubuntu operating system update screen
   #'c' shows available commands
   #'t' shows flux network node details
@@ -269,7 +270,7 @@ function update(){
     show_node_fix_details='0'
     show_docker_image_details='0'
 
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
@@ -286,6 +287,9 @@ function update(){
       check_daemon_log
       show_daemon='1'
     elif [[ $userInput == 'i' ]]; then
+      show_docker='1'
+    elif [[ $userInput == 'o' ]]; then
+      prune_docker
       show_docker='1'
     elif [[ $userInput == 'u' ]]; then
       node_os_update
@@ -552,7 +556,6 @@ function show_docker_tile(){
   echo -e "$dead_docker_containers"
   make_header "DANGLING DOCKER IMAGES DETAILS" "$YELLOW"
   echo -e "$dangling_docker_images"
-  prune_docker
   navigation
 }
 
@@ -565,21 +568,17 @@ function check_docker_images(){
 function prune_docker(){
   local userInput
 
-  if [[ $($dead_docker_containers | egrep -a -wi 'exited|dead') != "" ]]; then
-    read -p 'Would you like to prune your dead or exited docker containers ?(Y/N) ' userInput
+  if [[ $("$dead_docker_containers" | egrep -a -wi 'exited|dead') != "" ]]; then
 
-    if  [[ $userInput = 'y' ]]; then
-      echo -e "${GREEN} removing dead and exited docker containers ... "
+    if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
       docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
       sleep 1
     fi
   fi
 
-  if [[ $($dangling_docker_images | grep 'ago') != "" ]]; then
-    read -p 'Would you like to prune your dangling docker images ?(Y/N) ' userInput
+  if [[ $("$dangling_docker_images" | grep 'ago') != "" ]]; then
 
-    if  [[ $userInput = 'y' ]]; then
-      echo -e "${GREEN} removing dangling docker images... "
+    if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
       sleep 1
     fi
