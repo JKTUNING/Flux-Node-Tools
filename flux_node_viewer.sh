@@ -1,7 +1,6 @@
 #!/bin/bash
-
+#trap exit and re-enable history
 trap app_close EXIT
-
 function app_close(){
   clear
   echo -e "exiting .. clearing history ..."
@@ -13,7 +12,6 @@ function app_close(){
 
 # trap ctrl-c and call ctrl_c()
 trap ctrl_c INT
-
 function ctrl_c() {
   exit
 }
