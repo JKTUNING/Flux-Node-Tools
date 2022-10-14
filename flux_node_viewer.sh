@@ -229,6 +229,7 @@ function update(){
   local userInput
   local noInput
 
+  #if terminal is being resized we set redraw to 1 and exit the function
   if [[ $term_resize != '1' ]]; then
     redraw_term='0'
   else
@@ -258,6 +259,7 @@ function update(){
   #'l' shows Mowat's tmux log view pane
   #'q' will quit
 
+  #only process if new user input
   if [[ $noInput != 1 ]]; then
     show_node='0'
     show_daemon='0'
@@ -475,6 +477,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
   echo -e "$BLUE_CIRCLE   'i'            -    Docker Container Details"
+  echo -e "$BLUE_CIRCLE   'o'            -    Prune Docker Containers"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
