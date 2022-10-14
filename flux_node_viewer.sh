@@ -573,7 +573,7 @@ function prune_docker(){
   if [[ "$check_container"  != "" ]]; then
     if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
       docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
-      sleep 1
+      sleep 4
     fi
   fi
 
@@ -581,7 +581,7 @@ function prune_docker(){
   if [[ "$check_images" != "" ]]; then
     if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
-      sleep 1
+      sleep 4
     fi
   fi
 }
