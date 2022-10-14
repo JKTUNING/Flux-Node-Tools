@@ -1,5 +1,23 @@
 #!/bin/bash
 
+trap app_close EXIT
+
+function app_close(){
+  clear
+  echo -e "exiting .. clearing history ..."
+  sleep 1.5
+  set -o history
+  clear
+  sleep 0.5
+}
+
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+
+function ctrl_c() {
+  exit
+}
+
 #disable terminal history while inside of app
 set +o history
 
@@ -39,7 +57,6 @@ if ! jq --version >/dev/null 2>&1; then
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
-    set -o history
     exit
   fi
 fi
@@ -317,7 +334,6 @@ function update(){
       sleep 0.1
     elif [[ $userInput == 'q' ]]; then
       clear
-      set -o history
       exit
     elif [[ $userInput == 'l' ]]; then
       whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
@@ -1195,19 +1211,6 @@ function main_terminal(){
 
     update
   done
-}
-
-# trap ctrl-c and call ctrl_c()
-trap ctrl_c INT
-
-function ctrl_c() {
-  clear
-  echo -e "exiting .. clearing history ..."
-  sleep 1.5
-  set -o history
-  clear
-  sleep 0.5
-  exit
 }
 
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
