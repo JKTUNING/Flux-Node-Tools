@@ -567,17 +567,17 @@ function check_docker_images(){
 
 function prune_docker(){
   local userInput
+  check_container=$(docker ps --filter status=exited --filter status=dead 2>/dev/null | egrep -a -wi 'exited|dead' 2>/dev/null)
 
-  if [[ $("$dead_docker_containers" | egrep -a -wi 'exited|dead') != "" ]]; then
-
+  if [[ $("$check_container" | egrep -a -wi 'exited|dead') != "" ]]; then
     if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
       docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
       sleep 1
     fi
   fi
 
-  if [[ $("$dangling_docker_images" | grep 'ago') != "" ]]; then
-
+  check_images=$(docker images --filter dangling=true 2>/dev/null | grep 'ago')
+  if [[ "$check_images" != "" ]]; then
     if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
       sleep 1
