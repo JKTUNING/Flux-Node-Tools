@@ -225,9 +225,17 @@ function get_blocks_since_last_confirmed(){
   fi
 }
 
-function update (){
+function update(){
   local userInput
   local noInput
+
+  if [[ $term_resize != '1' ]]; then
+    redraw_term='0'
+  else
+    redraw_term='1'
+    sleep 1
+    return 1
+  fi
 
   read -s -n 1 -t 1 userInput
   if [[ -z $userInput ]]; then
@@ -248,25 +256,19 @@ function update (){
   #'f' shows fucntions to manage node services
   #'l' shows Mowat's tmux log view pane
   #'q' will quit
-  show_node='0'
-  show_daemon='0'
-  show_bench='0'
-  show_commands='0'
-  show_docker='0'
-  show_flux_node_details='0'
-  show_external_port_details='0'
-  show_node_kda_details='0'
-  show_node_fix_details='0'
-  show_docker_image_details='0'
-
-  if [[ $term_resize != '1' ]]; then
-    redraw_term='0'
-  else
-    redraw_term='1'
-    noInput='0'
-  fi
 
   if [[ $noInput != 1 ]]; then
+    show_node='0'
+    show_daemon='0'
+    show_bench='0'
+    show_commands='0'
+    show_docker='0'
+    show_flux_node_details='0'
+    show_external_port_details='0'
+    show_node_kda_details='0'
+    show_node_fix_details='0'
+    show_docker_image_details='0'
+
     valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
@@ -322,9 +324,15 @@ function update (){
 }
 
 function show_flux_daemon_info_tile(){
-  clear
-  echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
-  check_current_blockheight
+  if [[ $1 != 1 ]]; then
+    get_flux_blockchain_info
+    check_daemon_log
+    check_daemon_service
+    check_port_info
+    clear
+    echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
+    check_current_blockheight
+  fi
   clear
   sleep 0.25
   make_header "$DASH_DAEMON_TITLE" "$BLUE"
@@ -346,16 +354,27 @@ function show_flux_daemon_info_tile(){
 }
 
 function show_flux_node_info_tile(){
-  clear
-  sleep 0.25
-  # check dhcp first
-  check_dhcp_enable 
-  echo -e "${GREEN}   Checking external flux ports ...${NC}"
-  check_external_ports
-  echo -e "${GREEN}   Checking UPNP details ...${NC}"
-  check_upnp
-  echo -e "${GREEN}   Checking node uptime ...${NC}"
-  get_flux_uptime
+  if [[ $1 != 1 ]]; then
+    get_flux_node_info
+    get_blocks_since_last_confirmed
+    check_pm2_flux_service
+    check_docker_service
+    check_mongodb_service
+    check_pm2_flux_watchdog_service
+    check_port_info
+    check_flux_log
+    clear
+    sleep 0.25
+    # check dhcp first
+    check_dhcp_enable 
+    echo -e "${GREEN}   Checking external flux ports ...${NC}"
+    check_external_ports
+    echo -e "${GREEN}   Checking UPNP details ...${NC}"
+    check_upnp
+    echo -e "${GREEN}   Checking node uptime ...${NC}"
+    get_flux_uptime
+  fi
+
   clear
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
@@ -400,6 +419,11 @@ function show_flux_node_info_tile(){
 }
 
 function show_flux_benchmark_info_tile(){
+  if [[ $1 != 1 ]]; then
+    get_flux_bench_info
+    check_benchmark_log
+    check_port_info
+  fi
   clear
   sleep 0.25
   make_header "$DASH_BENCH_TITLE" "$BLUE"
@@ -453,15 +477,16 @@ function show_available_commands_tile(){
   navigation
 }
 
-
 # show the flux network node details
 function show_network_node_details_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   Checking flux network node details ...${NC}"
-  check_total_nodes
-  echo -e "${GREEN}   Checking flux price details ...${NC}"
-  check_flux_price
+  if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking flux network node details ...${NC}"
+    check_total_nodes
+    echo -e "${GREEN}   Checking flux price details ...${NC}"
+    check_flux_price
+  fi
   clear
   sleep 0.25
   make_header "FLUX NETWORK NODE DETAILS" "$BLUE"
@@ -476,12 +501,14 @@ function show_network_node_details_tile(){
 
 #show external port info
 function show_external_port_info_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   Checking external flux ports ...${NC}"
-  check_external_ports
-  echo -e "${GREEN}   Checking UPNP details ...${NC}"
-  check_upnp
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking external flux ports ...${NC}"
+    check_external_ports
+    echo -e "${GREEN}   Checking UPNP details ...${NC}"
+    check_upnp
+  fi
   clear
   sleep 0.25
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
@@ -495,10 +522,12 @@ function show_external_port_info_tile(){
 
 #show node kda address info
 function show_node_kda_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   checking node kda details ...${NC}"
-  check_kda_address
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   checking node kda details ...${NC}"
+    check_kda_address
+  fi
   clear
   sleep 0.25
   make_header "FLUX NODE KDA DETAILS" "$BLUE"
@@ -508,6 +537,9 @@ function show_node_kda_tile(){
 }
 
 function show_docker_tile(){
+  if [[ $1 != 1 ]]; then
+    check_docker_images
+  fi
   clear
   sleep 0.25
   echo -e "${GREEN}   checking docker image details ...${NC}"
@@ -1108,48 +1140,31 @@ function flux_watchdog_restart(){
 function main_terminal(){
  
   while true; do
-    check_term_resize
-
-    WINDOW_WIDTH=$(tput cols)
-    WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
     if [[ $redraw_term == '1' ]]; then
       if [[ $show_daemon == '1' ]]; then
-        get_flux_blockchain_info
-        check_daemon_log
-        check_daemon_service
-        check_port_info
-        show_flux_daemon_info_tile
+        show_flux_daemon_info_tile $term_resize
       elif [[ $show_node == '1' ]]; then
-        get_flux_node_info
-        get_blocks_since_last_confirmed
-        check_pm2_flux_service
-        check_docker_service
-        check_mongodb_service
-        check_pm2_flux_watchdog_service
-        check_port_info
-        check_flux_log
-        #check_back
-        show_flux_node_info_tile
+        show_flux_node_info_tile $term_resize
       elif [[ $show_bench == '1' ]]; then
-        get_flux_bench_info
-        check_benchmark_log
-        check_port_info
-        #check_bench
-        show_flux_benchmark_info_tile
+        show_flux_benchmark_info_tile $term_resize
       elif [[ $show_docker == '1' ]]; then
-        check_docker_images
-        show_docker_tile
+        show_docker_tile $term_resize
       elif [[ $show_commands == '1' ]]; then
         show_available_commands_tile
       elif [[ $show_flux_node_details == '1' ]]; then
-        show_network_node_details_tile
+        show_network_node_details_tile $term_resize
       elif [[ $show_external_port_details == '1' ]]; then
-        show_external_port_info_tile
+        show_external_port_info_tile $term_resize
       elif [[ $show_node_kda_details == '1' ]]; then
-        show_node_kda_tile
+        show_node_kda_tile $term_resize
       fi
     fi
+
+    check_term_resize
+    WINDOW_WIDTH=$(tput cols)
+    WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
+
     update
   done
 }
@@ -1169,15 +1184,6 @@ function ctrl_c() {
 
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
-#get_flux_bench_info
-#get_flux_blockchain_info
-#get_flux_node_info
-#get_blocks_since_last_confirmed
-#check_port_info
-#check_docker_service
-#check_mongodb_service
-#check_daemon_service
-#check_pm2_flux_service
 check_ip
 check_version
 
