@@ -556,6 +556,7 @@ function show_docker_tile(){
   echo -e "$dead_docker_containers"
   make_header "DANGLING DOCKER IMAGES DETAILS" "$YELLOW"
   echo -e "$dangling_docker_images"
+  echo -e "${YELLOW_ARROW}To prune docker press 'o' ..."
   navigation
 }
 
@@ -566,6 +567,7 @@ function check_docker_images(){
 }
 
 function prune_docker(){
+  check_docker_images
   check_container=$(echo "$dead_docker_containers" | egrep -a -wi 'exited|dead' 2>/dev/null)
 
   if [[ "$check_container"  != "" ]]; then
