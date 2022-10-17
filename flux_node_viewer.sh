@@ -367,7 +367,9 @@ function show_flux_daemon_info_tile(){
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
-  echo -e "$flux_daemon_version_check"
+  if [[ "$flux_daemon_version_check" != "" ]]; then
+    echo -e "$flux_daemon_version_check"
+  fi
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
@@ -458,7 +460,9 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
-  echo -e "$flux_bench_version_check"
+  if [[ "$flux_bench_version_check" != "" ]]; then
+    echo -e "$flux_bench_version_check"
+  fi
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
@@ -819,8 +823,8 @@ function check_flux_bench_version(){
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
     flux_bench_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
-  else
-    flux_bench_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_bench_required_version${NC}"
+  #else
+    #flux_bench_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_bench_required_version${NC}"
   fi
 }
 
@@ -830,8 +834,8 @@ function check_flux_daemon_version(){
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
     flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
-  else
-    flux_daemon_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_daemon_required_version${NC}"
+  #else
+    #flux_daemon_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_daemon_required_version${NC}"
   fi
 }
 
