@@ -3,6 +3,23 @@
 #disable terminal history while inside of app
 set +o history
 
+#trap exit and re-enable history
+trap app_close EXIT
+function app_close(){
+  clear
+  echo -e "exiting .. clearing history ..."
+  sleep 1
+  set -o history
+  clear
+  sleep 0.5
+}
+
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+function ctrl_c() {
+  exit
+}
+
 #colors
 YELLOW='\033[0;33m'
 GREEN='\033[1;32m'
@@ -15,6 +32,7 @@ TAB='  '
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
   echo "alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'" | sudo tee -a /etc/bash.bashrc
+  alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'
   source /etc/bash.bashrc
 fi
 
@@ -39,7 +57,6 @@ if ! jq --version >/dev/null 2>&1; then
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
-    set -o history
     exit
   fi
 fi
@@ -88,6 +105,8 @@ BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
 PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
+FLUX_BENCH_CHEKC_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
+FLUX_DAEMON_CHECK_URL='https://apt.runonflux.io/pool/main/f/flux/'
 
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
 # if ! [ -f /usr/local/bin/flux-cli ]; then
@@ -125,7 +144,9 @@ show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
 show_node_fix_details='0'
-
+show_docker_image_details='0'
+term_resize='0'
+last_user_input=''
 checking_ports='0'
 
 # get a list of the LISTEN ports
@@ -223,13 +244,31 @@ function get_blocks_since_last_confirmed(){
   fi
 }
 
-function update (){
+function update(){
   local userInput
+  local noInput
+
+  #if terminal is being resized we set redraw to 1 and exit the function
+  if [[ $term_resize != '1' ]]; then
+    redraw_term='0'
+  else
+    redraw_term='1'
+    sleep 1
+    return 1
+  fi
 
   read -s -n 1 -t 1 userInput
+  if [[ -z $userInput ]]; then
+    noInput=1
+    userInput="$last_user_input"
+  else
+    last_user_input=$userInput
+  fi
   #'b' shows benchmark screen and the last 5 lines of bench mark error log
   #'d' shows daemon screen and the last 5 lines of daemon error log
   #'n' shows node screen
+  #'i' docker image details
+  #'o' docker prune command
   #'u' shows ubuntu operating system update screen
   #'c' shows available commands
   #'t' shows flux network node details
@@ -238,118 +277,87 @@ function update (){
   #'f' shows fucntions to manage node services
   #'l' shows Mowat's tmux log view pane
   #'q' will quit
-  if [[ $userInput == 'b' ]]; then
-    check_benchmark_log
-    show_node='0'
-    show_daemon='0'
-    show_bench='1'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
-  elif [[ $userInput == 'n' ]]; then
-    show_node='1'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
-  elif [[ $userInput == 'd' ]]; then
-    check_daemon_log
-    show_node='0'
-    show_daemon='1'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
-  elif [[ $userInput == 'u' ]]; then
-    node_os_update
-    sleep 0.1
-    redraw_term='1'
-  elif [[ $userInput == 'c' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='1'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
-  elif [[ $userInput == 't' ]]; then
+
+  #only process if new user input
+  if [[ $noInput != 1 ]]; then
     show_node='0'
     show_daemon='0'
     show_bench='0'
     show_commands='0'
-    show_flux_node_details='1'
+    show_docker='0'
+    show_flux_node_details='0'
     show_external_port_details='0'
     show_node_kda_details='0'
     show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
+    show_docker_image_details='0'
+
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o')
+    for i in "${valid_input[@]}"; do
+      if [[ $userInput == $i ]]; then
+        redraw_term='1'
+        sleep 0.1
+      fi
+    done
+ 
+    if [[ $userInput == 'b' ]]; then
+      check_benchmark_log
+      show_bench='1'
+    elif [[ $userInput == 'n' ]]; then
+      show_node='1'
+    elif [[ $userInput == 'd' ]]; then
+      check_daemon_log
+      show_daemon='1'
+    elif [[ $userInput == 'i' ]]; then
+      show_docker='1'
+    elif [[ $userInput == 'o' ]]; then
+      prune_docker
+      show_docker='1'
+    elif [[ $userInput == 'u' ]]; then
+      node_os_update
+    elif [[ $userInput == 'c' ]]; then
+      show_commands='1'
+    elif [[ $userInput == 't' ]]; then
+      show_flux_node_details='1'
     elif [[ $userInput == 'p' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='1'
-    show_node_kda_details='0'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
+      show_external_port_details='1'
     elif [[ $userInput == 'k' ]]; then
-    show_node='0'
-    show_daemon='0'
-    show_bench='0'
-    show_commands='0'
-    show_flux_node_details='0'
-    show_external_port_details='0'
-    show_node_kda_details='1'
-    show_node_fix_details='0'
-    redraw_term='1'
-    sleep 0.1
-  elif [[ $userInput == 'f' ]]; then
-    clear
-    get_flux_bench_info
-    if [[ $checking_ports != '1' ]]; then
-      sleep 0.25
-      check_bench
+      show_node_kda_details='1'
+    elif [[ $userInput == 'f' ]]; then
+      clear
+      get_flux_bench_info
+      if [[ $checking_ports != '1' ]]; then
+        sleep 0.25
+        check_bench
+        sleep 0.1
+        check_back
+        sleep 0.1
+        show_node_fix_tile
+      fi
       sleep 0.1
-      check_back
-      sleep 0.1
-      show_node_fix_tile
+    elif [[ $userInput == 'q' ]]; then
+      clear
+      exit
+    elif [[ $userInput == 'l' ]]; then
+      whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
+      # Mowats script to run tmux to view flux logs
+      bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
+    else
+      redraw_term='0'
     fi
-    sleep 0.1
-  elif [[ $userInput == 'q' ]]; then
-    clear
-    set -o history
-    exit
-  elif [[ $userInput == 'l' ]]; then
-    whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
-    # Mowats script to run tmux to view flux logs
-    bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
-  else
-    redraw_term='0'
   fi
 }
 
 function show_flux_daemon_info_tile(){
-  clear
-  echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
-  check_current_blockheight
+  if [[ $1 != 1 ]]; then
+    get_flux_blockchain_info
+    check_daemon_log
+    check_daemon_service
+    check_port_info
+    clear
+    echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
+    check_current_blockheight
+    check_flux_daemon_version
+  fi
   clear
   sleep 0.25
   make_header "$DASH_DAEMON_TITLE" "$BLUE"
@@ -359,6 +367,9 @@ function show_flux_daemon_info_tile(){
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
+  if [[ "$flux_daemon_version_check" != "" ]]; then
+    echo -e "$flux_daemon_version_check"
+  fi
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
@@ -371,16 +382,27 @@ function show_flux_daemon_info_tile(){
 }
 
 function show_flux_node_info_tile(){
-  clear
-  sleep 0.25
-  # check dhcp first
-  check_dhcp_enable 
-  echo -e "${GREEN}   Checking external flux ports ...${NC}"
-  check_external_ports
-  echo -e "${GREEN}   Checking UPNP details ...${NC}"
-  check_upnp
-  echo -e "${GREEN}   Checking node uptime ...${NC}"
-  get_flux_uptime
+  if [[ $1 != 1 ]]; then
+    get_flux_node_info
+    get_blocks_since_last_confirmed
+    check_pm2_flux_service
+    check_docker_service
+    check_mongodb_service
+    check_pm2_flux_watchdog_service
+    check_port_info
+    check_flux_log
+    clear
+    sleep 0.25
+    # check dhcp first
+    check_dhcp_enable 
+    echo -e "${GREEN}   Checking external flux ports ...${NC}"
+    check_external_ports
+    echo -e "${GREEN}   Checking UPNP details ...${NC}"
+    check_upnp
+    echo -e "${GREEN}   Checking node uptime ...${NC}"
+    get_flux_uptime
+  fi
+
   clear
   sleep 0.25
   make_header "$DASH_NODE_TITLE" "$BLUE"
@@ -425,6 +447,12 @@ function show_flux_node_info_tile(){
 }
 
 function show_flux_benchmark_info_tile(){
+  if [[ $1 != 1 ]]; then
+    get_flux_bench_info
+    check_benchmark_log
+    check_port_info
+    check_flux_bench_version
+  fi
   clear
   sleep 0.25
   make_header "$DASH_BENCH_TITLE" "$BLUE"
@@ -432,6 +460,9 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
+  if [[ "$flux_bench_version_check" != "" ]]; then
+    echo -e "$flux_bench_version_check"
+  fi
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
@@ -471,21 +502,24 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'k'            -    Check Kadena Address"
   echo -e "$BLUE_CIRCLE   'f'            -    Flux Node Control"
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
+  echo -e "$BLUE_CIRCLE   'i'            -    Docker Container Details"
+  echo -e "$BLUE_CIRCLE   'o'            -    Prune Docker Containers"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
   navigation
 }
 
-
 # show the flux network node details
 function show_network_node_details_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   Checking flux network node details ...${NC}"
-  check_total_nodes
-  echo -e "${GREEN}   Checking flux price details ...${NC}"
-  check_flux_price
+  if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking flux network node details ...${NC}"
+    check_total_nodes
+    echo -e "${GREEN}   Checking flux price details ...${NC}"
+    check_flux_price
+  fi
   clear
   sleep 0.25
   make_header "FLUX NETWORK NODE DETAILS" "$BLUE"
@@ -500,12 +534,14 @@ function show_network_node_details_tile(){
 
 #show external port info
 function show_external_port_info_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   Checking external flux ports ...${NC}"
-  check_external_ports
-  echo -e "${GREEN}   Checking UPNP details ...${NC}"
-  check_upnp
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking external flux ports ...${NC}"
+    check_external_ports
+    echo -e "${GREEN}   Checking UPNP details ...${NC}"
+    check_upnp
+  fi
   clear
   sleep 0.25
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
@@ -519,16 +555,64 @@ function show_external_port_info_tile(){
 
 #show node kda address info
 function show_node_kda_tile(){
-  clear
-  sleep 0.25
-  echo -e "${GREEN}   checking node kda details ...${NC}"
-  check_kda_address
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   checking node kda details ...${NC}"
+    check_kda_address
+  fi
   clear
   sleep 0.25
   make_header "FLUX NODE KDA DETAILS" "$BLUE"
   echo -e "$BLUE_CIRCLE   NODE KDA ADDRESS                -    $node_kda_address"
   echo -e "$BLUE_CIRCLE   USER KDA ADDRESS                -    $user_kda_address"
   navigation
+}
+
+function show_docker_tile(){
+  if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   checking docker image details ...${NC}"
+    check_docker_images
+  fi
+ 
+  clear
+  sleep .25
+  make_header "RUNNING DOCKER CONTAINER DETAILS" "$BLUE"
+  echo -e "$running_docker_containers"
+  make_header "DEAD DOCKER CONTAINER DETAILS" "$YELLOW"
+  echo -e "$dead_docker_containers"
+  make_header "DANGLING DOCKER IMAGES DETAILS" "$YELLOW"
+  echo -e "$dangling_docker_images"
+  echo -e "${YELLOW_ARROW}To prune docker press 'o' ..."
+  navigation
+}
+
+function check_docker_images(){
+  running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}" 2>/dev/null)
+  dead_docker_containers=$(docker ps --filter status=exited --filter status=dead 2>/dev/null)
+  dangling_docker_images=$(docker images --filter dangling=true 2>/dev/null)
+}
+
+function prune_docker(){
+  check_docker_images
+  check_container=$(echo "$dead_docker_containers" | egrep -a -wi 'exited|dead' 2>/dev/null)
+
+  if [[ "$check_container"  != "" ]]; then
+    if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
+      docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
+      sleep 4
+    fi
+  fi
+
+  check_images=$(echo "$dangling_docker_images"  | grep 'ago'  2>/dev/null)
+  if [[ "$check_images" != "" ]]; then
+    if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
+      docker rmi $(docker images --filter dangling=true -q)
+      sleep 4
+    fi
+  fi
 }
 
 # check to see if docker service is running
@@ -732,6 +816,29 @@ function check_version(){
   fi
 }
 
+#checks the current flux bench version and compares to local
+function check_flux_bench_version(){
+  flux_bench_required_version=$(curl -s -m 5 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
+
+  if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
+    flux_bench_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
+  #else
+    #flux_bench_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_bench_required_version${NC}"
+  fi
+}
+
+#checks the current released daemon version and compares to local
+function check_flux_daemon_version(){
+  flux_daemon_required_version=$(curl -s -m 5 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
+  if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
+    flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
+  #else
+    #flux_daemon_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_daemon_required_version${NC}"
+  fi
+}
+
 # grab current node counts from https://api.runonflux.io/daemon/getzelnodecount
 function check_total_nodes(){
   local nodeInfo=$(curl -sS --max-time 5 https://api.runonflux.io/daemon/getzelnodecount | jq -r '.data')
@@ -867,7 +974,9 @@ function check_term_resize(){
   local currentWidth
   currentWidth=$(tput cols)
   if [[ $WINDOW_WIDTH -ne $currentWidth  ]]; then
-    redraw_term='1'
+    term_resize='1'
+  else
+    term_resize='0'
   fi
 }
 
@@ -1108,73 +1217,37 @@ function flux_watchdog_restart(){
 function main_terminal(){
  
   while true; do
-    check_term_resize
-
-    WINDOW_WIDTH=$(tput cols)
-    WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
     if [[ $redraw_term == '1' ]]; then
       if [[ $show_daemon == '1' ]]; then
-        get_flux_blockchain_info
-        check_daemon_log
-        check_daemon_service
-        check_port_info
-        show_flux_daemon_info_tile
+        show_flux_daemon_info_tile $term_resize
       elif [[ $show_node == '1' ]]; then
-        get_flux_node_info
-        get_blocks_since_last_confirmed
-        check_pm2_flux_service
-        check_docker_service
-        check_mongodb_service
-        check_pm2_flux_watchdog_service
-        check_port_info
-        check_flux_log
-        #check_back
-        show_flux_node_info_tile
+        show_flux_node_info_tile $term_resize
       elif [[ $show_bench == '1' ]]; then
-        get_flux_bench_info
-        check_benchmark_log
-        check_port_info
-        #check_bench
-        show_flux_benchmark_info_tile
+        show_flux_benchmark_info_tile $term_resize
+      elif [[ $show_docker == '1' ]]; then
+        show_docker_tile $term_resize
       elif [[ $show_commands == '1' ]]; then
         show_available_commands_tile
       elif [[ $show_flux_node_details == '1' ]]; then
-        show_network_node_details_tile
+        show_network_node_details_tile $term_resize
       elif [[ $show_external_port_details == '1' ]]; then
-        show_external_port_info_tile
+        show_external_port_info_tile $term_resize
       elif [[ $show_node_kda_details == '1' ]]; then
-        show_node_kda_tile
+        show_node_kda_tile $term_resize
       fi
     fi
+
+    check_term_resize
+    WINDOW_WIDTH=$(tput cols)
+    WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
+
     update
   done
 }
 
-# trap ctrl-c and call ctrl_c()
-trap ctrl_c INT
-
-function ctrl_c() {
-  clear
-  echo -e "exiting .. clearing history ..."
-  sleep 1.5
-  set -o history
-  clear
-  sleep 0.5
-  exit
-}
-
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
-#get_flux_bench_info
-#get_flux_blockchain_info
-#get_flux_node_info
-#get_blocks_since_last_confirmed
-#check_port_info
-#check_docker_service
-#check_mongodb_service
-#check_daemon_service
-#check_pm2_flux_service
 check_ip
 check_version
 
