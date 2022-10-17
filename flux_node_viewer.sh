@@ -825,7 +825,7 @@ function check_flux_bench_version(){
 
 #checks the current released daemon version and compares to local
 function check_flux_daemon_version(){
-  flux_daemon_required_version=$(curl -s -m 5 FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_daemon_required_version=$(curl -s -m 5 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
     flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
