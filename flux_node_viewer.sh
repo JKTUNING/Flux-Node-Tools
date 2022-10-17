@@ -1,10 +1,14 @@
 #!/bin/bash
+
+#disable terminal history while inside of app
+set +o history
+
 #trap exit and re-enable history
 trap app_close EXIT
 function app_close(){
   clear
   echo -e "exiting .. clearing history ..."
-  sleep 1.5
+  sleep 1
   set -o history
   clear
   sleep 0.5
@@ -15,9 +19,6 @@ trap ctrl_c INT
 function ctrl_c() {
   exit
 }
-
-#disable terminal history while inside of app
-set +o history
 
 #colors
 YELLOW='\033[0;33m'
@@ -103,6 +104,8 @@ BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
 PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
+FLUX_BENCH_CHEKC_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
+FLUX_DAEMON_CHECK_URL='https://apt.runonflux.io/pool/main/f/flux/'
 
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
 # if ! [ -f /usr/local/bin/flux-cli ]; then
@@ -352,6 +355,7 @@ function show_flux_daemon_info_tile(){
     clear
     echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
     check_current_blockheight
+    check_flux_daemon_version
   fi
   clear
   sleep 0.25
@@ -362,6 +366,7 @@ function show_flux_daemon_info_tile(){
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
+  echo -e "$flux_daemon_version_check"
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
@@ -443,6 +448,7 @@ function show_flux_benchmark_info_tile(){
     get_flux_bench_info
     check_benchmark_log
     check_port_info
+    check_flux_bench_version
   fi
   clear
   sleep 0.25
@@ -451,6 +457,7 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
+  echo -e "$flux_bench_version_check"
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
@@ -801,6 +808,29 @@ function check_version(){
     flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
   else
     flux_node_version_check="${RED_ARROW}   You do not have the required version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
+  fi
+}
+
+#checks the current flux bench version and compares to local
+function check_flux_bench_version(){
+  flux_bench_required_version=$(curl -s -m 5 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
+
+  if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
+    flux_bench_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
+  else
+    flux_bench_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_bench_required_version${NC}"
+  fi
+}
+
+#checks the current released daemon version and compares to local
+function check_flux_daemon_version(){
+  flux_daemon_required_version=$(curl -s -m 5 FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
+  if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
+    flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
+  else
+    flux_daemon_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_daemon_required_version${NC}"
   fi
 }
 
