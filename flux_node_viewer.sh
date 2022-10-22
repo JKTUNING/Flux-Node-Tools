@@ -3,13 +3,12 @@
 #disable terminal history while inside of app
 set +o history
 
-#trap exit and re-enable history
+#trap exit and re-enable history only if it is off
 trap app_close EXIT
 function app_close(){
-  clear
-  echo -e "exiting .. clearing history ..."
-  sleep 1
-  set -o history
+  if [[ $(set -o | grep history) == *"off"* ]]; then
+    set -o history
+  fi
   clear
   sleep 0.5
 }
