@@ -3,7 +3,7 @@
 #disable terminal history while inside of app
 set +o history
 
-#trap exit and re-enable history onlt if it is off
+#trap exit and re-enable history only if it is off
 trap app_close EXIT
 function app_close(){
   if [[ $(set -o | grep history) == *"off"* ]]; then
