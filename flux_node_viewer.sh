@@ -1061,7 +1061,7 @@ function check_current_blockheight(){
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
   if [[ "$dhcpCheck" != "" ]]; then
-    dhcp_status="${YELLOW}DHCP DETECTED .. CHECK NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
+    dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
 
