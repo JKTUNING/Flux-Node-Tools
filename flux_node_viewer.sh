@@ -1035,7 +1035,11 @@ function get_flux_uptime(){
 
 # Get api network blockheight
 function check_current_blockheight(){
-  local api_current_height=$(curl -sk -m 5 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+  local api_current_height=$(curl -sS --max-time 5 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
+  
+  if [[ api_current_height == "" ]]; then
+    api_current_height=$(curl -sk -m 5 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+  fi
 
   if [[ $flux_daemon_block_height == "" ]]; then
       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
@@ -1057,7 +1061,7 @@ function check_current_blockheight(){
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
   if [[ "$dhcpCheck" != "" ]]; then
-    dhcp_status="${YELLOW}DHCP DETECTED .. CHECK NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
+    dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
 
