@@ -1217,6 +1217,15 @@ function flux_watchdog_restart(){
   sleep 3
 }
 
+#function LVM Group fix
+function lvm_fix_function(){
+  echo -e "${SEA}applying LVM Fix and restarting benchmarks ...${NC} "
+  sudo lvextend -l +100%FREE --resizefs /dev/ubuntu-vg/ubuntu-lv
+  sleep 2
+  flux_update_benchmarks
+  $show_bench = '1'
+}
+
 function main_terminal(){
  
   while true; do
@@ -1268,6 +1277,8 @@ else
     show_daemon='1'
   elif [[ $1 == "ports" ]]; then
     show_external_port_details='1'
+  elif [[ $1 == "lvm-fix" ]]; then
+    lvm_fix_function
   else
     show_bench='1'
   fi
