@@ -333,6 +333,7 @@ function update(){
         show_node_fix_tile
       fi
       sleep 0.1
+      show_bench='1'
     elif [[ $userInput == 'q' ]]; then
       clear
       exit
