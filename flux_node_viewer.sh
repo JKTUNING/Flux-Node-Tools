@@ -570,7 +570,7 @@ function show_node_kda_tile(){
 function show_realtime_logs(){
   whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
   # Mowats script to run tmux to view flux logs
-  bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/dev/flux_log_tmux.sh)
+  bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_log_tmux.sh)
 }
 
 function show_docker_tile(){
