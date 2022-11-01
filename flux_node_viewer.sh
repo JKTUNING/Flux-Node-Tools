@@ -338,9 +338,7 @@ function update(){
       clear
       exit
     elif [[ $userInput == 'l' ]]; then
-      whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
-      # Mowats script to run tmux to view flux logs
-      bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
+      show_realtime_logs
     else
       redraw_term='0'
     fi
@@ -567,6 +565,12 @@ function show_node_kda_tile(){
   echo -e "$BLUE_CIRCLE   NODE KDA ADDRESS                -    $node_kda_address"
   echo -e "$BLUE_CIRCLE   USER KDA ADDRESS                -    $user_kda_address"
   navigation
+}
+
+function show_realtime_logs(){
+  whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
+  # Mowats script to run tmux to view flux logs
+  bash -i <(curl -s https://gist.githubusercontent.com/mattconres/670ffd527cb0e83b754ff39b2d37ce3a/raw/f9ef92147c4c3ce397c847494a0869c3ea379498/flux-log-tmux.sh)
 }
 
 function show_docker_tile(){
@@ -1280,6 +1284,9 @@ else
     show_external_port_details='1'
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
+  elif [[ $1 == "logs" ]]; then
+    show_realtime_logs
+    show_bench='1'
   else
     show_bench='1'
   fi
