@@ -805,7 +805,11 @@ function check_upnp(){
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
     fi
   else
-      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port not listening"
+    if [[ $upnp_check != "" ]]; then
+      upnp_status="${RED_ARROW}   UPNP ${GREEN}enabled${NC} - UI port and API port ${RED}NOT${NC} listening"
+    else
+      upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port ${RED}NOT${NC} listening"
+    fi
   fi
 }
 
