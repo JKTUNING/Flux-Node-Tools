@@ -35,6 +35,13 @@ if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
   source /etc/bash.bashrc
 fi
 
+#check to make sure running as user account
+if [[ "$USER" == "root" || "$USER" == "ubuntu" ]]; then
+		echo -e "${RED}You are currently logged in as ${GREEN}$USER${NC}"
+		echo -e "${SEA}Please switch to your Flux user.${NC}"
+		exit
+fi
+
 clear
 sleep 0.5
 
