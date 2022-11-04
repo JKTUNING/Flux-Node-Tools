@@ -1245,7 +1245,7 @@ function lvm_fix_function(){
 function create_flux_motd(){
   sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
   sudo touch /etc/update-motd.d/40-flux-motd
-  sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << EOF
+  sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << 'EOF'
 #!/bin/bash
 
 green=$'\033[32m'
