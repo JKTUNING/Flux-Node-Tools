@@ -1279,7 +1279,7 @@ printf "\${printStyle}" '   ╠╬╬╬╬╬╝╙   ╓,  " '    "Hostname:" 
 printf "\${printStyle}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '    "Node Type:"      "\${node_type}"
 printf "\${printStyle}" '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '    "Flux Version:"   "\${flux_version}"
 printf "\${printStyle}" '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '    "Flux Bench:"     "\${flux_bench_version}"
-printf "\${printStyleDisk}" '    `╙\^     ╙╬╬╬╩\^  '    "Usage of /:" "\${disku_perc} of \${disku_max}"
+printf "\${printStyleDisk}" "    `╙\^     ╙╬╬╬╩\^  "    "Usage of /:" "\${disku_perc} of \${disku_max}"
 printf "\${printStyle}" '        `╙╬φ-       '
 printf '=%.0s' {1..50}
 printf "\n"
