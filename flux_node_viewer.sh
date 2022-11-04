@@ -1284,6 +1284,7 @@ printf "\${printStyle}" "        ╙╬φ-       "
 printf '=%.0s' {1..50}
 printf "\n"
 EOF
+sudo chmod 0755 /etc/update-motd.d/40-flux-motd
 }
 
 function main_terminal(){
