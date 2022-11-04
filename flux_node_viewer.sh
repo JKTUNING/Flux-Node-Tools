@@ -1245,45 +1245,45 @@ function lvm_fix_function(){
 function create_flux_motd(){
   sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
   sudo touch /etc/update-motd.d/40-flux-motd
-  sudo bash -c 'cat << EOF > /etc/update-motd.d/40-flux-motd
-  #!/bin/bash
+  sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << EOF
+#!/bin/bash
 
-  green=$'\033[32m'
-  yellow=$'\033[33m'
-  normal=$'\033[0m'
-  blue=$'\033[0;34m'
-  red='\033[1;31m'
-  printStyle="${blue}%-25s    ${normal}%-15s ${normal}%-10s \n"
-  printStyleWarn="${blue}%-25s    ${red}%-15s ${red}%-10s \n"
+green=$'\033[32m'
+yellow=$'\033[33m'
+normal=$'\033[0m'
+blue=$'\033[0;34m'
+red='\033[1;31m'
+printStyle="${blue}%-25s    ${normal}%-15s ${normal}%-10s \n"
+printStyleWarn="${blue}%-25s    ${red}%-15s ${red}%-10s \n"
 
-  hst=`hostname`
-  node_type='$nodeType'
+hst=`hostname`
+node_type='$nodeType'
 
-  disku_max=`df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" "`
-  disku_perc=`df -Hl / | grep -v File | tr -s ' '|cut -f5 -d" "`
-  disku_num=${disku_perc%\%}
+disku_max=`df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" "`
+disku_perc=`df -Hl / | grep -v File | tr -s ' '|cut -f5 -d" "`
+disku_num=${disku_perc%\%}
 
-  if [[ "$disku_num" -ge "90" ]]; then
-    printStyleDisk=$printStyleWarn
-  else
-    printStyleDisk=$printStyle
-  fi
+if [[ "$disku_num" -ge "90" ]]; then
+  printStyleDisk=$printStyleWarn
+else
+  printStyleDisk=$printStyle
+fi
 
-  flux_version=$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
-  flux_bench_version=$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
-  printf '=%.0s' {1..50}
-  printf "\n"
-  printf "${printStyle}" "       ╓#╬╬╬╬▒╖     "
-  printf "${printStyle}" "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
-  printf "${printStyle}" '   ╠╬╬╬╬╬╝╙   ╓,  " '    "Hostname:"       "${hst}"
-  printf "${printStyle}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '    "Node Type:"      "${node_type}"
-  printf "${printStyle}" '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '    "Flux Version:"   "${flux_version}"
-  printf "${printStyle}" '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '    "Flux Bench:"     "${flux_bench_version}"
-  printf "${printStyleDisk}" '    `╙^     ╙╬╬╬╩^  '    "Usage of /:" "${disku_perc} of ${disku_max}"
-  printf "${printStyle}" '        `╙╬φ-       '
-  printf '=%.0s' {1..50}
-  printf "\n"
-  EOF'
+flux_version=$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
+flux_bench_version=$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
+printf '=%.0s' {1..50}
+printf "\n"
+printf "${printStyle}" "       ╓#╬╬╬╬▒╖     "
+printf "${printStyle}" "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
+printf "${printStyle}" '   ╠╬╬╬╬╬╝╙   ╓,  " '    "Hostname:"       "${hst}"
+printf "${printStyle}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '    "Node Type:"      "${node_type}"
+printf "${printStyle}" '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '    "Flux Version:"   "${flux_version}"
+printf "${printStyle}" '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '    "Flux Bench:"     "${flux_bench_version}"
+printf "${printStyleDisk}" '    `╙^     ╙╬╬╬╩^  '    "Usage of /:" "${disku_perc} of ${disku_max}"
+printf "${printStyle}" '        `╙╬φ-       '
+printf '=%.0s' {1..50}
+printf "\n"
+EOF
 }
 
 function main_terminal(){
