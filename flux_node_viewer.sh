@@ -1273,14 +1273,14 @@ flux_version=\$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
 flux_bench_version=\$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
 printf '=%.0s' {1..50}
 printf "\n"
-printf "\${printStyle}" "       ╓#╬╬╬╬▒╖     "
-printf "\${printStyle}" "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
-printf "\${printStyle}" '   ╠╬╬╬╬╬╝╙   ╓,  " '     "Hostname:"       "\${hst}"
-printf "\${printStyle}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '     "Node Type:"      "\${node_type}"
-printf "\${printStyle}" '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '     "Flux Version:"   "\${flux_version}"
-printf "\${printStyle}" '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '     "Flux Bench:"     "\${flux_bench_version}"
-printf "\${printStyleDisk}" '    ╙     ╙╬╬╬╩  '    "Usage of /:"     "\${disku_perc} of \${disku_max}"
-printf "\${printStyle}" "        ╙╬φ-       "
+printf "\${printStyle}"     "       ╓#╬╬╬╬▒╖     "
+printf "\${printStyle}"     "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
+printf "\${printStyle}"     '   ╠╬╬╬╬╬╝╙   ╓,  " '      "Hostname:"       "\${hst}"
+printf "\${printStyle}"     '   ╙²  "  ╓#╬╬╬╬╬▒╗ '      "Node Type:"      "\${node_type}"
+printf "\${printStyle}"     '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '      "Flux Version:"   "\${flux_version}"
+printf "\${printStyle}"     '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '      "Flux Bench:"     "\${flux_bench_version}"
+printf "\${printStyleDisk}" '    ╙╙╙     ╙╬╬╬╩╩  '      "Usage of /:"     "\${disku_perc} of \${disku_max}"
+printf "\${printStyle}"     "       ╙╙╬φ╬        "
 printf '=%.0s' {1..50}
 printf "\n"
 EOF
