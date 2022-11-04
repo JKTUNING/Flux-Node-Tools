@@ -1242,6 +1242,50 @@ function lvm_fix_function(){
   $show_bench = '1'
 }
 
+function create_flux_motd(){
+  sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
+  sudo touch /etc/update-motd.d/40-flux-motd
+  sudo cat <<- 'EOF' > /etc/update-motd.d/40-flux-motd
+#!/bin/bash
+
+green=$'\033[32m'
+yellow=$'\033[33m'
+normal=$'\033[0m'
+blue=$'\033[0;34m'
+red='\033[1;31m'
+printStyle="${blue}%-25s    ${normal}%-15s ${normal}%-10s \n"
+printStyleWarn="${blue}%-25s    ${red}%-15s ${red}%-10s \n"
+
+hst=`hostname`
+node_type='$nodeType'
+
+disku_max=`df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" "`
+disku_perc=`df -Hl / | grep -v File | tr -s ' '|cut -f5 -d" "`
+disku_num=${disku_perc%\%}
+
+if [[ "$disku_num" -ge "90" ]]; then
+  printStyleDisk=$printStyleWarn
+else
+  printStyleDisk=$printStyle
+fi
+
+flux_version=$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
+flux_bench_version=$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
+printf '=%.0s' {1..50}
+printf "\n"
+printf "${printStyle}" "       ╓#╬╬╬╬▒╖     "
+printf "${printStyle}" "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
+printf "${printStyle}" '   ╠╬╬╬╬╬╝╙   ╓,  " '    "Hostname:"       "${hst}"
+printf "${printStyle}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '    "Node Type:"      "${node_type}"
+printf "${printStyle}" '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '    "Flux Version:"   "${flux_version}"
+printf "${printStyle}" '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '    "Flux Bench:"     "${flux_bench_version}"
+printf "${printStyleDisk}" '    `╙^     ╙╬╬╬╩^  '    "Usage of /:" "${disku_perc} of ${disku_max}"
+printf "${printStyle}" '        `╙╬φ-       '
+printf '=%.0s' {1..50}
+printf "\n"
+EOF
+}
+
 function main_terminal(){
  
   while true; do
@@ -1295,6 +1339,12 @@ else
     show_external_port_details='1'
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
+  elif [[ $1 == "flux-motd" ]]; then
+    echo -e "creating custom flux splach login ..."
+    create_flux_motd
+    sleep 2
+    echo -e "exiting ..."
+    exit    
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
     show_bench='1'
