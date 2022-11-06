@@ -782,19 +782,24 @@ function check_port_info()
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
-  checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
-  if [[ -z $checkPort ]]; then
-    external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
-  else
-    external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
-  fi
+  if [[ $ui_port != "" && $api_port != "" ]]; then
+    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
+    if [[ -z $checkPort ]]; then
+      external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
+    else
+      external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
+    fi
 
-  checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
-   if [[ -z $checkPort ]]; then
-    external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
-    
+    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
+    if [[ -z $checkPort ]]; then
+      external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
+      
+    else
+      external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
+    fi
   else
-    external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
+    external_flux_ui_port="${RED_ARROW}   Flux UI Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
+    external_flux_api_port="${RED_ARROW}   Flux API Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
   fi
 }
 
