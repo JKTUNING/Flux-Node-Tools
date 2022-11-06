@@ -1248,6 +1248,9 @@ function lvm_fix_function(){
 }
 
 function create_flux_motd(){
+  echo -e ""
+  echo -e "${SEA}creating custom flux splash login ... ${NC}"
+  echo -e ""
   sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
   sudo touch /etc/update-motd.d/40-flux-motd
   sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << EOF
@@ -1300,6 +1303,12 @@ sudo rm /etc/update-motd.d/*-contract-ua-esm-status > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
+
+echo -e "${GREEN}Displaying new login screen ... ${NC}"
+echo -e ""
+sudo run-parts /etc/update-motd.d/
+echo -e "${RED}Exiting in 10 seconds ...${NC}"
+sleep 10
 }
 
 function main_terminal(){
@@ -1356,10 +1365,7 @@ else
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
   elif [[ $1 == "flux-motd" ]]; then
-    echo -e "creating custom flux splash login ..."
     create_flux_motd
-    sleep 2
-    echo -e "exiting ..."
     exit    
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
