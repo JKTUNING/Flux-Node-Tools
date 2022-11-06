@@ -1300,6 +1300,11 @@ sudo rm /etc/update-motd.d/*-contract-ua-esm-status > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
+
+echo -e "Displaying new login screen ... "
+sudo run-parts /etc/update-motd.d/
+echo -e "Exiting in 5 seconds ..."
+sleep 5
 }
 
 function main_terminal(){
