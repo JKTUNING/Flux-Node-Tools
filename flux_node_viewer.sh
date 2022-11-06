@@ -1295,6 +1295,12 @@ sudo rm /etc/update-motd.d/*-release-upgrade > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-help-text > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-esm-announce > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-motd-news > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-fwupd > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-contract-ua-esm-status > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
+
 }
 
 function main_terminal(){
