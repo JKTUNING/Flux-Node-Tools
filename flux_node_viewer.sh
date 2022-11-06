@@ -1290,6 +1290,10 @@ printf '=%.0s' {1..50}
 printf "\n"
 EOF
 sudo chmod 0755 /etc/update-motd.d/40-flux-motd
+
+sudo rm /etc/update-motd.d/*-release-upgrade > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-help-text > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-esm-announce > /dev/null 2>&1
 }
 
 function main_terminal(){
