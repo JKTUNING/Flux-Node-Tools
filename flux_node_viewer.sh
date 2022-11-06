@@ -1301,9 +1301,10 @@ sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
 sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
 
-echo -e "${GREEN}Displaying new login screen ... \n \n${NC}"
+echo -e "${GREEN}Displaying new login screen ... ${NC}"
+echo -e ""
 sudo run-parts /etc/update-motd.d/
-echo -e "${RED}\n \nExiting in 5 seconds ...${NC}"
+echo -e "${RED}Exiting in 5 seconds ...${NC}"
 sleep 5
 }
 
