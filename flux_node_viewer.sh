@@ -1262,8 +1262,6 @@ printStyle="\${blue}%-25s    \${normal}%-15s \${normal}%-10s \n"
 printStyleWarn="\${blue}%-25s    \${red}%-15s \${red}%-10s \n"
 
 hst=`hostname`
-node_type='cumulus'
-
 disku_max=\$(df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" ")
 disku_perc=\$(df -Hl / | grep -v File | tr -s ' '|cut -f5 -d" ")
 disku_num=\${disku_perc%\%}
@@ -1276,6 +1274,8 @@ fi
 
 flux_version=\$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
 flux_bench_version=\$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
+node_type=\$(su $USER -c 'fluxbench-cli getstatus' | jq -r '.benchmarking' 2>/dev/null)
+
 printf '=%.0s' {1..50}
 printf "\n"
 printf "\${printStyle}"     "       ╓#╬╬╬╬▒╖     "
@@ -1289,7 +1289,17 @@ printf "\${printStyle}"     "       ╙╙╬φ╬        "
 printf '=%.0s' {1..50}
 printf "\n"
 EOF
+
 sudo chmod 0755 /etc/update-motd.d/40-flux-motd
+sudo rm /etc/update-motd.d/*-release-upgrade > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-help-text > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-esm-announce > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-motd-news > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-fwupd > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-contract-ua-esm-status > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
+sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
 }
 
 function main_terminal(){
