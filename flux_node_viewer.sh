@@ -1248,6 +1248,9 @@ function lvm_fix_function(){
 }
 
 function create_flux_motd(){
+  echo -e ""
+  echo -e "${SEA}creating custom flux splash login ... ${NC}"
+  echo -e ""
   sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
   sudo touch /etc/update-motd.d/40-flux-motd
   sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << EOF
@@ -1362,8 +1365,6 @@ else
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
   elif [[ $1 == "flux-motd" ]]; then
-    echo -e "${SEA}creating custom flux splash login ... ${NC}"
-    echo -e ""
     create_flux_motd
     exit    
   elif [[ $1 == "logs" ]]; then
