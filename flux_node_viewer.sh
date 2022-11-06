@@ -1346,7 +1346,7 @@ else
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
   elif [[ $1 == "flux-motd" ]]; then
-    echo -e "creating custom flux splach login ..."
+    echo -e "creating custom flux splash login ..."
     create_flux_motd
     sleep 2
     echo -e "exiting ..."
