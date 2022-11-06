@@ -1305,7 +1305,7 @@ echo -e "${GREEN}Displaying new login screen ... ${NC}"
 echo -e ""
 sudo run-parts /etc/update-motd.d/
 echo -e "${RED}Exiting in 5 seconds ...${NC}"
-sleep 5
+sleep 10
 }
 
 function main_terminal(){
@@ -1362,10 +1362,9 @@ else
   elif [[ $1 == "lvm-fix" ]]; then
     lvm_fix_function
   elif [[ $1 == "flux-motd" ]]; then
-    echo -e "creating custom flux splash login ..."
+    echo -e "${SEA}creating custom flux splash login ... ${NC}"
+    echo -e ""
     create_flux_motd
-    sleep 2
-    echo -e "exiting ..."
     exit    
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
