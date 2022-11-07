@@ -1279,7 +1279,7 @@ fi
 flux_version=\$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
 flux_bench_version=\$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
 node_type=\$(su $USER -c 'fluxbench-cli getstatus' | jq -r '.benchmarking' 2>/dev/null)
-node_status=\$(su $USER -c 'flux-cli getzelnodestatus' | jq -r '.status' 2>dev/null)
+node_status=\$(su $USER -c 'flux-cli getzelnodestatus' | jq -r '.status' 2>/dev/null)
 
 if [[ "\$node_status != "CONFIRMED" ]]; then
   printStyleStatus=\$printStyleWarn
