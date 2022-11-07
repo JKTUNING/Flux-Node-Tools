@@ -1287,7 +1287,7 @@ else
   printStyleStatus=\$printStyleConfirm
 fi
 
-printf '=%.0s' {1..50}
+printf '=%.0s' {1..55}
 printf "\n"
 printf "\${printStyle}"       "       ╓#╬╬╬╬▒╖     "
 printf "\${printStyle}"       "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "      "Hostname:"       "\${hst}"
@@ -1297,7 +1297,7 @@ printf "\${printStyle}"       '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '  
 printf "\${printStyle}"       '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '      "Flux Bench:"     "\${flux_bench_version}"
 printf "\${printStyleDisk}"   '    ╙╙╙     ╙╬╬╬╩╩  '      "Usage of /:"     "\${disku_perc} of \${disku_max}"
 printf "\${printStyle}"       "       ╙╙╬φ╬        "
-printf '=%.0s' {1..50}
+printf '=%.0s' {1..55}
 printf "\n"
 EOF
 
