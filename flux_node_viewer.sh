@@ -1262,7 +1262,7 @@ normal='\033[0m'
 blue='\033[0;34m'
 red='\033[1;31m'
 printStyle="\${blue}%-25s    \${normal}%-15s \${normal}%-10s \n"
-printStyleWarn="\${blue}%-25s    \${red}%-15s \${red}%-10s \n"
+printStyleWarn="\${blue}%-25s    \${normal}%-15s \${red}%-10s \n"
 printStyleConfirm="\${blue}%-25s    \${normal}%-15s \${green}%-10s \n"
 
 hst=`hostname`
