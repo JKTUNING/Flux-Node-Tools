@@ -1262,7 +1262,8 @@ normal='\033[0m'
 blue='\033[0;34m'
 red='\033[1;31m'
 printStyle="\${blue}%-25s    \${normal}%-15s \${normal}%-10s \n"
-printStyleWarn="\${blue}%-25s    \${red}%-15s \${red}%-10s \n"
+printStyleWarn="\${blue}%-25s    \${normal}%-15s \${red}%-10s \n"
+printStyleConfirm="\${blue}%-25s    \${normal}%-15s \${green}%-10s \n"
 
 hst=`hostname`
 disku_max=\$(df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" ")
@@ -1278,18 +1279,25 @@ fi
 flux_version=\$(jq -r '.version' /home/$USER/zelflux/package.json 2>/dev/null)
 flux_bench_version=\$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/dev/null)
 node_type=\$(su $USER -c 'fluxbench-cli getstatus' | jq -r '.benchmarking' 2>/dev/null)
+node_status=\$(su $USER -c 'flux-cli getzelnodestatus' | jq -r '.status' 2>/dev/null)
 
-printf '=%.0s' {1..50}
+if [[ "\$node_status" != "CONFIRMED" ]]; then
+  printStyleStatus=\$printStyleWarn
+else
+  printStyleStatus=\$printStyleConfirm
+fi
+
+printf '=%.0s' {1..55}
 printf "\n"
-printf "\${printStyle}"     "       ╓#╬╬╬╬▒╖     "
-printf "\${printStyle}"     "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "
-printf "\${printStyle}"     '   ╠╬╬╬╬╬╝╙   ╓,  " '      "Hostname:"       "\${hst}"
-printf "\${printStyle}"     '   ╙²  "  ╓#╬╬╬╬╬▒╗ '      "Node Type:"      "\${node_type}"
-printf "\${printStyle}"     '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '      "Flux Version:"   "\${flux_version}"
-printf "\${printStyle}"     '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '      "Flux Bench:"     "\${flux_bench_version}"
-printf "\${printStyleDisk}" '    ╙╙╙     ╙╬╬╬╩╩  '      "Usage of /:"     "\${disku_perc} of \${disku_max}"
-printf "\${printStyle}"     "       ╙╙╬φ╬        "
-printf '=%.0s' {1..50}
+printf "\${printStyle}"       "       ╓#╬╬╬╬▒╖     "
+printf "\${printStyle}"       "   ,#▒╬╬╬╬╬╬╬╝╙╙╬φ╖ "      "Hostname:"       "\${hst}"
+printf "\${printStyle}"       '   ╠╬╬╬╬╬╝╙   ╓,  " '      "Node Type:"      "\${node_type}"      
+printf "\${printStyleStatus}" '   ╙²  "  ╓#╬╬╬╬╬▒╗ '      "Node Status:"    "\${node_status}"
+printf "\${printStyle}"       '   ╓@╬▒╗  ╠╬╬╬╬╬╬╬╬ '      "Flux Version:"   "\${flux_version}"
+printf "\${printStyle}"       '   ╠╬╬╬╬  ╠╬╬╬╬╬╬╬╬ '      "Flux Bench:"     "\${flux_bench_version}"
+printf "\${printStyleDisk}"   '    ╙╙╙     ╙╬╬╬╩╩  '      "Usage of /:"     "\${disku_perc} of \${disku_max}"
+printf "\${printStyle}"       "       ╙╙╬φ╬        "
+printf '=%.0s' {1..55}
 printf "\n"
 EOF
 
