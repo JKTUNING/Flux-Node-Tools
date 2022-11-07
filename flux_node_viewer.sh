@@ -1263,7 +1263,7 @@ blue='\033[0;34m'
 red='\033[1;31m'
 printStyle="\${blue}%-25s    \${normal}%-15s \${normal}%-10s \n"
 printStyleWarn="\${blue}%-25s    \${red}%-15s \${red}%-10s \n"
-printStyleConfirm="\${blue}%-25s    \${red}%-15s \${green}%-10s \n"
+printStyleConfirm="\${blue}%-25s    \${normal}%-15s \${green}%-10s \n"
 
 hst=`hostname`
 disku_max=\$(df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" ")
@@ -1281,7 +1281,7 @@ flux_bench_version=\$(su $USER -c 'fluxbench-cli getinfo' | jq -r '.version' 2>/
 node_type=\$(su $USER -c 'fluxbench-cli getstatus' | jq -r '.benchmarking' 2>/dev/null)
 node_status=\$(su $USER -c 'flux-cli getzelnodestatus' | jq -r '.status' 2>/dev/null)
 
-if [[ "\$node_status != "CONFIRMED" ]]; then
+if [[ "\$node_status" != "CONFIRMED" ]]; then
   printStyleStatus=\$printStyleWarn
 else
   printStyleStatus=\$printStyleConfirm
