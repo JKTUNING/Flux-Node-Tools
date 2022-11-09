@@ -39,7 +39,25 @@ fi
 if [[ "$USER" == "root" || "$USER" == "ubuntu" ]]; then
 		echo -e "${RED}You are currently logged in as ${GREEN}$USER${NC}"
 		echo -e "${SEA}Please switch to your Flux user.${NC}"
+    sleep 5
 		exit
+fi
+
+#check opperating system description
+if [[ $(lsb_release -d) != *Debian* && $(lsb_release -d) != *Ubuntu* ]]; then
+  echo -e "${SEA}ERROR: ${RED}OS version [$(lsb_release -d)] not supported${NC}"
+  echo -e "${SEA}Application exiting in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
+
+#check opperating system version
+if [[ $(lsb_release -cs) == "jammy" ]]; then
+  echo -e "${SEA}ERROR: ${RED}OS version [$(lsb_release -cs)] not supported${NC}"
+  echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 and re-install FluxOS"
+  echo -e "${SEA}Application exiting in 10 seconds ...${NC}"
+  sleep 10
+  exit
 fi
 
 clear
