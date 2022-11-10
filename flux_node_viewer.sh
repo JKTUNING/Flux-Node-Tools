@@ -229,6 +229,7 @@ function get_flux_bench_info(){
   flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_thunder=$(jq -r '.thunder' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats" 2>/dev/null)
 }
 
@@ -499,6 +500,7 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Bench Download Speed         -    $flux_bench_stats_download"
   echo -e "$BLUE_CIRCLE   Bench Upload Speed           -    $flux_bench_stats_upload"
   echo -e "$BLUE_CIRCLE   Bench Speed Test Version     -    $flux_bench_stats_speed_test_version"
+  echo -e "$BLUE_CIRCLE   Bench Thunder Enabled        -    $flux_bench_stats_thunder"
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
   make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
   echo -e "$flux_bench_port"
@@ -1095,7 +1097,6 @@ function check_current_blockheight(){
   fi
 }
 
-
 #check for dhcp with ip r 
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
@@ -1103,7 +1104,6 @@ function check_dhcp_enable(){
     dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
-
 
 # restart daemon service and restart FluxOS
 function flux_update_service(){
