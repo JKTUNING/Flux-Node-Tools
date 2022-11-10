@@ -444,7 +444,7 @@ function show_flux_node_info_tile(){
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
-  if [[ $dhcp_status != "" ]]; then
+  if [[ -n $dhcp_status ]]; then
     echo -e "${YELLOW_ARROW}   $dhcp_status${NC}"
   fi
   echo -e "$flux_api_port"
@@ -784,13 +784,13 @@ function check_port_info()
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
-  if [[ $api_port != "" ]]; then
+  if [[ -n $api_port ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
   else
     flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
   fi
 
-  if [[ $ui_port != "" ]]; then
+  if [[ -n $ui_port ]]; then
     flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
   else
     flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
@@ -800,7 +800,7 @@ function check_port_info()
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
-  if [[ $ui_port != "" && $api_port != "" ]]; then
+  if [[ -n $ui_port && -n $api_port ]]; then
     checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
@@ -828,14 +828,14 @@ function check_upnp(){
   upnp_check=""
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
-  if [[ $ui_port != "" && $api_port != "" ]]; then
+  if [[ -n $ui_port && -n $api_port ]]; then
     if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
       upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and registered for Flux UI $ui_port and Flux API $api_port ports"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
     fi
   else
-    if [[ $upnp_check != "" ]]; then
+    if [[ -n $upnp_check ]]; then
       upnp_status="${RED_ARROW}   UPNP ${GREEN}enabled${NC} - UI port and API port ${RED}NOT${NC} listening"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port ${RED}NOT${NC} listening"
@@ -898,7 +898,7 @@ function check_flux_dos_list(){
   local dosList=$(curl -sS --max-time 5 https://api.runonflux.io/daemon/getdoslist | jq .[] | grep "$flux_node_collateral" -A5 -B1)
 
   #if node collateral in the DoS list then show number of blocks left
-  if [[ "$dosList" != "" ]]; then
+  if [[ -n "$dosList" ]]; then
     local dosTime=$(jq -r '."eligible_in"' <<<"$dosList" 2>/dev/null)
     flux_node_dos="${RED_ARROW}   Node in DoS for ${RED}$dosTime${NC} blocks${NC}"
   fi
@@ -922,11 +922,11 @@ function check_kda_address(){
 
           #make sure the file exist first before trying to update or add kda address
           if [[ -f /home/$USER/zelflux/config/userconfig.js ]]; then
-            if [[ $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") != "" ]]; then
+            if [[ -n $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") ]]; then
               #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
               #sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/    kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
-              if [[ $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) != "" ]]; then
+              if [[ -n $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) ]]; then
                 whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60;
                 user_kda_address=kda_address
               fi
@@ -1099,7 +1099,7 @@ function check_current_blockheight(){
 #check for dhcp with ip r 
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
-  if [[ "$dhcpCheck" != "" ]]; then
+  if [[ -n "$dhcpCheck" ]]; then
     dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
