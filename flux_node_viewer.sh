@@ -390,14 +390,14 @@ function show_flux_daemon_info_tile(){
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
-  if [[ "$flux_daemon_version_check" != "" ]]; then
+  if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
 
-  if [[ $daemon_log != "" ]]; then
+  if [[ -n $daemon_log ]]; then
     make_header "$DASH_DAEMON_ERROR_TITLE" "$RED"
     echo -e "$daemon_log"
   fi
@@ -461,7 +461,7 @@ function show_flux_node_info_tile(){
   echo -e "$docker_service_status"
   echo -e "$watchdog_process_status"
 
-  if [[ $flux_log != "" ]]; then
+  if [[ -n $flux_log ]]; then
     make_header "$DASH_NODE_FLUX_LOG_TITLE" "$RED"
     echo -e "$flux_log"
   fi
@@ -483,7 +483,7 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
-  if [[ "$flux_bench_version_check" != "" ]]; then
+  if [[ -n "$flux_bench_version_check" ]]; then
     echo -e "$flux_bench_version_check"
   fi
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
@@ -503,7 +503,7 @@ function show_flux_benchmark_info_tile(){
   make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
   echo -e "$flux_bench_port"
 
-  if [[ $bench_log != "" ]]; then
+  if [[ -n $bench_log ]]; then
     make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
     echo -e "$bench_log"
   fi
@@ -628,7 +628,7 @@ function prune_docker(){
   check_docker_images
   check_container=$(echo "$dead_docker_containers" | egrep -a -wi 'exited|dead' 2>/dev/null)
 
-  if [[ "$check_container"  != "" ]]; then
+  if [[ -n "$check_container" ]]; then
     if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
       docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
       sleep 4
@@ -636,7 +636,7 @@ function prune_docker(){
   fi
 
   check_images=$(echo "$dangling_docker_images"  | grep 'ago'  2>/dev/null)
-  if [[ "$check_images" != "" ]]; then
+  if [[ -n "$check_images" ]]; then
     if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
       sleep 4
@@ -829,7 +829,7 @@ function check_upnp(){
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
   if [[ -n $ui_port && -n $api_port ]]; then
-    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
+    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && -n $upnp_check ]]; then
       upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and registered for Flux UI $ui_port and Flux API $api_port ports"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
