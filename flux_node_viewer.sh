@@ -229,6 +229,7 @@ function get_flux_bench_info(){
   flux_bench_stats_download=$(jq -r '.download_speed' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_upload=$(jq -r '.upload_speed' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_thunder=$(jq -r '.thunder' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats" 2>/dev/null)
 }
 
@@ -338,6 +339,7 @@ function update(){
       show_docker='1'
     elif [[ $userInput == 'u' ]]; then
       node_os_update
+      show_bench='1'
     elif [[ $userInput == 'c' ]]; then
       show_commands='1'
     elif [[ $userInput == 't' ]]; then
@@ -390,14 +392,14 @@ function show_flux_daemon_info_tile(){
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
   echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
-  if [[ "$flux_daemon_version_check" != "" ]]; then
+  if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
   make_header "$DASH_DAEMON_PORT_TITLE" "$BLUE"
   echo -e "$flux_daemon_port"
   echo -e "$daemon_service_status"
 
-  if [[ $daemon_log != "" ]]; then
+  if [[ -n $daemon_log ]]; then
     make_header "$DASH_DAEMON_ERROR_TITLE" "$RED"
     echo -e "$daemon_log"
   fi
@@ -444,7 +446,7 @@ function show_flux_node_info_tile(){
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
-  if [[ $dhcp_status != "" ]]; then
+  if [[ -n $dhcp_status ]]; then
     echo -e "${YELLOW_ARROW}   $dhcp_status${NC}"
   fi
   echo -e "$flux_api_port"
@@ -461,7 +463,7 @@ function show_flux_node_info_tile(){
   echo -e "$docker_service_status"
   echo -e "$watchdog_process_status"
 
-  if [[ $flux_log != "" ]]; then
+  if [[ -n $flux_log ]]; then
     make_header "$DASH_NODE_FLUX_LOG_TITLE" "$RED"
     echo -e "$flux_log"
   fi
@@ -483,7 +485,7 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
   echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
   echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
-  if [[ "$flux_bench_version_check" != "" ]]; then
+  if [[ -n "$flux_bench_version_check" ]]; then
     echo -e "$flux_bench_version_check"
   fi
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
@@ -499,11 +501,12 @@ function show_flux_benchmark_info_tile(){
   echo -e "$BLUE_CIRCLE   Bench Download Speed         -    $flux_bench_stats_download"
   echo -e "$BLUE_CIRCLE   Bench Upload Speed           -    $flux_bench_stats_upload"
   echo -e "$BLUE_CIRCLE   Bench Speed Test Version     -    $flux_bench_stats_speed_test_version"
+  echo -e "$BLUE_CIRCLE   Bench Thunder Enabled        -    $flux_bench_stats_thunder"
   echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
   make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
   echo -e "$flux_bench_port"
 
-  if [[ $bench_log != "" ]]; then
+  if [[ -n $bench_log ]]; then
     make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
     echo -e "$bench_log"
   fi
@@ -628,7 +631,7 @@ function prune_docker(){
   check_docker_images
   check_container=$(echo "$dead_docker_containers" | egrep -a -wi 'exited|dead' 2>/dev/null)
 
-  if [[ "$check_container"  != "" ]]; then
+  if [[ -n "$check_container" ]]; then
     if whiptail --title "Docker Container Prune" --yesno "Would you like to prune your dead or exited docker containers ?" 8 60; then
       docker rm $(docker ps --filter=status=exited --filter=status=dead -q)
       sleep 4
@@ -636,7 +639,7 @@ function prune_docker(){
   fi
 
   check_images=$(echo "$dangling_docker_images"  | grep 'ago'  2>/dev/null)
-  if [[ "$check_images" != "" ]]; then
+  if [[ -n "$check_images" ]]; then
     if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
       sleep 4
@@ -784,13 +787,13 @@ function check_port_info()
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
 
-  if [[ $api_port != "" ]]; then
+  if [[ -n $api_port ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
   else
     flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
   fi
 
-  if [[ $ui_port != "" ]]; then
+  if [[ -n $ui_port ]]; then
     flux_ui_port="${GREEN_ARROW}   Flux UI Listening on ${GREEN}$ui_port${NC}"
   else
     flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
@@ -800,7 +803,7 @@ function check_port_info()
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
-  if [[ $ui_port != "" && $api_port != "" ]]; then
+  if [[ -n $ui_port && -n $api_port ]]; then
     checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
@@ -828,14 +831,14 @@ function check_upnp(){
   upnp_check=""
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
 
-  if [[ $ui_port != "" && $api_port != "" ]]; then
-    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && $upnp_check != "" ]]; then
+  if [[ -n $ui_port && -n $api_port ]]; then
+    if [[ $upnp_check == *$ui_port* && $upnp_check == *$api_port* && -n $upnp_check ]]; then
       upnp_status="${GREEN_ARROW}   UPNP ${GREEN}enabled${NC} and registered for Flux UI $ui_port and Flux API $api_port ports"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} on UI port $ui_port and API port $api_port"
     fi
   else
-    if [[ $upnp_check != "" ]]; then
+    if [[ -n $upnp_check ]]; then
       upnp_status="${RED_ARROW}   UPNP ${GREEN}enabled${NC} - UI port and API port ${RED}NOT${NC} listening"
     else
       upnp_status="${RED_ARROW}   UPNP ${RED}disabled${NC} - UI port and API port ${RED}NOT${NC} listening"
@@ -898,7 +901,7 @@ function check_flux_dos_list(){
   local dosList=$(curl -sS --max-time 5 https://api.runonflux.io/daemon/getdoslist | jq .[] | grep "$flux_node_collateral" -A5 -B1)
 
   #if node collateral in the DoS list then show number of blocks left
-  if [[ "$dosList" != "" ]]; then
+  if [[ -n "$dosList" ]]; then
     local dosTime=$(jq -r '."eligible_in"' <<<"$dosList" 2>/dev/null)
     flux_node_dos="${RED_ARROW}   Node in DoS for ${RED}$dosTime${NC} blocks${NC}"
   fi
@@ -922,11 +925,11 @@ function check_kda_address(){
 
           #make sure the file exist first before trying to update or add kda address
           if [[ -f /home/$USER/zelflux/config/userconfig.js ]]; then
-            if [[ $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") != "" ]]; then
+            if [[ -n $(cat /home/$USER/zelflux/config/userconfig.js | grep "kadena") ]]; then
               #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
               #sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/    kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
-              if [[ $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) != "" ]]; then
+              if [[ -n $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) ]]; then
                 whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60;
                 user_kda_address=kda_address
               fi
@@ -1095,15 +1098,13 @@ function check_current_blockheight(){
   fi
 }
 
-
 #check for dhcp with ip r 
 function check_dhcp_enable(){
   local dhcpCheck=$(ip r | grep dhcp)
-  if [[ "$dhcpCheck" != "" ]]; then
+  if [[ -n "$dhcpCheck" ]]; then
     dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
   fi
 }
-
 
 # restart daemon service and restart FluxOS
 function flux_update_service(){
