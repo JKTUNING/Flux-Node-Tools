@@ -339,6 +339,7 @@ function update(){
       show_docker='1'
     elif [[ $userInput == 'u' ]]; then
       node_os_update
+      show_bench='1'
     elif [[ $userInput == 'c' ]]; then
       show_commands='1'
     elif [[ $userInput == 't' ]]; then
