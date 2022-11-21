@@ -152,6 +152,23 @@ DOCKER_USER=$(getent group docker)
 if [[ $DOCKER_USER != *$USER* ]]; then
   echo -e "${RED}$USER not in docker group${NC}"
   echo -e "${CYAN}Please login as your docker user ...${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
+
+if [[ -d "/home/$USER/.flux" ]]; then
+  echo -e "${RED}Flux Directory not found ... ${NC}"
+  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${CYAN}Please verify your FluxOS installation${NC}"
+  sleep 5
+  exit
+fi
+
+if [[ -d "/home/$USER/zelflux" ]]; then
+  echo -e "${RED}zelflux Directory not found ... ${NC}"
+  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${CYAN}Please verify your FluxD installation${NC}"
   sleep 5
   exit
 fi
