@@ -9,7 +9,9 @@ function app_close(){
   if [[ $(set -o | grep history) == *"off"* ]]; then
     set -o history
   fi
-  clear
+  if [[ $softExit != '1' ]]; then
+    clear
+  fi
   sleep 0.5
 }
 
@@ -27,7 +29,7 @@ BLUE="\\033[38;5;27m"
 SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
-
+softExit='0'
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
   echo "alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'" | sudo tee -a /etc/bash.bashrc
@@ -40,6 +42,7 @@ if [[ "$USER" == "root" || "$USER" == "ubuntu" ]]; then
 		echo -e "${RED}You are currently logged in as ${GREEN}$USER${NC}"
 		echo -e "${SEA}Please switch to your Flux user.${NC}"
     sleep 5
+    softExit='1'
 		exit
 fi
 
@@ -48,6 +51,7 @@ if [[ $(lsb_release -d) != *Debian* && $(lsb_release -d) != *Ubuntu* ]]; then
   echo -e "${SEA}ERROR: ${RED}OS version [$(lsb_release -d)] not supported${NC}"
   echo -e "${SEA}Application exiting in 5 seconds ...${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
@@ -57,6 +61,7 @@ if [[ $(lsb_release -cs) == "jammy" ]]; then
   echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 and re-install FluxOS"
   echo -e "${SEA}Application exiting in 10 seconds ...${NC}"
   sleep 10
+  softExit='1'
   exit
 fi
 
@@ -81,6 +86,7 @@ if ! jq --version >/dev/null 2>&1; then
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
+    softExit='1'
     exit
   fi
 fi
@@ -137,6 +143,7 @@ if ! [ -f /usr/local/bin/flux-cli ]; then
   echo -e "${RED}flux-cli tool not installed${NC}"
   echo -e "${RED}application will exit in 5 seconds ...${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
@@ -144,6 +151,7 @@ if ! [ -f /usr/local/bin/fluxbench-cli ]; then
   echo -e "${RED}fluxbench-cli tool not installed${NC}"
   echo -e "${RED}application will exit in 5 seconds ...${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
@@ -154,6 +162,7 @@ if [[ $DOCKER_USER != *$USER* ]]; then
   echo -e "${CYAN}Please login as your docker user ...${NC}"
   echo -e "${RED}application will exit in 5 seconds ...${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
@@ -162,6 +171,7 @@ if [ ! -d "/home/$USER/.flux" ]; then
   echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
   echo -e "${CYAN}Please verify your FluxOS installation${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
@@ -170,6 +180,7 @@ if [ ! -d "/home/$USER/zelflux" ]; then
   echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
   echo -e "${CYAN}Please verify your FluxD installation${NC}"
   sleep 5
+  softExit='1'
   exit
 fi
 
