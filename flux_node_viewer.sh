@@ -157,7 +157,7 @@ if [[ $DOCKER_USER != *$USER* ]]; then
   exit
 fi
 
-if ! [ -d "/home/$USER/.flux" ]; then
+if [ ! -d "/home/$USER/.flux" ]; then
   echo -e "${RED}Flux Directory not found ... ${NC}"
   echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
   echo -e "${CYAN}Please verify your FluxOS installation${NC}"
@@ -165,7 +165,7 @@ if ! [ -d "/home/$USER/.flux" ]; then
   exit
 fi
 
-if ! [ -d "/home/$USER/zelflux" ]; then
+if [ ! -d "/home/$USER/zelflux" ]; then
   echo -e "${RED}zelflux Directory not found ... ${NC}"
   echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
   echo -e "${CYAN}Please verify your FluxD installation${NC}"
