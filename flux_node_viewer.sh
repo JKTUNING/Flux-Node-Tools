@@ -133,19 +133,28 @@ FLUX_BENCH_CHEKC_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
 FLUX_DAEMON_CHECK_URL='https://apt.runonflux.io/pool/main/f/flux/'
 
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
-# if ! [ -f /usr/local/bin/flux-cli ]; then
-#   echo -e "${RED}flux-cli tool not installed${NC}"
-#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
-#   sleep 5
-#   exit
-# fi
+if ! [ -f /usr/local/bin/flux-cli ]; then
+  echo -e "${RED}flux-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
 
-# if ! [ -f /usr/local/bin/fluxbench-cli ]; then
-#   echo -e "${RED}fluxbench-cli tool not installed${NC}"
-#   echo -e "${RED}application will exit in 5 seconds ...${NC}"
-#   sleep 5
-#   exit
-# fi
+if ! [ -f /usr/local/bin/fluxbench-cli ]; then
+  echo -e "${RED}fluxbench-cli tool not installed${NC}"
+  echo -e "${RED}application will exit in 5 seconds ...${NC}"
+  sleep 5
+  exit
+fi
+
+DOCKER_USER=$(getent group docker)
+
+if [[ $DOCKER_USER != *$USER* ]]; then
+  echo -e "${RED}$USER not in docker group${NC}"
+  echo -e "${CYAN}Please login as your docker user ...${NC}"
+  sleep 5
+  exit
+fi
 
 BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
 DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
