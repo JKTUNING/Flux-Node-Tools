@@ -488,11 +488,12 @@ function show_flux_node_info_tile(){
   fi
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
-  echo -e "$syncthing_port"
+  echo -e "$flux_syncthing_port"
   echo -e "$mongodb_port"
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
+  echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
   make_header "$DASH_NODE_SERVICE_TITLE" "$BLUE"
@@ -611,6 +612,7 @@ function show_external_port_info_tile(){
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
+  echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
   navigation
@@ -821,15 +823,16 @@ function check_port_info()
     flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
   fi
 
-  if [[ $listen_ports == *'16229'* && $listen_ports == *'syncthing'* ]]; then
-    syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16224${NC}"
+  if [[ $listen_ports == *'16129'* && $listen_ports == *'syncthing'* ]]; then
+    flux_syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16224${NC}"
   else
-    syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
+    flux_syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
   fi
 
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
+  syncthing_port="16129"
 
   if [[ -n $api_port ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
