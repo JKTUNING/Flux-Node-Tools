@@ -823,16 +823,10 @@ function check_port_info()
     flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
   fi
 
-  if [[ $listen_ports == *'16129'* && $listen_ports == *'syncthing'* ]]; then
-    flux_syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16129${NC}"
-  else
-    flux_syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
-  fi
-
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
-  syncthing_port="16129"
+  syncthing_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "syncthing") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
 
   if [[ -n $api_port ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
@@ -845,6 +839,13 @@ function check_port_info()
   else
     flux_ui_port="${RED_ARROW}   Flux UI is ${RED}not listening${NC}"
   fi
+
+  if [[ -n $syncthing_port ]]; then
+    flux_syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}$syncthing_port${NC}"
+  else
+    flux_syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
+  fi
+
 }
 
 # function to check flux ports are open to external world
