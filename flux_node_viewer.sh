@@ -488,6 +488,7 @@ function show_flux_node_info_tile(){
   fi
   echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
+  echo -e "$syncthing_port"
   echo -e "$mongodb_port"
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
@@ -820,6 +821,12 @@ function check_port_info()
     flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
   fi
 
+  if [[ $listen_ports == *'16229'* && $listen_ports == *'syncthing'* ]]; then
+    syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16224${NC}"
+  else
+    syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
+  fi
+
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
   ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
@@ -855,9 +862,19 @@ function check_external_ports(){
     else
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
+
+    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
+    if [[ -z $checkPort ]]; then
+      external_syncthing_port="${RED_ARROW}   Syncthing Port $syncthing_port is ${RED}closed${NC} - please check your network settings"
+      
+    else
+      external_syncthing_port="${GREEN_ARROW}   Syncthing Port $syncthing_port is ${GREEN}open${NC}"
+    fi
+
   else
     external_flux_ui_port="${RED_ARROW}   Flux UI Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
     external_flux_api_port="${RED_ARROW}   Flux API Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
+    external_syncthing_port="${RED_ARROW}   Syncthing Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
   fi
 }
 
@@ -901,8 +918,6 @@ function check_flux_bench_version(){
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
     flux_bench_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
-  #else
-    #flux_bench_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_bench_required_version${NC}"
   fi
 }
 
@@ -912,8 +927,6 @@ function check_flux_daemon_version(){
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
     flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
-  #else
-    #flux_daemon_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_daemon_required_version${NC}"
   fi
 }
 
@@ -1097,7 +1110,6 @@ function node_os_update(){
     else
       whiptail --msgbox "User would not like to update the operating system" 8 60;
     fi
- 
 }
 
 # Gets the node's uptime in minutes
