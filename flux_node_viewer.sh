@@ -824,7 +824,7 @@ function check_port_info()
   fi
 
   if [[ $listen_ports == *'16129'* && $listen_ports == *'syncthing'* ]]; then
-    flux_syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16224${NC}"
+    flux_syncthing_port="${GREEN_ARROW}   Syncthing is listening on port ${GREEN}16129${NC}"
   else
     flux_syncthing_port="${RED_ARROW}   Syncthing is ${RED}not listening${NC}"
   fi
