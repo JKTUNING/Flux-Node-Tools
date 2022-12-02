@@ -773,7 +773,7 @@ function check_benchmark_log(){
 #check Flux Error file
 function check_flux_log(){
   if [[ -f $FLUX_LOG_DIR ]]; then
-    flux_log=$(tail -100 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new" | tac)
+    flux_log=$(tail -200 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new|Syncthing is not" | tac)
     if [[ $flux_log == "" ]]; then
       flux_log="${GREEN_ARROW}   No common flux errors logged"
     fi
