@@ -911,7 +911,7 @@ function check_version(){
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
     flux_node_version_check="${GREEN_ARROW}   You have the current version ${GREEN}$flux_node_version${NC}"
   else
-    flux_node_version_check="${RED_ARROW}   You do not have the current version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
+    flux_node_version_check="${RED_ARROW}   You do not have the current version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
   fi
 }
 
@@ -921,7 +921,7 @@ function check_flux_bench_version(){
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
-    flux_bench_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
+    flux_bench_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_bench_required_version${NC} - your local version is ${RED}$flux_bench_current_version${NC}"
   fi
 }
 
@@ -930,7 +930,7 @@ function check_flux_daemon_version(){
   flux_daemon_required_version=$(curl -s -m 5 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
-    flux_daemon_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
+    flux_daemon_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_daemon_required_version${NC} - your local version is ${RED}$flux_daemon_current_version${NC}"
   fi
 }
 
