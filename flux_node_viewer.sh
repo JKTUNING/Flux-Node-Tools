@@ -761,7 +761,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
-    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed' | tac)
+    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed|Warning' | tac)
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
@@ -773,7 +773,7 @@ function check_benchmark_log(){
 #check Flux Error file
 function check_flux_log(){
   if [[ -f $FLUX_LOG_DIR ]]; then
-    flux_log=$(tail -100 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new" | tac)
+    flux_log=$(tail -200 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new|Syncthing is not" | tac)
     if [[ $flux_log == "" ]]; then
       flux_log="${GREEN_ARROW}   No common flux errors logged"
     fi
@@ -909,9 +909,9 @@ function check_version(){
   #flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
   flux_required_version=$(curl -sS --max-time 5 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
-    flux_node_version_check="${GREEN_ARROW}   You have the required version ${GREEN}$flux_node_version${NC}"
+    flux_node_version_check="${GREEN_ARROW}   You have the current version ${GREEN}$flux_node_version${NC}"
   else
-    flux_node_version_check="${RED_ARROW}   You do not have the required version ${GREEN}$flux_required_version${NC} - your current version is ${RED}$flux_node_version${NC}"
+    flux_node_version_check="${RED_ARROW}   You do not have the current version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
   fi
 }
 
@@ -921,7 +921,7 @@ function check_flux_bench_version(){
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
-    flux_bench_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_bench_required_version${NC} - your current version is ${RED}$flux_bench_current_version${NC}"
+    flux_bench_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_bench_required_version${NC} - your local version is ${RED}$flux_bench_current_version${NC}"
   fi
 }
 
@@ -930,7 +930,7 @@ function check_flux_daemon_version(){
   flux_daemon_required_version=$(curl -s -m 5 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
-    flux_daemon_version_check="${RED_ARROW}   You do not have the required version ${SEA}$flux_daemon_required_version${NC} - your current version is ${RED}$flux_daemon_current_version${NC}"
+    flux_daemon_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_daemon_required_version${NC} - your local version is ${RED}$flux_daemon_current_version${NC}"
   fi
 }
 
