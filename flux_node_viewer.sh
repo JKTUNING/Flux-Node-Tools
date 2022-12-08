@@ -635,13 +635,13 @@ function show_upnp_status(){
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
-    echo -e "${GREEN}$upnp_gateway${NC}"
-    echo -e "${SEA}$upnp_local_ip${NC}"
-    echo -e "${SEA}$upnp_external_ip${NC}"
+    echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
+    echo -e "$BLUE_CIRCLE   $upnp_local_ip${NC}"
+    echo -e "$BLUE_CIRCLE   $upnp_external_ip${NC}"
     make_header "UPnP FLux Routes " "$BLUE"
     echo -e "$upnp_flux_routes"
   else
-    echo -e "${RED}$upnp_gateway${NC}"
+    echo -e "${RED_ARROW}   $upnp_gateway${NC}"
   fi
   navigation
   checking_ports='0'
@@ -1203,7 +1203,7 @@ function display_upnp(){
     #echo -e "$upnp_flux_routes"
   else
     upnp_gateway="NO IGD UPnP Device Found"
-    echo -e "$upnp_gateway"
+    #echo -e "$upnp_gateway"
   fi
 }
 
