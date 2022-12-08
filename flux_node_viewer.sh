@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node Viewer 1.0.0'
+nodeViewVersion='Flux Node View 1.0.0'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
@@ -71,7 +71,7 @@ clear
 sleep 0.5
 
 echo -e ""
-echo -e "${SEA}starting flux node viewer $nodeViewVersion..."
+echo -e "${SEA}starting $nodeViewVersion..."
 echo -e ""
 echo -e "${BLUE}checking required packages ... ${NC}"
 
