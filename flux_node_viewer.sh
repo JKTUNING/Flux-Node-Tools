@@ -634,7 +634,7 @@ function show_upnp_status(){
   clear
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
-  if [[ $upnp_gateway != "NO IGD UPnP Device Found" && -n $upnp_gateway ]]; then
+  if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     make_header "UPnP Device Details" "$BLUE"
     echo -e "$upnp_gateway"
     echo -e "$upnp_local_ip"
@@ -1198,10 +1198,10 @@ function display_upnp(){
     upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
     upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress" | awk -F "." '{print $1"."$2".XXX.XXX"}')
 
-    echo -e "$upnp_gateway"
-    echo -e "$upnp_local_ip"
-    echo -e "$upnp_external_ip"
-    echo -e "$upnp_flux_routes"
+    #echo -e "$upnp_gateway"
+    #echo -e "$upnp_local_ip"
+    #echo -e "$upnp_external_ip"
+    #echo -e "$upnp_flux_routes"
   else
     upnp_gateway="NO IGD UPnP Device Found"
     echo -e "$upnp_gateway"
@@ -1503,6 +1503,7 @@ else
     show_bench='1'
   elif [[ $1 == "upnp" ]]; then
     show_upnp_status_tile='1'
+    softExit='1'
     exit
   else
     show_bench='1'
