@@ -1084,7 +1084,7 @@ function make_header(){
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
   make_header
-  echo -e "d - daemon | b - benchmarks | n - node | p - ports | q - quit | c - commands" 
+  echo -e "d - daemon | b - benchmarks | n - node | l - logs | q - quit | c - commands" 
 }
 
 #this function simply prints the version at the top of the page
