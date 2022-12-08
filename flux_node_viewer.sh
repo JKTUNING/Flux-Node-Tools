@@ -76,13 +76,13 @@ echo -e "${BLUE}checking required packages ... ${NC}"
 if ! dpkg -s miniupnpc 2>/dev/null | grep "ok installed" >/dev/null 2>&1; then
   echo -e "UPNPC ${RED}not installed${NC} ... installing miniupnpc"
   sleep 2
-  sudo apt install miniupnpc -y >/dev/null 2>&1
+  sudo apt install miniupnpc -y
 fi
 
 if ! jq --version >/dev/null 2>&1; then
   echo -e "${RED}jq not found ... installing jq${NC}"
   sleep 2
-  sudo apt install jq -y >/dev/null 2>&1
+  sudo apt install jq -y
 
   if ! jq --version >/dev/null 2>&1; then
     echo "jq install was not successful - exiting"
@@ -94,7 +94,7 @@ fi
 if ! lsof -v > /dev/null 2>&1; then
   echo -e "${RED}lsof not found ... installing lsof${NC}"
   sleep 2
-  sudo apt-get install lsof -y >/dev/null 2>&1
+  sudo apt install lsof -y
 fi
 
 version='Flux Node Viewer 1.0.0'
