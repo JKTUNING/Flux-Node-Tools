@@ -159,7 +159,7 @@ DOCKER_USER=$(getent group docker)
 
 if [[ $DOCKER_USER != *$USER* ]]; then
   echo -e "${RED}$USER not in docker group${NC}"
-  echo -e "${CYAN}Please login as your docker user ...${NC}"
+  echo -e "${SEA}Please login as your docker user ...${NC}"
   echo -e "${RED}application will exit in 5 seconds ...${NC}"
   sleep 5
   softExit='1'
@@ -168,8 +168,8 @@ fi
 
 if [ ! -d "/home/$USER/.flux" ]; then
   echo -e "${RED}Flux Directory not found ... ${NC}"
-  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${CYAN}Please verify your FluxOS installation${NC}"
+  echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${SEA}Please verify your FluxOS installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -177,8 +177,8 @@ fi
 
 if [ ! -d "/home/$USER/zelflux" ]; then
   echo -e "${RED}zelflux Directory not found ... ${NC}"
-  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${CYAN}Please verify your FluxD installation${NC}"
+  echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${SEA}Please verify your FluxD installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -204,6 +204,7 @@ show_commands='0'
 show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
+show_upnp_status_tile='0'
 show_node_fix_details='0'
 show_docker_image_details='0'
 term_resize='0'
@@ -352,8 +353,9 @@ function update(){
     show_node_kda_details='0'
     show_node_fix_details='0'
     show_docker_image_details='0'
+    show_upnp_status_tile='0'
 
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
@@ -385,6 +387,8 @@ function update(){
       show_external_port_details='1'
     elif [[ $userInput == 'k' ]]; then
       show_node_kda_details='1'
+    elif [[ $userInput == 's' ]]; then
+      show_upnp_status_tile='1'
     elif [[ $userInput == 'f' ]]; then
       clear
       get_flux_bench_info
@@ -561,6 +565,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'd'            -    Show Flux Daemon Info"
   echo -e "$BLUE_CIRCLE   'n'            -    Show Flux Node Info"
   echo -e "$BLUE_CIRCLE   'b'            -    Show Flux Node Benchmark Info"
+  echo -e "$BLUE_CIRCLE   's'            -    Show UPnP Status Details"
   echo -e "$BLUE_CIRCLE   'u'            -    Update Ubuntu Operating System"
   echo -e "$BLUE_CIRCLE   't'            -    Show Flux Network Node Details"
   echo -e "$BLUE_CIRCLE   'p'            -    Check External Flux Ports"
@@ -615,6 +620,30 @@ function show_external_port_info_tile(){
   echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
+  navigation
+  checking_ports='0'
+}
+
+#show upnp status
+function show_upnp_status(){
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking UPNP status ...${NC}"
+    display_upnp
+  fi
+  clear
+  sleep 0.25
+  make_header "UPnP Device Details" "$BLUE"
+  if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
+    echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
+    echo -e "$BLUE_CIRCLE   $upnp_local_ip${NC}"
+    echo -e "$BLUE_CIRCLE   $upnp_external_ip${NC}"
+    make_header "UPnP FLux Routes " "$BLUE"
+    echo -e "$upnp_flux_routes"
+  else
+    echo -e "${RED_ARROW}   $upnp_gateway${NC}"
+  fi
   navigation
   checking_ports='0'
 }
@@ -1159,6 +1188,26 @@ function check_dhcp_enable(){
   fi
 }
 
+#use upnpc -l to display all details for Flux upnp
+function display_upnp(){
+
+  upnp_display=$(upnpc -l)
+  if [[ "$upnp_display" == *"Found valid IGD"* ]]; then
+    upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
+    upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
+    upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
+    upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress" | awk -F "." '{print $1"."$2".XXX.XXX"}')
+
+    #echo -e "$upnp_gateway"
+    #echo -e "$upnp_local_ip"
+    #echo -e "$upnp_external_ip"
+    #echo -e "$upnp_flux_routes"
+  else
+    upnp_gateway="NO IGD UPnP Device Found"
+    #echo -e "$upnp_gateway"
+  fi
+}
+
 # restart daemon service and restart FluxOS
 function flux_update_service(){
   #stop daemon
@@ -1412,6 +1461,8 @@ function main_terminal(){
         show_external_port_info_tile $term_resize
       elif [[ $show_node_kda_details == '1' ]]; then
         show_node_kda_tile $term_resize
+      elif [[ $show_upnp_status_tile == '1' ]]; then
+        show_upnp_status $term_resize
       fi
     fi
 
@@ -1450,6 +1501,8 @@ else
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
     show_bench='1'
+  elif [[ $1 == "upnp" ]]; then
+    show_upnp_status_tile='1'
   else
     show_bench='1'
   fi
