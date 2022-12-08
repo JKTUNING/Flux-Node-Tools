@@ -30,6 +30,8 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
+nodeViewVersion='Flux Node Viewer 1.0.0'
+
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
   echo "alias fluxnodeview='bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_node_viewer.sh)'" | sudo tee -a /etc/bash.bashrc
@@ -69,12 +71,12 @@ clear
 sleep 0.5
 
 echo -e ""
-echo -e "${SEA}starting flux node viewer ..."
+echo -e "${SEA}starting flux node viewer $nodeViewVersion..."
 echo -e ""
 echo -e "${BLUE}checking required packages ... ${NC}"
 
 if ! dpkg -s miniupnpc 2>/dev/null | grep "ok installed" >/dev/null 2>&1; then
-  echo -e "UPNPC ${RED}not installed${NC} ... installing miniupnpc"
+  echo -e "Mininupnpc ${RED}not installed${NC} ... installing miniupnpc"
   sleep 2
   sudo apt install miniupnpc -y
 fi
@@ -96,8 +98,6 @@ if ! lsof -v > /dev/null 2>&1; then
   sleep 2
   sudo apt install lsof -y
 fi
-
-version='Flux Node Viewer 1.0.0'
 
 WRENCH='\xF0\x9F\x94\xA7'
 YELLOW_ARROW="${YELLOW}\xE2\x96\xB6${NC}  "
@@ -1090,7 +1090,7 @@ function navigation(){
 
 #this function simply prints the version at the top of the page
 function make_title(){
-  make_header "$version" "$BLUE"
+  make_header "$nodeViewVersion" "$BLUE"
 }
 
 #checks the current window size and compares it to the last windows size to see if we need to redraw the term
