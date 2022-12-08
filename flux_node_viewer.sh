@@ -1166,7 +1166,7 @@ function display_upnp(){
   if [[ "$upnp_display" == *"Found valid IGD"* ]]; then
     upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
     upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
-    upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN IP")
+    upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
     upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress")
 
     echo -e "$upnp_gateway"
