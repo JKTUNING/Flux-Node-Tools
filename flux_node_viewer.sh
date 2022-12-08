@@ -159,7 +159,7 @@ DOCKER_USER=$(getent group docker)
 
 if [[ $DOCKER_USER != *$USER* ]]; then
   echo -e "${RED}$USER not in docker group${NC}"
-  echo -e "${CYAN}Please login as your docker user ...${NC}"
+  echo -e "${SEA}Please login as your docker user ...${NC}"
   echo -e "${RED}application will exit in 5 seconds ...${NC}"
   sleep 5
   softExit='1'
@@ -168,8 +168,8 @@ fi
 
 if [ ! -d "/home/$USER/.flux" ]; then
   echo -e "${RED}Flux Directory not found ... ${NC}"
-  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${CYAN}Please verify your FluxOS installation${NC}"
+  echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${SEA}Please verify your FluxOS installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -177,8 +177,8 @@ fi
 
 if [ ! -d "/home/$USER/zelflux" ]; then
   echo -e "${RED}zelflux Directory not found ... ${NC}"
-  echo -e "${CYAN}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${CYAN}Please verify your FluxD installation${NC}"
+  echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
+  echo -e "${SEA}Please verify your FluxD installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -636,8 +636,8 @@ function show_upnp_status(){
   make_header "UPnP Device Details" "$BLUE"
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     echo -e "${GREEN}$upnp_gateway${NC}"
-    echo -e "${CYAN}$upnp_local_ip${NC}"
-    echo -e "${CYAN}$upnp_external_ip${NC}"
+    echo -e "${SEA}$upnp_local_ip${NC}"
+    echo -e "${SEA}$upnp_external_ip${NC}"
     make_header "UPnP FLux Routes " "$BLUE"
     echo -e "$upnp_flux_routes"
   else
