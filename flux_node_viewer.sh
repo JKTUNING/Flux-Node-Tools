@@ -1502,7 +1502,6 @@ else
     show_bench='1'
   elif [[ $1 == "upnp" ]]; then
     show_upnp_status_tile='1'
-    exit
   else
     show_bench='1'
   fi
