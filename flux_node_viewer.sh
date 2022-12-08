@@ -1159,6 +1159,25 @@ function check_dhcp_enable(){
   fi
 }
 
+#use upnpc -l to display all details for Flux upnp
+function display_upnp(){
+
+  upnp_display=$(upnpc -l)
+  if [[ "$upnp_display" == *"Found valid IGD"* ]]; then
+    upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
+    upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
+    upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN IP")
+    upnp_external_ip$(echo "$upnp_display" | grep "ExternalIPAddress")
+
+    echo -e $upnp_gateway
+    echo -e $upnp_local_ip
+    echo -e $upnp_external_ip
+    echo -e $upnp_flux_routes
+  else
+    echo -e "NO IGD UPnP Device Found"
+  fi
+}
+
 # restart daemon service and restart FluxOS
 function flux_update_service(){
   #stop daemon
@@ -1450,6 +1469,10 @@ else
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
     show_bench='1'
+  elif [[ $1 == "upnp" ]]; then
+    display_upnp
+    softExit='1'
+    exit
   else
     show_bench='1'
   fi
