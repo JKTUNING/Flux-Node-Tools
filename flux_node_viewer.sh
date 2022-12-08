@@ -1164,10 +1164,10 @@ function display_upnp(){
 
   upnp_display=$(upnpc -l)
   if [[ "$upnp_display" == *"Found valid IGD"* ]]; then
-    upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD")
-    upnp_flux_routes=$(echo "$upnp_display" | egrep -a -wi "Flux")
-    upnp_local_ip=$(echo "$upnp_display" | egrep -a -wi "Local LAN IP")
-    upnp_external_ip$(echo "$upnp_display" | egrep -a -wi "ExternalIPAddress")
+    upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
+    upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
+    upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN IP")
+    upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress")
 
     echo -e "$upnp_gateway"
     echo -e "$upnp_local_ip"
