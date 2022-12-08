@@ -641,7 +641,7 @@ function show_upnp_status(){
     make_header "UPnP FLux Routes " "$BLUE"
     echo -e "$upnp_flux_routes"
   else
-    echo -e "$upnp_gateway"
+    echo -e "${RED}$upnp_gateway${NC}"
   fi
   navigation
   checking_ports='0'
