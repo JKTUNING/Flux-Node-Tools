@@ -635,7 +635,6 @@ function show_upnp_status(){
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
-    make_header "UPnP Device Details" "$BLUE"
     echo -e "$upnp_gateway"
     echo -e "$upnp_local_ip"
     echo -e "$upnp_external_ip"
