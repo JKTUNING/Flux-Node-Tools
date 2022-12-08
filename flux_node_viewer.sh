@@ -204,6 +204,7 @@ show_commands='0'
 show_flux_node_details='0'
 show_external_port_details='0'
 show_node_kda_details='0'
+show_upnp_status_tile='0'
 show_node_fix_details='0'
 show_docker_image_details='0'
 term_resize='0'
@@ -352,8 +353,9 @@ function update(){
     show_node_kda_details='0'
     show_node_fix_details='0'
     show_docker_image_details='0'
+    show_upnp_status_tile='0'
 
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
@@ -385,6 +387,8 @@ function update(){
       show_external_port_details='1'
     elif [[ $userInput == 'k' ]]; then
       show_node_kda_details='1'
+    elif [[ $userInput == 's' ]]; then
+      show_upnp_status_tile='1'
     elif [[ $userInput == 'f' ]]; then
       clear
       get_flux_bench_info
@@ -615,6 +619,31 @@ function show_external_port_info_tile(){
   echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
+  navigation
+  checking_ports='0'
+}
+
+#show external port info
+function show_upnp_status(){
+   if [[ $1 != 1 ]]; then
+    clear
+    sleep 0.25
+    echo -e "${GREEN}   Checking UPNP status ...${NC}"
+    display_upnp
+  fi
+  clear
+  sleep 0.25
+  make_header "UPnP Device Details" "$BLUE"
+  if [[ $upnp_gateway != "NO IGD UPnP Device Found" && -n $upnp_gateway ]]; then
+    make_header "UPnP Device Details" "$BLUE"
+    echo -e "$upnp_gateway"
+    echo -e "$upnp_local_ip"
+    echo -e "$upnp_external_ip"
+    make_header "UPnP FLux Routes " "$BLUE"
+    echo -e "$upnp_flux_routes"
+  else
+    echo -e "$upnp_gateway"
+  fi
   navigation
   checking_ports='0'
 }
@@ -1174,7 +1203,8 @@ function display_upnp(){
     echo -e "$upnp_external_ip"
     echo -e "$upnp_flux_routes"
   else
-    echo -e "NO IGD UPnP Device Found"
+    upnp_gateway="NO IGD UPnP Device Found"
+    echo -e "$upnp_gateway"
   fi
 }
 
@@ -1431,6 +1461,8 @@ function main_terminal(){
         show_external_port_info_tile $term_resize
       elif [[ $show_node_kda_details == '1' ]]; then
         show_node_kda_tile $term_resize
+      elif [[ $show_upnp_status_tile == '1' ]]; then
+        show_upnp_status $term_resize
       fi
     fi
 
@@ -1470,8 +1502,7 @@ else
     show_realtime_logs
     show_bench='1'
   elif [[ $1 == "upnp" ]]; then
-    display_upnp
-    softExit='1'
+    show_upnp_status_tile='1'
     exit
   else
     show_bench='1'
