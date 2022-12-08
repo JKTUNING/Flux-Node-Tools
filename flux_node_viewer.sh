@@ -623,7 +623,7 @@ function show_external_port_info_tile(){
   checking_ports='0'
 }
 
-#show external port info
+#show upnp status
 function show_upnp_status(){
    if [[ $1 != 1 ]]; then
     clear
