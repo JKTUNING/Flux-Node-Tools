@@ -1167,7 +1167,7 @@ function display_upnp(){
     upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
     upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
     upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
-    upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress")
+    upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress" | awk -F "." '{print $1"."$2".XXX.XXX"}')
 
     echo -e "$upnp_gateway"
     echo -e "$upnp_local_ip"
