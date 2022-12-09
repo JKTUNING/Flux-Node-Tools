@@ -1206,7 +1206,7 @@ function display_upnp(){
     upnp_gateway="NO IGD UPnP Device Found"
   fi
 
-  flux_upnp_port=$(grep -w apiport /home/$USER/zelflux/config/userconfig.js | awk -F ":" '{print $2}' | awk -F "," '{print $1}')
+  flux_upnp_port=$(grep -w apiport /home/$USER/zelflux/config/userconfig.js | awk -F "'" '{print $2}')
 }
 
 # restart daemon service and restart FluxOS
