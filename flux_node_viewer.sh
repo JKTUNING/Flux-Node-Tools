@@ -636,9 +636,9 @@ function show_upnp_status(){
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
   if [[ $flux_upnp_port =~ ^-?[0-9]+$ ]]; then
-      echo -e "$GREEN_ARROW   API from Config ${GREEN}$flux_upnp_port${NC}"
+      echo -e "$GREEN_ARROW   API from Config: ${GREEN}$flux_upnp_port${NC}"
     else
-      echo -e "$RED_ARROW   API from Config ${RED}Disabled${NC}"
+      echo -e "$RED_ARROW   API from Config: ${RED}Disabled${NC}"
   fi
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
