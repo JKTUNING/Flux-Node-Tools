@@ -71,7 +71,7 @@ clear
 sleep 0.5
 
 echo -e ""
-echo -e "${SEA}starting $nodeViewVersion..."
+echo -e "${SEA}Starting $nodeViewVersion..."
 echo -e ""
 echo -e "${BLUE}checking required packages ... ${NC}"
 
@@ -635,6 +635,11 @@ function show_upnp_status(){
   clear
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
+  if [[ $flux_upnp_port =~ ^-?[0-9]+$ ]]; then
+      echo -e "$GREEN_ARROW   API from Config ${GREEN}$flux_upnp_port${NC}"
+    else
+      echo -e "$RED_ARROW   API from Config ${RED}Disabled${NC}"
+  fi
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
     echo -e "$BLUE_CIRCLE   $upnp_local_ip${NC}"
@@ -1197,15 +1202,11 @@ function display_upnp(){
     upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
     upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
     upnp_external_ip=$(echo "$upnp_display" | grep "ExternalIPAddress" | awk -F "." '{print $1"."$2".XXX.XXX"}')
-
-    #echo -e "$upnp_gateway"
-    #echo -e "$upnp_local_ip"
-    #echo -e "$upnp_external_ip"
-    #echo -e "$upnp_flux_routes"
   else
     upnp_gateway="NO IGD UPnP Device Found"
-    #echo -e "$upnp_gateway"
   fi
+
+  flux_upnp_port=$(grep -w apiport /home/$USER/zelflux/config/userconfig.js | awk -F ":" '{print $2}' | awk -F "," '{print $1}')
 }
 
 # restart daemon service and restart FluxOS
