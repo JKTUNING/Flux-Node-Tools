@@ -1199,7 +1199,7 @@ function display_upnp(){
   upnp_display=$(upnpc -l)
   if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"*  ]]; then
     upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
-    if [[ -n $upnp_gateway ]]; then
+    if [[ -z "$upnp_gateway" ]]; then
       upnp_gateway="Found Not Connected Gateway"
     fi
     upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
