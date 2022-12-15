@@ -1198,9 +1198,9 @@ function display_upnp(){
 
   upnp_display=$(upnpc -l)
   if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"*  ]]; then
-    upnp_gateway=$(echo "$upnp_display" | grep "Found valid IGD")
+   upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD|Found a (not connected?) IGD")
     if [[ -z "$upnp_gateway" ]]; then
-      upnp_gateway="Found Not Connected Gateway"
+      upnp_gateway="N/A"
     fi
     upnp_flux_routes=$(echo "$upnp_display" | grep "Flux")
     upnp_local_ip=$(echo "$upnp_display" | grep "Local LAN ip")
