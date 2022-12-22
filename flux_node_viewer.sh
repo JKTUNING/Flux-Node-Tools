@@ -1197,8 +1197,8 @@ function check_dhcp_enable(){
 function display_upnp(){
 
   upnp_display=$(upnpc -l)
-  if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"*  ]]; then
-   upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD|Found a (not connected?) IGD")
+   if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"*  ]]; then
+   upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD|Found a \(not connected?")
     if [[ -z "$upnp_gateway" ]]; then
       upnp_gateway="N/A"
     fi
