@@ -784,7 +784,7 @@ function check_pm2_flux_watchdog_service(){
 #checks last 100 lines of daemon log file for errors or failed entries
 function check_daemon_log(){
   if [[ -f $DAEMON_LOG_DIR ]]; then
-    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a -wi 'error|failed' | tac)
+    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a -wi 'error|failed' | tac | head)
     if [[ $daemon_log == "" ]]; then
       daemon_log="${GREEN_ARROW}   No Daemon Errors logged"
     fi
@@ -795,7 +795,7 @@ function check_daemon_log(){
 
 function check_benchmark_log(){
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
-    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed|Warning' | tac)
+    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed|Warning' | tac | head)
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
@@ -807,7 +807,7 @@ function check_benchmark_log(){
 #check Flux Error file
 function check_flux_log(){
   if [[ -f $FLUX_LOG_DIR ]]; then
-    flux_log=$(tail -200 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new|Syncthing is not" | tac)
+    flux_log=$(tail -200 $FLUX_LOG_DIR | egrep -a -wi "Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new|Syncthing is not" | tac | head)
     if [[ $flux_log == "" ]]; then
       flux_log="${GREEN_ARROW}   No common flux errors logged"
     fi
