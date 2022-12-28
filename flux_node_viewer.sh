@@ -835,7 +835,7 @@ function check_ip(){
       flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
     fi
   else
-      flux_ip_check"${RED_ARROW}   Public IP or $local_device WAN IP ${RED}not available${NC}"
+      flux_ip_check="${RED_ARROW}   Public IP or $local_device WAN IP ${RED}not available${NC}"
   fi
 }
 
