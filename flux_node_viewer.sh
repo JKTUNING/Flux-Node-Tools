@@ -821,16 +821,21 @@ function check_ip(){
   WANIP=$(curl --silent -m 15 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
     WANIP=$(curl --silent -m 15 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
-  else
-  WANIP=$(curl --silent -m 15 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
+  fi
+  if [[ "$WANIP" == "" ]]; then
+    WANIP=$(curl --silent -m 15 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
   fi
 
   local_device_ip=$(ip a list $local_device | grep -o $WANIP)
 
-  if [[ "$WANIP" == "$local_device_ip" ]]; then
-    flux_ip_check="${GREEN_ARROW}   Public IP ${GREEN}matches${NC} device IP"
+  if [[ "$WANIP" != "" && "$local_device_ip" != "" ]]; then
+    if [[ "$WANIP" == "$local_device_ip" ]]; then
+      flux_ip_check="${GREEN_ARROW}   Public IP ${GREEN}matches${NC} device IP"
+    else
+      flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
+    fi
   else
-    flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
+      flux_ip_check"${RED_ARROW}   Public IP or $local_device WAN IP not available"
   fi
 }
 
