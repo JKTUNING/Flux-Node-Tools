@@ -229,8 +229,6 @@ flux_node_confirmed_height=""
 flux_node_last_confirmed_height=""
 flux_node_last_paid_height=""
 
-#get local device name
-local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
 #get node version on device
 flux_node_version=$(jq -r '.version' /home/$USER/$FLUX_DIR/package.json 2>/dev/null)
 
@@ -461,6 +459,8 @@ function show_flux_node_info_tile(){
     sleep 0.25
     # check dhcp first
     check_dhcp_enable 
+    echo -e "${GREEN}   Gathering IP address info ...${NC}"
+    check_ip
     echo -e "${GREEN}   Checking external flux ports ...${NC}"
     check_external_ports
     echo -e "${GREEN}   Checking UPNP details ...${NC}"
@@ -607,6 +607,8 @@ function show_external_port_info_tile(){
    if [[ $1 != 1 ]]; then
     clear
     sleep 0.25
+    echo -e "${GREEN}   Gathering IP address info ...${NC}"
+    check_ip
     echo -e "${GREEN}   Checking external flux ports ...${NC}"
     check_external_ports
     echo -e "${GREEN}   Checking UPNP details ...${NC}"
@@ -818,6 +820,7 @@ function check_flux_log(){
 
 #check node external IP address and compare it to device IP address
 function check_ip(){
+  local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
   WANIP=$(curl --silent -m 15 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
     WANIP=$(curl --silent -m 15 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
@@ -1485,7 +1488,6 @@ function main_terminal(){
 
 echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 
-check_ip
 check_version
 
 # allow for user input to go right to desired tile
@@ -1518,5 +1520,3 @@ else
 fi
 
 main_terminal
-
-#flux_external_available=$(curl -i -H "Accept: application/json" "https://api.runonflux.io/flux/checkfluxavailability/$WANIP" | grep 'success')
