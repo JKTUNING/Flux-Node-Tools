@@ -589,8 +589,8 @@ function show_node_overview_tile(){
    if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
-
-  echo -e "${YELLOW}Use navigation commands at bottom of screen to change tiles$NC}"
+  echo -e ""
+  echo -e "${YELLOW}Use navigation commands at bottom of screen to change tiles${NC}"
   navigation
 }
 
