@@ -575,6 +575,7 @@ function show_node_overview_tile(){
     get_blocks_since_last_confirmed
   fi
   bench_status_style
+  node_status_style
   clear
   sleep 0.25
   echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
@@ -1433,6 +1434,14 @@ function bench_status_style(){
     flux_bench_benchmark="$(echo -e "${GREEN}${flux_bench_benchmark}${NC}")"
   else
     flux_bench_benchmark="$(echo -e "${RED}${flux_bench_benchmark}${NC}")"
+  fi
+}
+
+function node_status_style(){
+  if [[ "$flux_node_status" == "CONFIRMED" ]]; then
+    flux_node_status="$(echo -e "${GREEN}${flux_node_status}${NC}")"
+  else
+    flux_node_status="$(echo -e "${RED}${flux_node_status}${NC}")"
   fi
 }
 
