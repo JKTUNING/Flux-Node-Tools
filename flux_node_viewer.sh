@@ -599,6 +599,7 @@ function show_node_overview_tile(){
   echo -e "${GREEN}l${NC} - view real-time logs"
   echo -e "${GREEN}c${NC} - display list of commands"
   echo -e "${GREEN}q${NC} - quit application"
+  make_header
 }
 
 #show available commands for the application
