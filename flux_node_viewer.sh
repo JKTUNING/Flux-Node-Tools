@@ -1427,7 +1427,7 @@ function lvm_fix_function(){
 }
 
 function bench_status_style(){
-  if [[ $flux_bench_benchmark == "CUMULUS|NIMBUS|STRATUS" ]]
+  if [[ "$flux_bench_benchmark" == "CUMULUS|NIMBUS|STRATUS" ]]; then
     flux_bench_benchmark="$(echo -e "${GREEN}${flux_bench_benchmark}${NC}")"
   else
     flux_bench_benchmark="$(echo -e "${RED}${flux_bench_benchmark}${NC}")"
