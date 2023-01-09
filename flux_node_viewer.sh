@@ -353,7 +353,7 @@ function update(){
     show_docker_image_details='0'
     show_upnp_status_tile='0'
 
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's' 'v')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
@@ -366,6 +366,8 @@ function update(){
       show_bench='1'
     elif [[ $userInput == 'n' ]]; then
       show_node='1'
+    elif [[ $userInput == 'v' ]]; then
+      show_overview='1'
     elif [[ $userInput == 'd' ]]; then
       check_daemon_log
       show_daemon='1'
@@ -554,6 +556,40 @@ function show_flux_benchmark_info_tile(){
     echo -e "$bench_log"
   fi
  
+  navigation
+}
+
+function show_node_overview_tile(){
+  if [[ $1 != 1 ]]; then
+    get_flux_node_info
+    get_flux_bench_info
+    get_flux_blockchain_info
+    clear
+    echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
+    check_current_blockheight
+    check_flux_daemon_version
+    check_flux_bench_version
+    check_version
+    get_blocks_since_last_confirmed
+  fi
+  clear
+  sleep 0.25
+  make_header "FLUX NODE OVERVIEW" "$BLUE"
+  echo -e "$BLUE_CIRCLE   Flux Node Status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Flux Bench Status            -    $flux_bench_flux_status"
+  echo -e "$daemon_sync_status"
+
+  echo -e "$flux_node_version_check"
+
+  if [[ -n "$flux_bench_version_check" ]]; then
+    echo -e "$flux_bench_version_check"
+  fi
+
+   if [[ -n "$flux_daemon_version_check" ]]; then
+    echo -e "$flux_daemon_version_check"
+  fi
+  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
+  
   navigation
 }
 
@@ -1463,6 +1499,8 @@ function main_terminal(){
         show_flux_node_info_tile $term_resize
       elif [[ $show_bench == '1' ]]; then
         show_flux_benchmark_info_tile $term_resize
+      elif [[ $show_overview == '1' ]]; then
+        show_node_overview_tile $term_resize
       elif [[ $show_docker == '1' ]]; then
         show_docker_tile $term_resize
       elif [[ $show_commands == '1' ]]; then
@@ -1494,7 +1532,7 @@ check_version
 # allow arguments are 
 # - node, bench, daemon, ports
 if [ -z "$1" ]; then
-   show_bench='1'
+   show_overview='1'
 else
   if [[ $1 == "node" ]]; then
     show_node='1'
@@ -1515,7 +1553,7 @@ else
   elif [[ $1 == "upnp" ]]; then
     show_upnp_status_tile='1'
   else
-    show_bench='1'
+    show_overview='1'
   fi
 fi
 
