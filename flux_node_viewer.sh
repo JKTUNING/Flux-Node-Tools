@@ -576,8 +576,9 @@ function show_node_overview_tile(){
   sleep 0.25
   make_header "FLUX NODE OVERVIEW" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux Node Status             -    $flux_node_status"
-  echo -e "$BLUE_CIRCLE   Flux Bench Status            -    $flux_bench_flux_status"
+  echo -e "$BLUE_CIRCLE   Flux Bench Status            -    $flux_bench_benchmark"
   echo -e "$daemon_sync_status"
+  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
 
   echo -e "$flux_node_version_check"
 
@@ -587,9 +588,7 @@ function show_node_overview_tile(){
 
    if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
-  fi
-  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
-  
+  fi  
   navigation
 }
 
@@ -987,9 +986,9 @@ function check_version(){
   #flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
   flux_required_version=$(curl -sS --max-time 5 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
-    flux_node_version_check="${GREEN_ARROW}   You have the current version ${GREEN}$flux_node_version${NC}"
+    flux_node_version_check="${GREEN_ARROW}   You have the current FluxOS version ${GREEN}$flux_node_version${NC}"
   else
-    flux_node_version_check="${RED_ARROW}   You do not have the current version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
+    flux_node_version_check="${RED_ARROW}   You do not have the current FluxOS version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
   fi
 }
 
