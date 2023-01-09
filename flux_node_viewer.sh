@@ -344,6 +344,7 @@ function update(){
     show_node='0'
     show_daemon='0'
     show_bench='0'
+    show_overview='0'
     show_commands='0'
     show_docker='0'
     show_flux_node_details='0'
