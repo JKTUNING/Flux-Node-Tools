@@ -590,12 +590,15 @@ function show_node_overview_tile(){
    if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
-  echo -e "${YELLOW}Press command key to navigate to new tile${NC}"
+
+  echo -e ""
+  echo -e "${YELLOW}Press navigation commands to navigate tiles${NC}"
   echo -e "${GREEN}b${NC} - get benchmark details"
   echo -e "${GREEN}n${NC} - get node and network details"
   echo -e "${GREEN}d${NC} - get daemon details"
+  echo -e "${GREEN}l${NC} - view real-time logs"
   echo -e "${GREEN}c${NC} - display list of commands"
-  echo -e "${YELLOW}Use navigation commands at bottom of screen to change tiles${NC}"
+  echo -e "${GREEN}q${NC} - quit application"
   navigation
 }
 
