@@ -572,6 +572,7 @@ function show_node_overview_tile(){
     check_version
     get_blocks_since_last_confirmed
   fi
+  bench_status_style
   clear
   sleep 0.25
   echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
@@ -1423,6 +1424,14 @@ function lvm_fix_function(){
   sleep 2
   flux_update_benchmarks
   show_bench = '1'
+}
+
+function bench_status_style(){
+  if [[ $flux_bench_benchmark == "CUMULUS|NIMBUS|STRATUS" ]]
+    flux_bench_benchmark="$(echo -e "${GREEN}${flux_bench_benchmark}${NC}")"
+  else
+    flux_bench_benchmark="$(echo -e "${RED}${flux_bench_benchmark}${NC}")"
+  fi
 }
 
 function create_flux_motd(){
