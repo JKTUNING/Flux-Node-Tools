@@ -197,6 +197,7 @@ watchdog_process_status=""
 flux_node_dos=""
 
 #variables to draw windows
+show_overview='0'
 show_bench='0'
 show_daemon='0'
 show_node='0'
