@@ -575,10 +575,10 @@ function show_node_overview_tile(){
   clear
   sleep 0.25
   make_header "FLUX NODE OVERVIEW" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux Node Status             -    $flux_node_status"
-  echo -e "$BLUE_CIRCLE   Flux Bench Status            -    $flux_bench_benchmark"
+  echo -e "$BLUE_CIRCLE   Flux node Status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Flux bench Status            -    $flux_bench_benchmark"
   echo -e "$daemon_sync_status"
-  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Node maintenance window      -    $maint_window mins"
 
   echo -e "$flux_node_version_check"
 
@@ -588,7 +588,9 @@ function show_node_overview_tile(){
 
    if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
-  fi  
+  fi
+
+  echo -e "${YELLOW}Use navigation commands at bottom of screen to change tiles$NC}"
   navigation
 }
 
