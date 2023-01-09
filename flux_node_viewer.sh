@@ -574,7 +574,7 @@ function show_node_overview_tile(){
   fi
   clear
   sleep 0.25
-  figlet -f slant "$nodeViewVersion"
+  figlet -f small "$nodeViewVersion"
   make_header "FLUX NODE OVERVIEW" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node Status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux bench Status            -    $flux_bench_benchmark"
