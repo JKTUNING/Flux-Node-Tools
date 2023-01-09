@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node View 1.0.0'
+nodeViewVersion='Flux Node View 1.1'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
@@ -574,7 +574,7 @@ function show_node_overview_tile(){
   fi
   clear
   sleep 0.25
-  echo -e "${BLUE} $(figlet -f small "nodeViewVersion")${NC}"
+  echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
   make_header "FLUX NODE OVERVIEW" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node Status             -    $flux_node_status"
   echo -e "$BLUE_CIRCLE   Flux bench Status            -    $flux_bench_benchmark"
