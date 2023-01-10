@@ -657,7 +657,9 @@ function show_network_node_details_tile(){
 function show_external_port_info_tile(){
    if [[ $1 != 1 ]]; then
     clear
-    sleep 0.25
+    sleep 0.25    
+    echo -e "${GREEN}   Checking FluxOS Ports used ... ${NC}"
+    check_port_info
     echo -e "${GREEN}   Gathering IP address info ...${NC}"
     check_ip
     echo -e "${GREEN}   Checking external flux ports ...${NC}"
