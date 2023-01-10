@@ -601,6 +601,7 @@ function show_node_overview_tile(){
   echo -e "${GREEN}n${NC} - get node and network details"
   echo -e "${GREEN}d${NC} - get daemon details"
   echo -e "${GREEN}l${NC} - view real-time logs"
+  echo -e "${GREEN}s${NC} - view upnp details"
   echo -e "${GREEN}c${NC} - display list of commands"
   echo -e "${GREEN}q${NC} - quit application"
   make_header
@@ -623,6 +624,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
   echo -e "$BLUE_CIRCLE   'i'            -    Docker Container Details"
   echo -e "$BLUE_CIRCLE   'o'            -    Prune Docker Containers"
+  echo -e "$BLUE_CIRCLE   'v'            -    Node Overview"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
