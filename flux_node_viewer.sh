@@ -475,6 +475,7 @@ function show_flux_node_info_tile(){
 
   clear
   sleep 0.25
+  node_status_style
   make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   if [[ "$flux_node_status" == "DOS" ]]; then
@@ -527,6 +528,7 @@ function show_flux_benchmark_info_tile(){
   fi
   clear
   sleep 0.25
+  bench_status_style
   make_header "$DASH_BENCH_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
