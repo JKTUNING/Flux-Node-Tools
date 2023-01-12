@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node View 1.0.0'
+nodeViewVersion='Flux Node View 1.1'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
@@ -197,6 +197,7 @@ watchdog_process_status=""
 flux_node_dos=""
 
 #variables to draw windows
+show_overview='0'
 show_bench='0'
 show_daemon='0'
 show_node='0'
@@ -344,6 +345,7 @@ function update(){
     show_node='0'
     show_daemon='0'
     show_bench='0'
+    show_overview='0'
     show_commands='0'
     show_docker='0'
     show_flux_node_details='0'
@@ -353,7 +355,7 @@ function update(){
     show_docker_image_details='0'
     show_upnp_status_tile='0'
 
-    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's')
+    valid_input=('b' 'n' 'd' 'u' 'c' 't' 'p' 'k' 'i' 'o' 's' 'v')
     for i in "${valid_input[@]}"; do
       if [[ $userInput == $i ]]; then
         redraw_term='1'
@@ -366,6 +368,8 @@ function update(){
       show_bench='1'
     elif [[ $userInput == 'n' ]]; then
       show_node='1'
+    elif [[ $userInput == 'v' ]]; then
+      show_overview='1'
     elif [[ $userInput == 'd' ]]; then
       check_daemon_log
       show_daemon='1'
@@ -471,6 +475,7 @@ function show_flux_node_info_tile(){
 
   clear
   sleep 0.25
+  node_status_style
   make_header "$DASH_NODE_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
   if [[ "$flux_node_status" == "DOS" ]]; then
@@ -523,6 +528,7 @@ function show_flux_benchmark_info_tile(){
   fi
   clear
   sleep 0.25
+  bench_status_style
   make_header "$DASH_BENCH_TITLE" "$BLUE"
   echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
   echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
@@ -557,6 +563,52 @@ function show_flux_benchmark_info_tile(){
   navigation
 }
 
+function show_node_overview_tile(){
+  if [[ $1 != 1 ]]; then
+    get_flux_node_info
+    get_flux_bench_info
+    get_flux_blockchain_info
+    clear
+    echo -e "${GREEN}checking current blockchain height from explorer ... ${NC}"
+    check_current_blockheight
+    check_flux_daemon_version
+    check_flux_bench_version
+    check_version
+    get_blocks_since_last_confirmed
+  fi
+  bench_status_style
+  node_status_style
+  clear
+  sleep 0.25
+  echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
+  make_header "FLUX NODE OVERVIEW" "$BLUE"
+  echo -e "$BLUE_CIRCLE   Flux node Status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Flux bench Status            -    $flux_bench_benchmark"
+  echo -e "$daemon_sync_status"
+  echo -e "$BLUE_CIRCLE   Node maintenance window      -    $maint_window mins"
+
+  echo -e "$flux_node_version_check"
+
+  if [[ -n "$flux_bench_version_check" ]]; then
+    echo -e "$flux_bench_version_check"
+  fi
+
+   if [[ -n "$flux_daemon_version_check" ]]; then
+    echo -e "$flux_daemon_version_check"
+  fi
+
+  echo -e ""
+  echo -e "${YELLOW}Press navigation commands to navigate tiles${NC}"
+  echo -e "${GREEN}b${NC} - get benchmark details"
+  echo -e "${GREEN}n${NC} - get node and network details"
+  echo -e "${GREEN}d${NC} - get daemon details"
+  echo -e "${GREEN}l${NC} - view real-time logs"
+  echo -e "${GREEN}s${NC} - view upnp details"
+  echo -e "${GREEN}c${NC} - display list of commands"
+  echo -e "${GREEN}q${NC} - quit application"
+  make_header
+}
+
 #show available commands for the application
 function show_available_commands_tile(){
   clear
@@ -574,6 +626,7 @@ function show_available_commands_tile(){
   echo -e "$BLUE_CIRCLE   'l'            -    Flux Log Viewer"
   echo -e "$BLUE_CIRCLE   'i'            -    Docker Container Details"
   echo -e "$BLUE_CIRCLE   'o'            -    Prune Docker Containers"
+  echo -e "$BLUE_CIRCLE   'v'            -    Node Overview"
   echo -e "$BLUE_CIRCLE   'c'            -    Show Available Application Commands"
   echo -e "$BLUE_CIRCLE   'q'            -    Quit Application"
   make_title
@@ -606,7 +659,9 @@ function show_network_node_details_tile(){
 function show_external_port_info_tile(){
    if [[ $1 != 1 ]]; then
     clear
-    sleep 0.25
+    sleep 0.25    
+    echo -e "${GREEN}   Checking FluxOS Ports used ... ${NC}"
+    check_port_info
     echo -e "${GREEN}   Gathering IP address info ...${NC}"
     check_ip
     echo -e "${GREEN}   Checking external flux ports ...${NC}"
@@ -951,9 +1006,9 @@ function check_version(){
   #flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
   flux_required_version=$(curl -sS --max-time 5 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
-    flux_node_version_check="${GREEN_ARROW}   You have the current version ${GREEN}$flux_node_version${NC}"
+    flux_node_version_check="${GREEN_ARROW}   You have the current FluxOS version ${GREEN}$flux_node_version${NC}"
   else
-    flux_node_version_check="${RED_ARROW}   You do not have the current version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
+    flux_node_version_check="${RED_ARROW}   You do not have the current FluxOS version ${GREEN}$flux_required_version${NC} - your local version is ${RED}$flux_node_version${NC}"
   fi
 }
 
@@ -1098,7 +1153,7 @@ function make_header(){
 #this function simply prints tile navigation at the bottom of the current tile
 function navigation(){
   make_header
-  echo -e "d - daemon | b - benchmarks | n - node | l - logs | q - quit | c - commands" 
+  echo -e "${YELLOW}d - daemon | b - benchmarks | n - node | l - logs | q - quit | c - commands${NC}" 
 }
 
 #this function simply prints the version at the top of the page
@@ -1183,9 +1238,9 @@ function check_current_blockheight(){
   else
     if [[ "$api_current_height" != "0" && "$api_current_height" =~ ^-?[0-9]+$ ]]; then
       if [[ $flux_daemon_block_height == $api_current_height ]]; then
-        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}Synced${NC}"
+        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}SYNCED${NC}"
       else
-        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT Synced${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
+        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
       fi
     else
        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
@@ -1380,6 +1435,22 @@ function lvm_fix_function(){
   show_bench = '1'
 }
 
+function bench_status_style(){
+  if [[ "$flux_bench_benchmark" == "CUMULUS" || "$flux_bench_benchmark" == "NIMBUS" || "$flux_bench_benchmark" == "STRATUS" ]]; then
+    flux_bench_benchmark="$(echo -e "${GREEN}${flux_bench_benchmark}${NC}")"
+  else
+    flux_bench_benchmark="$(echo -e "${RED}${flux_bench_benchmark}${NC}")"
+  fi
+}
+
+function node_status_style(){
+  if [[ "$flux_node_status" == "CONFIRMED" ]]; then
+    flux_node_status="$(echo -e "${GREEN}${flux_node_status}${NC}")"
+  else
+    flux_node_status="$(echo -e "${RED}${flux_node_status}${NC}")"
+  fi
+}
+
 function create_flux_motd(){
   echo -e ""
   echo -e "${SEA}creating custom flux splash login ... ${NC}"
@@ -1463,6 +1534,8 @@ function main_terminal(){
         show_flux_node_info_tile $term_resize
       elif [[ $show_bench == '1' ]]; then
         show_flux_benchmark_info_tile $term_resize
+      elif [[ $show_overview == '1' ]]; then
+        show_node_overview_tile $term_resize
       elif [[ $show_docker == '1' ]]; then
         show_docker_tile $term_resize
       elif [[ $show_commands == '1' ]]; then
@@ -1494,7 +1567,7 @@ check_version
 # allow arguments are 
 # - node, bench, daemon, ports
 if [ -z "$1" ]; then
-   show_bench='1'
+   show_overview='1'
 else
   if [[ $1 == "node" ]]; then
     show_node='1'
@@ -1515,7 +1588,7 @@ else
   elif [[ $1 == "upnp" ]]; then
     show_upnp_status_tile='1'
   else
-    show_bench='1'
+    show_overview='1'
   fi
 fi
 

@@ -24,6 +24,10 @@ bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/mai
 ```
 - `fluxnodeview` - alias for quick launch after first use of script
 ---
+### Node Overview Splash Screen
+![Node Overview](https://user-images.githubusercontent.com/26805518/211461620-bbc342da-61ef-4b22-afec-8aa6ae89e560.PNG)
+
+---
 #### View Node Benchmarks and Error Logs
 ![bench_view](https://user-images.githubusercontent.com/26805518/191158716-6e5dbfd0-74a9-45f8-b772-97437ce033dc.jpg)
 
