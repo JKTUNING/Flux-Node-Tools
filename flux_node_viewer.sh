@@ -1238,9 +1238,9 @@ function check_current_blockheight(){
   else
     if [[ "$api_current_height" != "0" && "$api_current_height" =~ ^-?[0-9]+$ ]]; then
       if [[ $flux_daemon_block_height == $api_current_height ]]; then
-        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}Synced${NC}"
+        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}SYNCED${NC}"
       else
-        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT Synced${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
+        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
       fi
     else
        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
