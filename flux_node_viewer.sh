@@ -59,12 +59,9 @@ fi
 
 #check opperating system version
 if [[ $(lsb_release -cs) == "jammy" || $(lsb_release -cs) == *kinetic*  ]]; then
-  echo -e "${SEA}ERROR: ${RED}OS version [$(lsb_release -cs)] not supported${NC}"
-  echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 and re-install FluxOS"
-  echo -e "${SEA}Application exiting in 10 seconds ...${NC}"
+  echo -e "${SEA}WARNING: ${RED}OS version [$(lsb_release -cs)] not officially supported${NC}"
+  echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 Server or verify appropriate packages are installed for MongoDB"
   sleep 10
-  softExit='1'
-  exit
 fi
 
 clear
@@ -949,14 +946,14 @@ function check_port_info()
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
   if [[ -n $ui_port && -n $api_port ]]; then
-    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
+    checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
     else
       external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
     fi
 
-    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
+    checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
       
@@ -964,7 +961,7 @@ function check_external_ports(){
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
 
-    checkPort=$(curl --silent --max-time 10 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
+    checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_syncthing_port="${RED_ARROW}   Syncthing Port $syncthing_port is ${RED}closed${NC} - please check your network settings"
       
