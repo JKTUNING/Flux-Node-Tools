@@ -58,7 +58,7 @@ if [[ $(lsb_release -d) != *Debian* && $(lsb_release -d) != *Ubuntu* ]]; then
 fi
 
 #check opperating system version
-if [[ $(lsb_release -cs) == "jammy" || $(lsb_release -cs) == *kinetic*  ]]; then
+if [[ $(lsb_release -cs) == *kinetic*  ]]; then
   echo -e "${SEA}WARNING: ${RED}OS version [$(lsb_release -cs)] not officially supported${NC}"
   echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 Server or verify appropriate packages are installed for MongoDB"
   sleep 10
