@@ -873,12 +873,12 @@ function check_flux_log(){
 #check node external IP address and compare it to device IP address
 function check_ip(){
   local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-  WANIP=$(curl --silent -m 20 https://api.ipify.org | tr -dc '[:alnum:].')
+  WANIP=$(curl --silent --max-time 20 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
-    WANIP=$(curl --silent -m 20 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
+    WANIP=$(curl --silent --max-time 20 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
   fi
   if [[ "$WANIP" == "" ]]; then
-    WANIP=$(curl --silent -m 20 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
+    WANIP=$(curl --silent --max-time 20 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
   fi
 
   local_device_ip=$(ip a list $local_device | grep -o $WANIP)
@@ -945,8 +945,8 @@ function check_port_info()
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports(){
-  if [[ -n $ui_port && -n $api_port]]; then
-    echo -e "${BLUE} checking gui port${NC}"
+  if [[ -n $ui_port && -n $api_port ]]; then
+    echo -e "${BLUE} checking gui port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
@@ -954,7 +954,7 @@ function check_external_ports(){
       external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
     fi
     sleep 1
-    echo -e "${BLUE} checking api port${NC}"
+    echo -e "${BLUE} checking api port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
@@ -963,7 +963,7 @@ function check_external_ports(){
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
     sleep 1
-    echo -e "${BLUE} checking syncthing port${NC}"
+    echo -e "${BLUE} checking syncthing port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_syncthing_port="${RED_ARROW}   Syncthing Port $syncthing_port is ${RED}closed${NC} - please check your network settings"
@@ -1002,7 +1002,6 @@ function check_upnp(){
 
 function check_version(){
   ## grab current version requirements from the flux api and compare to current node version
-  #flux_required_version=$(curl -sS --max-time 5 https://api.runonflux.io/flux/version | jq -r '.data')
   flux_required_version=$(curl -sS --max-time 20 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
     flux_node_version_check="${GREEN_ARROW}   You have the current FluxOS version ${GREEN}$flux_node_version${NC}"
@@ -1013,7 +1012,7 @@ function check_version(){
 
 #checks the current flux bench version and compares to local
 function check_flux_bench_version(){
-  flux_bench_required_version=$(curl -s -m 20 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
@@ -1023,7 +1022,7 @@ function check_flux_bench_version(){
 
 #checks the current released daemon version and compares to local
 function check_flux_daemon_version(){
-  flux_daemon_required_version=$(curl -s -m 20 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_daemon_required_version=$(curl -s --max-time 20 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
     flux_daemon_version_check="${RED_ARROW}   You do not have the current version ${SEA}$flux_daemon_required_version${NC} - your local version is ${RED}$flux_daemon_current_version${NC}"
@@ -1229,7 +1228,7 @@ function check_current_blockheight(){
   local api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
   
   if [[ api_current_height == "" ]]; then
-    api_current_height=$(curl -sk -m 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+    api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
   fi
 
   if [[ $flux_daemon_block_height == "" ]]; then
