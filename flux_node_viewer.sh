@@ -692,7 +692,7 @@ function show_upnp_status(){
   if [[ $flux_upnp_port =~ ^-?[0-9]+$ ]]; then
       echo -e "$GREEN_ARROW   API from Config: ${GREEN}$flux_upnp_port${NC}"
     else
-      echo -e "$RED_ARROW   API from Config: ${RED}Disabled${NC}"
+      echo -e "$RED_ARROW   API from Config: ${RED}N/A${NC}"
   fi
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
@@ -1270,7 +1270,7 @@ function display_upnp(){
     upnp_gateway="NO IGD UPnP Device Found"
   fi
 
-  flux_upnp_port=$(grep -w apiport /home/$USER/zelflux/config/userconfig.js | awk -F "'" '{print $2}')
+  flux_upnp_port=$(grep -w apiport /home/$USER/zelflux/config/userconfig.js | egrep -o '[0-9]+')
 }
 
 # restart daemon service and restart FluxOS
