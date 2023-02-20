@@ -873,9 +873,9 @@ function check_flux_log(){
 #check node external IP address and compare it to device IP address
 function check_ip(){
   local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-  WANIP=$(curl --silent --max-time 20 https://api.ipify.org | tr -dc '[:alnum:].')
+  WANIP=$(curl --silent --max-time 20 https://api.ipify.org)
   if [[ "$WANIP" == "" ]]; then
-    WANIP=$(curl --silent --max-time 20 https://ipv4bot.whatismyipaddress.com | tr -dc '[:alnum:].')
+    WANIP=$(curl --silent --max-time 20 https://ipv4.icanhazip.com | tr -dc '[:alnum:].')
   fi
   if [[ "$WANIP" == "" ]]; then
     WANIP=$(curl --silent --max-time 20 https://checkip.amazonaws.com | tr -dc '[:alnum:].')
@@ -1060,6 +1060,7 @@ function check_flux_dos_list(){
 #check node_kda_address on the node api side
 #check user_kda_address in the user config file
 function check_kda_address(){
+  check_port_info
   LANIP=$(hostname -I | awk '{print $1}')
   node_kda_address=$(curl -sS --max-time 20 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
   user_kda_address=$(grep -w kadena ~/$FLUX_DIR/config/userconfig.js 2>/dev/null | awk -F"'" '/1/ {print $2}' 2>/dev/null)
@@ -1215,6 +1216,7 @@ function node_os_update(){
 function get_flux_uptime(){
   #curl local node IP's API port for uptime -s (silent) -S(show error)
   #converts seconds to minutes .. d/h/m/s will come at some point 
+  check_port_info
   local get_uptime=$(curl -sS --max-time 20 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
   flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
 
