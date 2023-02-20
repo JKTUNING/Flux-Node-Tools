@@ -873,7 +873,7 @@ function check_flux_log(){
 #check node external IP address and compare it to device IP address
 function check_ip(){
   local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
-  WANIP=$(curl --silent --max-time 20 https://api.ipify.org)
+  WANIP=$(curl --silent --max-time 20 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
     WANIP=$(curl --silent --max-time 20 https://ipv4.icanhazip.com | tr -dc '[:alnum:].')
   fi
