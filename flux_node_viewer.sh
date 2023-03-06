@@ -1453,7 +1453,7 @@ function lvm_fix_function(){
   sudo lvextend -l +100%FREE --resizefs /dev/ubuntu-vg/ubuntu-lv
   sleep 2
   flux_update_benchmarks
-  show_bench = '1'
+  show_bench='1'
 }
 
 function bench_status_style(){
