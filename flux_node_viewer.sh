@@ -181,10 +181,19 @@ if [ ! -d "/home/$USER/zelflux" ]; then
   exit
 fi
 
-BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
-DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
-WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
+#detect testnet folder
+if [ ! -d "$HOME/.flux/testnet" ]; then
+  DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
+  BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
+  testnet='0'
+else
+  DAEMON_LOG_DIR="/home/$USER/.flux/testnet/debug.log"
+  BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/testnet/debug.log"
+  testnet='1'
+fi
+
 FLUX_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
+WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
 
 docker_service_status=""
 mongodb_service_status=""
@@ -241,16 +250,23 @@ redraw_term='1'
 #Function to collect all benchmark information for display
 function get_flux_bench_info(){
   #gets fluxbench version info
-  flux_bench_version=$(($BENCH_CLI getinfo) 2>/dev/null | jq -r '.version' 2>/dev/null)
+  if [[ $testnet == '0' ]]; then
+    flux_bench_version=$($BENCH_CLI getinfo 2>/dev/null | jq -r '.version' 2>/dev/null)
+    flux_bench_details=$($BENCH_CLI getstatus 2>/dev/null)
+    flux_bench_stats=$($BENCH_CLI getbenchmarks 2>/dev/null)
+  else
+    flux_bench_version=$($BENCH_CLI -testnet getinfo 2>/dev/null | jq -r '.version' 2>/dev/null)
+    flux_bench_details=$($BENCH_CLI -testnet getstatus 2>/dev/null)
+    flux_bench_stats=$($BENCH_CLI -testnet getbenchmarks 2>/dev/null)
+  fi
+  
 
-  #gets fluxbench info
-  flux_bench_details=$($BENCH_CLI getstatus 2>/dev/null)
+  #gets fluxbench info  
   flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details" 2>/dev/null)
 
-  #gets flux node benchmark info
-  flux_bench_stats=$($BENCH_CLI getbenchmarks 2>/dev/null)
+  #gets flux node benchmark info  
   flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
