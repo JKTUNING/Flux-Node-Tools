@@ -132,7 +132,7 @@ BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
 PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
-FLUX_BENCH_CHEKC_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
+FLUX_BENCH_CHECK_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
 FLUX_DAEMON_CHECK_URL='https://apt.runonflux.io/pool/main/f/flux/'
 
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
@@ -1028,7 +1028,7 @@ function check_version(){
 
 #checks the current flux bench version and compares to local
 function check_flux_bench_version(){
-  flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
