@@ -1243,11 +1243,16 @@ function get_flux_uptime(){
 
 # Get api network blockheight
 function check_current_blockheight(){
-  local api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
-  
-  if [[ api_current_height == "" ]]; then
-    api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
-  fi
+  local api_current_height=""
+
+  if [[ $testnet == '1' ]]; then
+    api_current_height=$(curl -sk --max-time 20 https://testnet.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+  else
+    api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
+    if [[ api_current_height == "" ]]; then
+      api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+    fi
+  fi  
 
   if [[ $flux_daemon_block_height == "" ]]; then
       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
