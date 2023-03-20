@@ -132,7 +132,7 @@ BENCH_DIR_LOG='.fluxbenchmark'
 FLUX_DIR='zelflux'
 
 PORT_CHECK_URL='https://ports.yougetsignal.com/check-port.php'
-FLUX_BENCH_CHEKC_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
+FLUX_BENCH_CHECK_URL='https://apt.runonflux.io/pool/main/f/fluxbench/'
 FLUX_DAEMON_CHECK_URL='https://apt.runonflux.io/pool/main/f/flux/'
 
 # RE-ENABLE FOR PRODUCTION VERSION TO CHECK FOR CLI TOOLS!!
@@ -181,10 +181,19 @@ if [ ! -d "/home/$USER/zelflux" ]; then
   exit
 fi
 
-BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
-DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
-WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
+#detect testnet folder
+if [ ! -d "$HOME/.flux/testnet" ]; then
+  DAEMON_LOG_DIR="/home/$USER/.flux/debug.log"
+  BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/debug.log"
+  testnet='0'
+else
+  DAEMON_LOG_DIR="/home/$USER/.flux/testnet/debug.log"
+  BENCH_LOG_FILE_DIR="/home/$USER/$BENCH_DIR_LOG/testnet/debug.log"
+  testnet='1'
+fi
+
 FLUX_LOG_DIR="/home/$USER/$FLUX_DIR/debug.log"
+WATCHDOG_LOG_DIR="home/$USER/watchdog/watchdog_error.log"
 
 docker_service_status=""
 mongodb_service_status=""
@@ -241,16 +250,23 @@ redraw_term='1'
 #Function to collect all benchmark information for display
 function get_flux_bench_info(){
   #gets fluxbench version info
-  flux_bench_version=$(($BENCH_CLI getinfo) 2>/dev/null | jq -r '.version' 2>/dev/null)
+  if [[ $testnet == '0' ]]; then
+    flux_bench_version=$($BENCH_CLI getinfo 2>/dev/null | jq -r '.version' 2>/dev/null)
+    flux_bench_details=$($BENCH_CLI getstatus 2>/dev/null)
+    flux_bench_stats=$($BENCH_CLI getbenchmarks 2>/dev/null)
+  else
+    flux_bench_version=$($BENCH_CLI -testnet getinfo 2>/dev/null | jq -r '.version' 2>/dev/null)
+    flux_bench_details=$($BENCH_CLI -testnet getstatus 2>/dev/null)
+    flux_bench_stats=$($BENCH_CLI -testnet getbenchmarks 2>/dev/null)
+  fi
+  
 
-  #gets fluxbench info
-  flux_bench_details=$($BENCH_CLI getstatus 2>/dev/null)
+  #gets fluxbench info  
   flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details" 2>/dev/null)
 
-  #gets flux node benchmark info
-  flux_bench_stats=$($BENCH_CLI getbenchmarks 2>/dev/null)
+  #gets flux node benchmark info  
   flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
@@ -1012,7 +1028,7 @@ function check_version(){
 
 #checks the current flux bench version and compares to local
 function check_flux_bench_version(){
-  flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHEKC_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
+  flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
   if [[ $flux_bench_required_version != $flux_bench_current_version ]]; then
@@ -1227,11 +1243,16 @@ function get_flux_uptime(){
 
 # Get api network blockheight
 function check_current_blockheight(){
-  local api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
-  
-  if [[ api_current_height == "" ]]; then
-    api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
-  fi
+  local api_current_height=""
+
+  if [[ $testnet == '1' ]]; then
+    api_current_height=$(curl -sk --max-time 20 https://testnet.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+  else
+    api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
+    if [[ api_current_height == "" ]]; then
+      api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+    fi
+  fi  
 
   if [[ $flux_daemon_block_height == "" ]]; then
       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
@@ -1432,7 +1453,7 @@ function lvm_fix_function(){
   sudo lvextend -l +100%FREE --resizefs /dev/ubuntu-vg/ubuntu-lv
   sleep 2
   flux_update_benchmarks
-  show_bench = '1'
+  show_bench='1'
 }
 
 function bench_status_style(){
