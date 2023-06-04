@@ -305,6 +305,14 @@ function get_flux_node_info(){
   flux_node_confirmed_height=$(jq -r '.confirmed_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_deterministic=$($COIN_CLI viewdeterministiczelnodelist $(grep 'nodeoutpoint' $HOME/.flux/flux.conf | awk -F '=' '{print $2}'))
+  
+  #gather node rank from determin
+  if [ ${#flux_node_deterministic[@]} -eq 1 ]; then
+    flux_node_rank=$(jq -r '.rank' <<< "$flux_node_deterministic" 2>/dev/null)
+  else
+   flux_node_rank="N/A"
+  fi 
 }
 
 #calculated block height since last confirmed
@@ -495,6 +503,7 @@ function show_flux_node_info_tile(){
     check_flux_dos_list
     echo -e "$flux_node_dos"
   fi
+  echo -e "$BLUE_CIRCLE   Flux node rank               -    $flux_node_rank"
   echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
   echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
   echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
@@ -595,10 +604,11 @@ function show_node_overview_tile(){
   sleep 0.25
   echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
   make_header "FLUX NODE OVERVIEW" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux node Status             -    $flux_node_status"
-  echo -e "$BLUE_CIRCLE   Flux bench Status            -    $flux_bench_benchmark"
+  echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_benchmark"
   echo -e "$daemon_sync_status"
   echo -e "$BLUE_CIRCLE   Node maintenance window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Flux node rank               -    $flux_node_rank"
 
   echo -e "$flux_node_version_check"
 
