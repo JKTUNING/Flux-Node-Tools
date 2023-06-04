@@ -309,7 +309,7 @@ function get_flux_node_info(){
   
   #gather node rank from determin
   if [ ${#flux_node_deterministic[@]} -eq 1 ]; then
-    flux_node_rank=$(jq -r '.rank' <<< "$flux_node_deterministic" 2>/dev/null)
+    flux_node_rank=$(jq -r '.[0].rank' <<< "$flux_node_deterministic" 2>/dev/null)
   else
    flux_node_rank="N/A"
   fi 
