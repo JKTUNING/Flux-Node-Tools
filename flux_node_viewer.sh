@@ -584,7 +584,7 @@ function show_flux_benchmark_info_tile() {
   echo -e "$disk_info"
   echo -e "$BLUE_CIRCLE   Bench SSD                    -    $flux_bench_stats_ssd"
   echo -e "$BLUE_CIRCLE   Bench HDD                    -    $flux_bench_stats_hhd"
-  echo -e "$BLUE_CIRCLE   Bench ddWrite                -    $flux_bench_stats_ddwrite"
+  #echo -e "$BLUE_CIRCLE   Bench ddWrite                -    $flux_bench_stats_ddwrite"
   echo -e "$BLUE_CIRCLE   Bench Total Storage          -    $flux_bench_stats_storage"
   echo -e "$BLUE_CIRCLE   Bench EPS                    -    $flux_bench_stats_eps"
   echo -e "$BLUE_CIRCLE   Bench Ping                   -    $flux_bench_stats_ping"
