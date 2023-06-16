@@ -5,7 +5,7 @@ set +o history
 
 #trap exit and re-enable history only if it is off
 trap app_close EXIT
-function app_close(){
+function app_close() {
   if [[ $(set -o | grep history) == *"off"* ]]; then
     set -o history
   fi
@@ -43,11 +43,11 @@ fi
 
 #check to make sure running as user account
 if [[ "$USER" == "root" || "$USER" == "ubuntu" ]]; then
-		echo -e "${RED}You are currently logged in as ${GREEN}$USER${NC}"
-		echo -e "${SEA}Please switch to your Flux user.${NC}"
-    sleep 5
-    softExit='1'
-		exit
+  echo -e "${RED}You are currently logged in as ${GREEN}$USER${NC}"
+  echo -e "${SEA}Please switch to your Flux user.${NC}"
+  sleep 5
+  softExit='1'
+  exit
 fi
 
 #check opperating system description
@@ -60,7 +60,7 @@ if [[ $(lsb_release -d) != *Debian* && $(lsb_release -d) != *Ubuntu* ]]; then
 fi
 
 #check opperating system version
-if [[ $(lsb_release -cs) == *kinetic*  ]]; then
+if [[ $(lsb_release -cs) == *kinetic* ]]; then
   echo -e "${SEA}WARNING: ${RED}OS version [$(lsb_release -cs)] not officially supported${NC}"
   echo -e "${SEA}Please re-image with Ubuntu Focal 20.04 Server or verify appropriate packages are installed for MongoDB"
   sleep 10
@@ -92,7 +92,7 @@ if ! jq --version >/dev/null 2>&1; then
   fi
 fi
 
-if ! lsof -v > /dev/null 2>&1; then
+if ! lsof -v >/dev/null 2>&1; then
   echo -e "${RED}lsof not found ... installing lsof${NC}"
   sleep 2
   sudo apt install lsof -y
@@ -250,7 +250,7 @@ flux_log=""
 redraw_term='1'
 
 #Function to collect all benchmark information for display
-function get_flux_bench_info(){
+function get_flux_bench_info() {
   #gets fluxbench version info
   if [[ $testnet == '0' ]]; then
     flux_bench_version=$($BENCH_CLI getinfo 2>/dev/null | jq -r '.version' 2>/dev/null)
@@ -261,14 +261,13 @@ function get_flux_bench_info(){
     flux_bench_details=$($BENCH_CLI -testnet getstatus 2>/dev/null)
     flux_bench_stats=$($BENCH_CLI -testnet getbenchmarks 2>/dev/null)
   fi
-  
 
-  #gets fluxbench info  
+  #gets fluxbench info
   flux_bench_back=$(jq -r '.flux' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_flux_status=$(jq -r '.status' <<<"$flux_bench_details" 2>/dev/null)
   flux_bench_benchmark=$(jq -r '.benchmarking' <<<"$flux_bench_details" 2>/dev/null)
 
-  #gets flux node benchmark info  
+  #gets flux node benchmark info
   flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
@@ -286,7 +285,7 @@ function get_flux_bench_info(){
 }
 
 ## Function to collect flux block chain daemon data
-function get_flux_blockchain_info(){
+function get_flux_blockchain_info() {
   #gets blockchain info
   flux_daemon_details=$($COIN_CLI getinfo 2>/dev/null)
   flux_daemon_version=$(jq -r '.version' <<<"$flux_daemon_details" 2>/dev/null)
@@ -298,7 +297,7 @@ function get_flux_blockchain_info(){
 }
 
 ## Function to get flux node data
-function get_flux_node_info(){
+function get_flux_node_info() {
   #gets flux node info
   flux_node_details=$($COIN_CLI getzelnodestatus 2>/dev/null)
   flux_node_status=$(jq -r '.status' <<<"$flux_node_details" 2>/dev/null)
@@ -308,28 +307,28 @@ function get_flux_node_info(){
   flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_deterministic=$($COIN_CLI viewdeterministiczelnodelist $(grep 'nodeoutpoint' $HOME/.flux/flux.conf | awk -F '=' '{print $2}'))
-  
+
   #gather node rank from determin
   if [ ${#flux_node_deterministic[@]} -eq 1 ]; then
-    flux_node_rank=$(jq -r '.[0].rank' <<< "$flux_node_deterministic" 2>/dev/null)
+    flux_node_rank=$(jq -r '.[0].rank' <<<"$flux_node_deterministic" 2>/dev/null)
   else
-   flux_node_rank="N/A"
-  fi 
+    flux_node_rank="N/A"
+  fi
 }
 
 #calculated block height since last confirmed
-function get_blocks_since_last_confirmed(){
+function get_blocks_since_last_confirmed() {
   ## require daemon block height to must get blockchain info
   get_flux_blockchain_info
-  if [[ ! -z $flux_node_last_confirmed_height && $flux_node_last_confirmed_height != "null" && $flux_node_last_confirmed_height != "0" ]] ; then
-    blockDiff=$((flux_daemon_block_height-flux_node_last_confirmed_height))
-    maint_window=$(((120-(flux_daemon_block_height-flux_node_last_confirmed_height))*2))
+  if [[ ! -z $flux_node_last_confirmed_height && $flux_node_last_confirmed_height != "null" && $flux_node_last_confirmed_height != "0" ]]; then
+    blockDiff=$((flux_daemon_block_height - flux_node_last_confirmed_height))
+    maint_window=$(((120 - (flux_daemon_block_height - flux_node_last_confirmed_height)) * 2))
   else
     maint_window='0'
   fi
 }
 
-function updateInput(){
+function updateInput() {
   local userInput
   local noInput
 
@@ -385,7 +384,7 @@ function updateInput(){
         sleep 0.1
       fi
     done
- 
+
     if [[ $userInput == 'b' ]]; then
       check_benchmark_log
       show_bench='1'
@@ -438,7 +437,7 @@ function updateInput(){
   fi
 }
 
-function show_flux_daemon_info_tile(){
+function show_flux_daemon_info_tile() {
   if [[ $1 != 1 ]]; then
     get_flux_blockchain_info
     check_daemon_log
@@ -472,7 +471,7 @@ function show_flux_daemon_info_tile(){
   navigation
 }
 
-function show_flux_node_info_tile(){
+function show_flux_node_info_tile() {
   if [[ $1 != 1 ]]; then
     get_flux_node_info
     get_blocks_since_last_confirmed
@@ -485,7 +484,7 @@ function show_flux_node_info_tile(){
     clear
     sleep 0.25
     # check dhcp first
-    check_dhcp_enable 
+    check_dhcp_enable
     echo -e "${GREEN}   Gathering IP address info ...${NC}"
     check_ip
     echo -e "${GREEN}   Checking external flux ports ...${NC}"
@@ -543,7 +542,7 @@ function show_flux_node_info_tile(){
   navigation
 }
 
-function show_flux_benchmark_info_tile(){
+function show_flux_benchmark_info_tile() {
   if [[ $1 != 1 ]]; then
     get_flux_bench_info
     check_benchmark_log
@@ -583,11 +582,11 @@ function show_flux_benchmark_info_tile(){
     make_header "$DASH_BENCH_ERROR_TITLE" "$RED"
     echo -e "$bench_log"
   fi
- 
+
   navigation
 }
 
-function show_node_overview_tile(){
+function show_node_overview_tile() {
   if [[ $1 != 1 ]]; then
     get_flux_node_info
     get_flux_bench_info
@@ -618,7 +617,7 @@ function show_node_overview_tile(){
     echo -e "$flux_bench_version_check"
   fi
 
-   if [[ -n "$flux_daemon_version_check" ]]; then
+  if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
 
@@ -635,7 +634,7 @@ function show_node_overview_tile(){
 }
 
 #show available commands for the application
-function show_available_commands_tile(){
+function show_available_commands_tile() {
   clear
   sleep 0.25
   make_header "$DASH_COMMANDS_TITLE" "$BLUE"
@@ -659,7 +658,7 @@ function show_available_commands_tile(){
 }
 
 # show the flux network node details
-function show_network_node_details_tile(){
+function show_network_node_details_tile() {
   if [[ $1 != 1 ]]; then
     clear
     sleep 0.25
@@ -675,16 +674,16 @@ function show_network_node_details_tile(){
   echo -e "$BLUE_CIRCLE   Cumulus nodes                -    $cumulus_nodes"
   echo -e "$BLUE_CIRCLE   Nimbus nodes                 -    $nimbus_nodes"
   echo -e "$BLUE_CIRCLE   Stratus nodes                -    $stratus_nodes"
-  
+
   echo -e "$BLUE_CIRCLE   Flux Price                   -    $flux_price"
   navigation
 }
 
 #show external port info
-function show_external_port_info_tile(){
-   if [[ $1 != 1 ]]; then
+function show_external_port_info_tile() {
+  if [[ $1 != 1 ]]; then
     clear
-    sleep 0.25    
+    sleep 0.25
     echo -e "${GREEN}   Checking FluxOS Ports used ... ${NC}"
     check_port_info
     echo -e "${GREEN}   Gathering IP address info ...${NC}"
@@ -707,8 +706,8 @@ function show_external_port_info_tile(){
 }
 
 #show upnp status
-function show_upnp_status(){
-   if [[ $1 != 1 ]]; then
+function show_upnp_status() {
+  if [[ $1 != 1 ]]; then
     clear
     sleep 0.25
     echo -e "${GREEN}   Checking UPNP status ...${NC}"
@@ -718,9 +717,9 @@ function show_upnp_status(){
   sleep 0.25
   make_header "UPnP Device Details" "$BLUE"
   if [[ $flux_upnp_port =~ ^-?[0-9]+$ ]]; then
-      echo -e "$GREEN_ARROW   API from Config: ${GREEN}$flux_upnp_port${NC}"
-    else
-      echo -e "$RED_ARROW   API from Config: ${RED}N/A${NC}"
+    echo -e "$GREEN_ARROW   API from Config: ${GREEN}$flux_upnp_port${NC}"
+  else
+    echo -e "$RED_ARROW   API from Config: ${RED}N/A${NC}"
   fi
   if [[ "$upnp_gateway" != "NO IGD UPnP Device Found" && -n "$upnp_gateway" ]]; then
     echo -e "$GREEN_ARROW   $upnp_gateway${NC}"
@@ -736,8 +735,8 @@ function show_upnp_status(){
 }
 
 #show node kda address info
-function show_node_kda_tile(){
-   if [[ $1 != 1 ]]; then
+function show_node_kda_tile() {
+  if [[ $1 != 1 ]]; then
     clear
     sleep 0.25
     echo -e "${GREEN}   checking node kda details ...${NC}"
@@ -751,20 +750,20 @@ function show_node_kda_tile(){
   navigation
 }
 
-function show_realtime_logs(){
-  whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50;
+function show_realtime_logs() {
+  whiptail --title "Mowat's Node Log Viewer" --msgbox "Please use ctrl+c to exit log view mode" 8 50
   # Mowats script to run tmux to view flux logs
   bash -i <(curl -s https://raw.githubusercontent.com/JKTUNING/Flux-Node-Tools/main/flux_log_tmux.sh)
 }
 
-function show_docker_tile(){
+function show_docker_tile() {
   if [[ $1 != 1 ]]; then
     clear
     sleep 0.25
     echo -e "${GREEN}   checking docker image details ...${NC}"
     check_docker_images
   fi
- 
+
   clear
   sleep .25
   make_header "RUNNING DOCKER CONTAINER DETAILS" "$BLUE"
@@ -777,13 +776,13 @@ function show_docker_tile(){
   navigation
 }
 
-function check_docker_images(){
+function check_docker_images() {
   running_docker_containers=$(docker ps --size --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Size}}" 2>/dev/null)
   dead_docker_containers=$(docker ps --filter status=exited --filter status=dead 2>/dev/null)
   dangling_docker_images=$(docker images --filter dangling=true 2>/dev/null)
 }
 
-function prune_docker(){
+function prune_docker() {
   check_docker_images
   check_container=$(echo "$dead_docker_containers" | egrep -a -wi 'exited|dead' 2>/dev/null)
 
@@ -794,7 +793,7 @@ function prune_docker(){
     fi
   fi
 
-  check_images=$(echo "$dangling_docker_images"  | grep 'ago'  2>/dev/null)
+  check_images=$(echo "$dangling_docker_images" | grep 'ago' 2>/dev/null)
   if [[ -n "$check_images" ]]; then
     if whiptail --title "Docker Images Prune" --yesno "Would you like to prune your dangling docker images ?" 8 60; then
       docker rmi $(docker images --filter dangling=true -q)
@@ -804,10 +803,10 @@ function prune_docker(){
 }
 
 # check to see if docker service is running
-function check_docker_service(){
-  if systemctl --type=service --state=running --quiet 2>/dev/null |grep docker >/dev/null 2>&1; then
+function check_docker_service() {
+  if systemctl --type=service --state=running --quiet 2>/dev/null | grep docker >/dev/null 2>&1; then
     docker_service_status="${GREEN_ARROW}   Docker Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep docker >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null | grep docker >/dev/null 2>&1; then
     docker_service_status="${RED_ARROW}   Docker Service is ${RED}inactive${NC}"
   else
     docker_service_status="${RED_ARROW}   Docker Service is ${RED}not installed${NC}"
@@ -815,10 +814,10 @@ function check_docker_service(){
 }
 
 #check to see if mongoDB service is running
-function check_mongodb_service(){
-  if systemctl --type=service --state=running --quiet 2>/dev/null |grep mongod >/dev/null 2>&1; then
+function check_mongodb_service() {
+  if systemctl --type=service --state=running --quiet 2>/dev/null | grep mongod >/dev/null 2>&1; then
     mongodb_service_status="${GREEN_ARROW}   MongoDB Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep mongod >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null | grep mongod >/dev/null 2>&1; then
     mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}inactive${NC}"
   else
     mongodb_service_status="${RED_ARROW}   MongoDB Service is ${RED}not installed${NC}"
@@ -826,10 +825,10 @@ function check_mongodb_service(){
 }
 
 #check to ese if Daemon Service is running
-function check_daemon_service(){
-  if systemctl --type=service --state=running --quiet 2>/dev/null |grep zelcash >/dev/null 2>&1; then
+function check_daemon_service() {
+  if systemctl --type=service --state=running --quiet 2>/dev/null | grep zelcash >/dev/null 2>&1; then
     daemon_service_status="${GREEN_ARROW}   Flux Daemon Service is ${GREEN}running${NC}"
-  elif systemctl --type=service --state=failed --quiet 2>/dev/null |grep zelcash >/dev/null 2>&1; then
+  elif systemctl --type=service --state=failed --quiet 2>/dev/null | grep zelcash >/dev/null 2>&1; then
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}inactive${NC}"
   else
     daemon_service_status="${RED_ARROW}   Flux Daemon Service is ${RED}not installed${NC}"
@@ -837,7 +836,7 @@ function check_daemon_service(){
 }
 
 #check if pm2 flux process is running
-function check_pm2_flux_service(){
+function check_pm2_flux_service() {
   local pm2_status_check=$(pm2 info flux 2>/dev/null | grep 'status')
 
   if [[ $pm2_status_check == *"online"* ]]; then
@@ -850,7 +849,7 @@ function check_pm2_flux_service(){
 }
 
 #check pm2 watchdog process is running
-function check_pm2_flux_watchdog_service(){
+function check_pm2_flux_watchdog_service() {
   local pm2_watchdog_status_check=$(pm2 info watchdog 2>/dev/null | grep 'status')
 
   if [[ $pm2_watchdog_status_check == *"online"* ]]; then
@@ -864,7 +863,7 @@ function check_pm2_flux_watchdog_service(){
 }
 
 #checks last 100 lines of daemon log file for errors or failed entries
-function check_daemon_log(){
+function check_daemon_log() {
   if [[ -f $DAEMON_LOG_DIR ]]; then
     daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a -wi 'error|failed' | tac | head)
     if [[ $daemon_log == "" ]]; then
@@ -875,7 +874,7 @@ function check_daemon_log(){
   fi
 }
 
-function check_benchmark_log(){
+function check_benchmark_log() {
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
     bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed|Warning' | tac | head)
     if [[ $bench_log == "" ]]; then
@@ -887,7 +886,7 @@ function check_benchmark_log(){
 }
 
 #check Flux Error file
-function check_flux_log(){
+function check_flux_log() {
   if [[ -f $FLUX_LOG_DIR ]]; then
     flux_log=$(tail -200 $FLUX_LOG_DIR | egrep -a -wi "Flux IP detection failed|My Flux|communication is limited|Unable to detect Flux IP|Daemon not yet|Flux geolocation service is awaiting|Connection timed out while searching for the gateway|Node hardware requirements not met|below new|Syncthing is not|Error getting publicIp from FluxBench" | tac | head)
     if [[ $flux_log == "" ]]; then
@@ -899,7 +898,7 @@ function check_flux_log(){
 }
 
 #check node external IP address and compare it to device IP address
-function check_ip(){
+function check_ip() {
   local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
   WANIP=$(curl --silent --max-time 20 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
@@ -918,15 +917,14 @@ function check_ip(){
       flux_ip_check="${RED_ARROW}   Public IP ${RED}does NOT match${NC} device IP"
     fi
   else
-      flux_ip_check="${RED_ARROW}   Public IP or $local_device WAN IP ${RED}not available${NC}"
+    flux_ip_check="${RED_ARROW}   Public IP or $local_device WAN IP ${RED}not available${NC}"
   fi
 }
 
 #this function checks for listen ports using lsof
-function check_port_info()
-{
+function check_port_info() {
   listen_ports=$(sudo lsof -i -n | grep LISTEN)
-  
+
   if [[ $listen_ports == *'27017'* && $listen_ports == *'mongod'* ]]; then
     mongodb_port="${GREEN_ARROW}   MongoDB is listening on port ${GREEN}27017${NC}"
   else
@@ -939,7 +937,7 @@ function check_port_info()
     flux_daemon_port="${RED_ARROW}   Flux Daemon is ${RED}not listening${NC}"
   fi
 
-   if [[ $listen_ports == *'16224'* && $listen_ports == *'bench'* ]]; then
+  if [[ $listen_ports == *'16224'* && $listen_ports == *'bench'* ]]; then
     flux_bench_port="${GREEN_ARROW}   Flux Bench is listening on port ${GREEN}16224${NC}"
   else
     flux_bench_port="${RED_ARROW}   Flux Bench is ${RED}not listening${NC}"
@@ -972,7 +970,7 @@ function check_port_info()
 
 # function to check flux ports are open to external world
 # Only checks Flux UI port and Flux API Port at this time
-function check_external_ports(){
+function check_external_ports() {
   if [[ -n $ui_port && -n $api_port ]]; then
     echo -e "${BLUE}   checking gui port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
@@ -986,7 +984,7 @@ function check_external_ports(){
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
-      
+
     else
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
@@ -995,7 +993,7 @@ function check_external_ports(){
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_syncthing_port="${RED_ARROW}   Syncthing Port $syncthing_port is ${RED}closed${NC} - please check your network settings"
-      
+
     else
       external_syncthing_port="${GREEN_ARROW}   Syncthing Port $syncthing_port is ${GREEN}open${NC}"
     fi
@@ -1007,8 +1005,8 @@ function check_external_ports(){
 }
 
 #check to see if upnp is enabled and ports routed for LANIP
-#requires installation of miniupnpc 
-function check_upnp(){
+#requires installation of miniupnpc
+function check_upnp() {
   LANIP=$(hostname -I | awk '{print $1}')
   upnp_check=""
   upnp_check=$(upnpc -l 2>/dev/null | grep $LANIP)
@@ -1028,7 +1026,7 @@ function check_upnp(){
   fi
 }
 
-function check_version(){
+function check_version() {
   ## grab current version requirements from the flux api and compare to current node version
   flux_required_version=$(curl -sS --max-time 20 https://raw.githubusercontent.com/RunOnFlux/flux/master/package.json | jq -r '.version')
   if [[ "$flux_required_version" == "$flux_node_version" ]]; then
@@ -1039,7 +1037,7 @@ function check_version(){
 }
 
 #checks the current flux bench version and compares to local
-function check_flux_bench_version(){
+function check_flux_bench_version() {
   flux_bench_required_version=$(curl -s --max-time 20 $FLUX_BENCH_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_bench_current_version=$(dpkg -l fluxbench | grep -w fluxbench | awk '{print $3}')
 
@@ -1049,7 +1047,7 @@ function check_flux_bench_version(){
 }
 
 #checks the current released daemon version and compares to local
-function check_flux_daemon_version(){
+function check_flux_daemon_version() {
   flux_daemon_required_version=$(curl -s --max-time 20 $FLUX_DAEMON_CHECK_URL | grep -o '[0-9].[0-9].[0-9]' | head -n1)
   flux_daemon_current_version=$(dpkg -l flux | grep -w flux | awk '{print $3}')
   if [[ $flux_daemon_required_version != $flux_daemon_current_version ]]; then
@@ -1058,7 +1056,7 @@ function check_flux_daemon_version(){
 }
 
 # grab current node counts from https://api.runonflux.io/daemon/getzelnodecount
-function check_total_nodes(){
+function check_total_nodes() {
   local nodeInfo=$(curl -sS --max-time 20 https://api.runonflux.io/daemon/getzelnodecount | jq -r '.data')
   total_nodes=$(jq -r '.total' <<<"$nodeInfo" 2>/dev/null)
   cumulus_nodes=$(jq -r '."cumulus-enabled"' <<<"$nodeInfo" 2>/dev/null)
@@ -1067,13 +1065,13 @@ function check_total_nodes(){
 }
 
 # check current flux price
-function check_flux_price(){
+function check_flux_price() {
   local currencyInfo=$(curl -sS --max-time 20 https://explorer.runonflux.io/api/currency | jq -r '.data' | jq -r '.rate')
   flux_price=$(printf "%.3f" $currencyInfo)
 }
 
 # check flux DoS List
-function check_flux_dos_list(){
+function check_flux_dos_list() {
   get_flux_node_info
   local dosList=$(curl -sS --max-time 20 https://api.runonflux.io/daemon/getdoslist | jq .[] | grep "$flux_node_collateral" -A5 -B1)
 
@@ -1087,7 +1085,7 @@ function check_flux_dos_list(){
 # grab current kda address from user config file in zelflux directory
 #check node_kda_address on the node api side
 #check user_kda_address in the user config file
-function check_kda_address(){
+function check_kda_address() {
   check_port_info
   LANIP=$(hostname -I | awk '{print $1}')
   node_kda_address=$(curl -sS --max-time 20 http://$LANIP:$api_port/flux/kadena 2>/dev/null | jq -r '.data' 2>/dev/null)
@@ -1108,18 +1106,18 @@ function check_kda_address(){
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
               #sed -i "s/$(grep -e kadena /home/$USER/zelflux/config/userconfig.js)/    kadena: '$kda_address',/" /home/$USER/zelflux/config/userconfig.js
               if [[ -n $(grep -w $KDA_A /home/$USER/zelflux/config/userconfig.js) ]]; then
-                whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60;
+                whiptail --title "Update KDA Address" --msgbox "KDA Address Updated successfully" 8 60
                 user_kda_address=kda_address
               fi
             else
               #make a backup copy of the userconfig.js file
               sudo cp /home/$USER/zelflux/config/userconfig.js /home/$USER/zelflux/config/userconfig_backup.js
               #sudo sed -i -e "/zelid/a"$'\\\n'"    kadena: '$kda_address',"$'\n' "/home/$USER/zelflux/config/userconfig_backup.js"
-              whiptail --title "Add KDA Address" --msgbox "KDA Address Added successfully" 8 60;
+              whiptail --title "Add KDA Address" --msgbox "KDA Address Added successfully" 8 60
               user_kda_address=kda_address
             fi
           else
-            whiptail --title "CONFIG NOT FOUND" --msgbox "userconfig.js file not found - KDA Address not updated" 8 60;
+            whiptail --title "CONFIG NOT FOUND" --msgbox "userconfig.js file not found - KDA Address not updated" 8 60
           fi
           break
         fi
@@ -1143,7 +1141,7 @@ function check_kda_address(){
 
 #This function simply draws a title header if arguments are provided and a footer if no arguments are provided
 #If text is provided it will be centered and if a second color argument is provided it will have that color
-function make_header(){
+function make_header() {
   local output
   local inputLength
   local halfInputLength
@@ -1151,8 +1149,7 @@ function make_header(){
   local HEADER_TEXT_STOP
   output=""
   if [[ -z $1 ]]; then
-    for (( c=1; c<=$WINDOW_WIDTH; c++ ))
-    do 
+    for ((c = 1; c <= $WINDOW_WIDTH; c++)); do
       output="${output}${_HLINE}"
     done
   else
@@ -1164,7 +1161,7 @@ function make_header(){
     # HEADER_TEXT_START=$((WINDOW_HALF_WIDTH-halfInputLength))
     # HEADER_TEXT_STOP=$((HEADER_TEXT_START+inputLength))
     # for (( c=1; c<=$WINDOW_WIDTH; c++ ))
-    # do 
+    # do
     #   if [[ $c -lt $HEADER_TEXT_START || $c -gt $HEADER_TEXT_STOP ]]; then
     #     output="${output}${NC}${_HLINE}"
     #   else
@@ -1178,21 +1175,21 @@ function make_header(){
 }
 
 #this function simply prints tile navigation at the bottom of the current tile
-function navigation(){
+function navigation() {
   make_header
-  echo -e "${YELLOW}d - daemon | b - benchmarks | n - node | l - logs | q - quit | c - commands${NC}" 
+  echo -e "${YELLOW}d - daemon | b - benchmarks | n - node | l - logs | q - quit | c - commands${NC}"
 }
 
 #this function simply prints the version at the top of the page
-function make_title(){
+function make_title() {
   make_header "$nodeViewVersion" "$BLUE"
 }
 
 #checks the current window size and compares it to the last windows size to see if we need to redraw the term
-function check_term_resize(){
+function check_term_resize() {
   local currentWidth
   currentWidth=$(tput cols)
-  if [[ $WINDOW_WIDTH -ne $currentWidth  ]]; then
+  if [[ $WINDOW_WIDTH -ne $currentWidth ]]; then
     term_resize='1'
   else
     term_resize='0'
@@ -1209,44 +1206,44 @@ function check_bench() {
         show_external_port_info_tile
       fi
     elif [[ $flux_bench_stats_error == *"Failed: HW requirements not sufficient"* ]]; then
-      whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --msgbox "$flux_bench_stats_error" 8 60;
+      whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --msgbox "$flux_bench_stats_error" 8 60
     else
       if whiptail --title "Benchmarks Failed - $flux_bench_benchmark" --yesno "Would you like to restart your node benchmarks?" 8 60; then
         flux_update_benchmarks
       else
-        whiptail --msgbox "User would not like to restart benchmarks" 8 60;
+        whiptail --msgbox "User would not like to restart benchmarks" 8 60
       fi
     fi
   fi
 }
 
 #check flux back
-function check_back(){
+function check_back() {
   if [[ $flux_bench_back != *"connected"* ]]; then
     if whiptail --title "Flux Back Status Not Connected" --yesno "Would you like to update and restart the flux daemon and node?" 8 60; then
       flux_update_service
     else
-      whiptail --msgbox "User would not like to update and restart flux daemon and flux node" 8 60;
+      whiptail --msgbox "User would not like to update and restart flux daemon and flux node" 8 60
     fi
   fi
 }
 
 # Update Ubuntu OS
-function node_os_update(){
+function node_os_update() {
   if whiptail --title "Ubuntu Operating System Update" --yesno "Would you like to update the operating system?" 8 60; then
     sudo apt-get update -y && sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
   else
-    whiptail --msgbox "User would not like to update the operating system" 8 60;
+    whiptail --msgbox "User would not like to update the operating system" 8 60
   fi
 }
 
 # Gets the node's uptime in minutes
-function get_flux_uptime(){
+function get_flux_uptime() {
   #curl local node IP's API port for uptime -s (silent) -S(show error)
-  #converts seconds to minutes .. d/h/m/s will come at some point 
+  #converts seconds to minutes .. d/h/m/s will come at some point
   check_port_info
   local get_uptime=$(curl -sS --max-time 20 "http://$LANIP:$api_port/flux/uptime" 2>&1 | jq -r '.data')
-  flux_uptime=$(bc <<< "$get_uptime / 60" | awk '{print $1 " mins"}')
+  flux_uptime=$(bc <<<"$get_uptime / 60" | awk '{print $1 " mins"}')
 
   if [[ $flux_uptime == "" ]]; then
     flux_uptime="0 mins"
@@ -1254,35 +1251,35 @@ function get_flux_uptime(){
 }
 
 # Get api network blockheight
-function check_current_blockheight(){
+function check_current_blockheight() {
   local api_current_height=""
 
   if [[ $testnet == '1' ]]; then
-    api_current_height=$(curl -sk --max-time 20 https://testnet.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+    api_current_height=$(curl -sk --max-time 20 https://testnet.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2>/dev/null)
   else
     api_current_height=$(curl -sS --max-time 20 "https://api.runonflux.io/daemon/getblockcount" 2>&1 | jq -r '.data')
     if [[ api_current_height == "" ]]; then
-      api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2> /dev/null)
+      api_current_height=$(curl -sk --max-time 20 https://explorer.runonflux.io/api/status?q=getInfo getinfo 2>/dev/null | jq '.info.blocks' 2>/dev/null)
     fi
-  fi  
+  fi
 
   if [[ $flux_daemon_block_height == "" ]]; then
-      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
+    daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
   else
     if [[ "$api_current_height" != "0" && "$api_current_height" =~ ^-?[0-9]+$ ]]; then
       if [[ $flux_daemon_block_height == $api_current_height ]]; then
         daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}SYNCED${NC}"
       else
-        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height-flux_daemon_block_height)) blocks behind"
+        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height - flux_daemon_block_height)) blocks behind"
       fi
     else
-       daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
+      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
     fi
   fi
 }
 
-#check for dhcp with ip r 
-function check_dhcp_enable(){
+#check for dhcp with ip r
+function check_dhcp_enable() {
   local dhcpCheck=$(ip r | grep dhcp)
   if [[ -n "$dhcpCheck" ]]; then
     dhcp_status="${YELLOW}DHCP DETECTED .. VERIFY NODE LAN IP ADDRESS IS STATIC ON YOUR ROUTER${NC}"
@@ -1290,11 +1287,11 @@ function check_dhcp_enable(){
 }
 
 #use upnpc -l to display all details for Flux upnp
-function display_upnp(){
+function display_upnp() {
 
   upnp_display=$(upnpc -l)
-   if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"*  ]]; then
-   upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD|Found a \(not connected?")
+  if [[ "$upnp_display" == *"Found valid IGD"* || "$upnp_display" == *"Found a (not connected?) IGD"* ]]; then
+    upnp_gateway=$(echo "$upnp_display" | egrep -a -wi "Found valid IGD|Found a \(not connected?")
     if [[ -z "$upnp_gateway" ]]; then
       upnp_gateway="N/A"
     fi
@@ -1309,7 +1306,7 @@ function display_upnp(){
 }
 
 # restart daemon service and restart FluxOS
-function flux_update_service(){
+function flux_update_service() {
   #stop daemon
   flux_daemon_stop
 
@@ -1324,45 +1321,45 @@ function flux_update_service(){
 }
 
 #show node fixer tile - whiptail options to restart services/benchmarks and processes
-function show_node_fix_tile(){
+function show_node_fix_tile() {
   if [[ -z $1 ]]; then
-    
+
     # choose a node control menu option
     menuOption=$(whiptail --title "Choose Node Control" --menu "Choose an option:" 12 60 5 \
-    "Flux Bench Controls" "" \
-    "Flux OS Controls" "" \
-    "Flux Daemon Controls" "" \
-    "Flux Watchdog Controls" "" \
-    "Flux PM2 Monitor" "" 3>&1 1>&2 2>&3 )
+      "Flux Bench Controls" "" \
+      "Flux OS Controls" "" \
+      "Flux Daemon Controls" "" \
+      "Flux Watchdog Controls" "" \
+      "Flux PM2 Monitor" "" 3>&1 1>&2 2>&3)
 
     # show submenu optoins for node controls
     if [[ "$menuOption" == "Flux Bench Controls" ]]; then
       userOption=$(whiptail --title "Flux Bench Controls" --menu "Choose an option: " 12 60 3 \
-      "1"   "Restart Node Benchmarks      " \
-      "2"   "Stop Benchmark               " \
-      "3"   "Start Benchmark Service      " 3>&1 1>&2 2>&3 )
+        "1" "Restart Node Benchmarks      " \
+        "2" "Stop Benchmark               " \
+        "3" "Start Benchmark Service      " 3>&1 1>&2 2>&3)
     elif [[ "$menuOption" == "Flux OS Controls" ]]; then
       userOption=$(whiptail --title "Flux OS Controls" --menu "Choose option: " 10 60 2 \
-      "4"   "Stop Flux                    " \
-      "5"   "Start Flux                   " 3>&1 1>&2 2>&3 )
+        "4" "Stop Flux                    " \
+        "5" "Start Flux                   " 3>&1 1>&2 2>&3)
     elif [[ "$menuOption" == "Flux Daemon Controls" ]]; then
       userOption=$(whiptail --title "Flux Daemon Controls" --menu "Choose option: " 10 60 2 \
-      "6"   "Stop Flux Daemon             " \
-      "7"   "Start Flux Daemon            " 3>&1 1>&2 2>&3 )
+        "6" "Stop Flux Daemon             " \
+        "7" "Start Flux Daemon            " 3>&1 1>&2 2>&3)
     elif [[ "$menuOption" == "Flux Watchdog Controls" ]]; then
       userOption=$(whiptail --title "Watchdog Controls" --menu "Choose option: " 12 60 3 \
-      "8"   "Stop watchdog                " \
-      "9"   "Start watchdog               " \
-      "10"  "Restart watchdog             " 3>&1 1>&2 2>&3 )
+        "8" "Stop watchdog                " \
+        "9" "Start watchdog               " \
+        "10" "Restart watchdog             " 3>&1 1>&2 2>&3)
     elif [[ "$menuOption" == "Flux PM2 Monitor" ]]; then
-        #display pm2 monitor helpful for viewing watchdog actions every 4 minutes
-        pm2 monit 2>/dev/null
+      #display pm2 monitor helpful for viewing watchdog actions every 4 minutes
+      pm2 monit 2>/dev/null
     fi
   else
     if [[ $1 -gt 0 ]] && [[ $1 -lt 11 ]]; then
       userOption="$1"
     fi
-  fi 
+  fi
 
   # could use case switch here
   if [[ "$userOption" == "1" ]]; then
@@ -1390,77 +1387,77 @@ function show_node_fix_tile(){
 }
 
 # restart the node benchmarks
-function flux_update_benchmarks(){
+function flux_update_benchmarks() {
   echo -e "${GREEN}starting${NC} node benchmarks ... please allow approx 5 mins for benchmarks to complete"
   $BENCH_CLI restartnodebenchmarks
   sleep 5
 }
 
 # stop the node benchmarks
-function flux_stop_benchmarks(){
+function flux_stop_benchmarks() {
   echo -e "${RED}stopping${NC} node benchmarks ... "
   $BENCH_CLI stop
   sleep 3
 }
 
 # start the node benchmarks
-function flux_start_benchmarks(){
+function flux_start_benchmarks() {
   echo -e "${GREEN}restarting${NC} node benchmark service ... please allow approx 5 minutes to complete"
   sudo systemctl restart zelcash
   sleep 5
 }
 
 # stop the flux node OS
-function flux_stop(){
+function flux_stop() {
   echo -e "pm2 ${RED}stopping${NC} flux node os service ... "
   pm2 stop flux
   sleep 5
 }
 
 # start the flux node OS
-function flux_start(){
+function flux_start() {
   echo -e "pm2 ${GREEN}starting${NC} flux node os service ... "
   pm2 start flux
   sleep 5
 }
 
 # stop the flux daemon
-function flux_daemon_stop(){
+function flux_daemon_stop() {
   echo -e "${RED}stopping${NC} flux daemon service ... "
   sudo systemctl stop zelcash
   sleep 5
 }
 
 # start flux daemon
-function flux_daemon_start(){
+function flux_daemon_start() {
   echo -e "${GREEN}starting${NC} flux daemon service ... "
   sudo systemctl start zelcash
   sleep 5
 }
 
 # stop watchdog
-function flux_watchdog_stop(){
+function flux_watchdog_stop() {
   echo -e "pm2 ${RED}stopping${NC} flux watchdog service ..."
   pm2 stop watchdog
   sleep 3
 }
 
 # start watchdog
-function flux_watchdog_start(){
+function flux_watchdog_start() {
   echo -e "pm2 ${GREEN}starting${NC} flux watchdog service ... "
   pm2 start watchdog --watch
   sleep 3
 }
 
 # restart watchdog
-function flux_watchdog_restart(){
+function flux_watchdog_restart() {
   echo -e "pm2 ${GREEN}re-starting${NC} flux watchdog service ..."
   pm2 reload watchdog --watch
   sleep 3
 }
 
 #function LVM Group fix
-function lvm_fix_function(){
+function lvm_fix_function() {
   echo -e "${SEA}applying LVM Fix and restarting benchmarks ...${NC} "
   sudo lvextend -l +100%FREE --resizefs /dev/ubuntu-vg/ubuntu-lv
   sleep 2
@@ -1468,7 +1465,7 @@ function lvm_fix_function(){
   show_bench='1'
 }
 
-function bench_status_style(){
+function bench_status_style() {
   if [[ "$flux_bench_benchmark" == "CUMULUS" || "$flux_bench_benchmark" == "NIMBUS" || "$flux_bench_benchmark" == "STRATUS" ]]; then
     flux_bench_benchmark="$(echo -e "${GREEN}${flux_bench_benchmark}${NC}")"
   else
@@ -1476,7 +1473,7 @@ function bench_status_style(){
   fi
 }
 
-function node_status_style(){
+function node_status_style() {
   if [[ "$flux_node_status" == "CONFIRMED" ]]; then
     flux_node_status="$(echo -e "${GREEN}${flux_node_status}${NC}")"
   else
@@ -1484,13 +1481,13 @@ function node_status_style(){
   fi
 }
 
-function create_flux_motd(){
+function create_flux_motd() {
   echo -e ""
   echo -e "${SEA}creating custom flux splash login ... ${NC}"
   echo -e ""
-  sudo rm /etc/update-motd.d/40-flux-motd > /dev/null 2>&1
+  sudo rm /etc/update-motd.d/40-flux-motd >/dev/null 2>&1
   sudo touch /etc/update-motd.d/40-flux-motd
-  sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' << EOF
+  sudo bash -c 'cat > /etc/update-motd.d/40-flux-motd' <<EOF
 #!/bin/bash
 
 green='\033[32m'
@@ -1502,7 +1499,7 @@ printStyle="\${blue}%-25s    \${normal}%-15s \${normal}%-10s \n"
 printStyleWarn="\${blue}%-25s    \${normal}%-15s \${red}%-10s \n"
 printStyleConfirm="\${blue}%-25s    \${normal}%-15s \${green}%-10s \n"
 
-hst=`hostname`
+hst=$(hostname)
 disku_max=\$(df -Hl / | grep -v File | tr -s ' '|cut -f2 -d" ")
 disku_perc=\$(df -Hl / | grep -v File | tr -s ' '|cut -f5 -d" ")
 disku_num=\${disku_perc%\%}
@@ -1538,26 +1535,26 @@ printf '=%.0s' {1..55}
 printf "\n"
 EOF
 
-sudo chmod 0755 /etc/update-motd.d/40-flux-motd
-sudo rm /etc/update-motd.d/*-release-upgrade > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-help-text > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-esm-announce > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-motd-news > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-fwupd > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-contract-ua-esm-status > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-unattended-upgrades > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-overlayroot > /dev/null 2>&1
-sudo rm /etc/update-motd.d/*-hwe-eol > /dev/null 2>&1
+  sudo chmod 0755 /etc/update-motd.d/40-flux-motd
+  sudo rm /etc/update-motd.d/*-release-upgrade >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-help-text >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-esm-announce >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-motd-news >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-fwupd >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-contract-ua-esm-status >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-unattended-upgrades >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-overlayroot >/dev/null 2>&1
+  sudo rm /etc/update-motd.d/*-hwe-eol >/dev/null 2>&1
 
-echo -e "${GREEN}Displaying new login screen ... ${NC}"
-echo -e ""
-sudo run-parts /etc/update-motd.d/
-echo -e "${RED}Exiting in 10 seconds ...${NC}"
-sleep 10
+  echo -e "${GREEN}Displaying new login screen ... ${NC}"
+  echo -e ""
+  sudo run-parts /etc/update-motd.d/
+  echo -e "${RED}Exiting in 10 seconds ...${NC}"
+  sleep 10
 }
 
-function main_terminal(){
- 
+function main_terminal() {
+
   while true; do
 
     if [[ $redraw_term == '1' ]]; then
@@ -1597,10 +1594,10 @@ echo -e "\n${GREEN}gathering node and daemon info ... ${NC}"
 check_version
 
 # allow for user input to go right to desired tile
-# allow arguments are 
+# allow arguments are
 # - node, bench, daemon, ports
 if [ -z "$1" ]; then
-   show_overview='1'
+  show_overview='1'
 else
   if [[ $1 == "node" ]]; then
     show_node='1'
@@ -1614,7 +1611,7 @@ else
     lvm_fix_function
   elif [[ $1 == "flux-motd" ]]; then
     create_flux_motd
-    exit    
+    exit
   elif [[ $1 == "logs" ]]; then
     show_realtime_logs
     show_bench='1'
