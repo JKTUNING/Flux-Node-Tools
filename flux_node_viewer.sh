@@ -1238,7 +1238,6 @@ function node_os_update(){
     else
       whiptail --msgbox "User would not like to update the operating system" 8 60;
     fi
-  fi
 }
 
 # Gets the node's uptime in minutes
