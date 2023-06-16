@@ -288,7 +288,7 @@ function get_flux_bench_info() {
 
   for ((i = 0; i < numDisks; i++)); do
     keys=$(echo "$flux_bench_stats_disk" | jq -r ".[$i] | keys[]")
-    disk_info="$BLUE_CIRCLE   Bench Disk Info              - "
+    disk_info="$BLUE_CIRCLE   Bench Disk Info              -    "
 
     for key in $keys; do
       value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
