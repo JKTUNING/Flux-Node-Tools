@@ -329,7 +329,7 @@ function get_blocks_since_last_confirmed(){
   fi
 }
 
-function update(){
+function updateInput(){
   local userInput
   local noInput
 
@@ -1234,10 +1234,10 @@ function check_back(){
 # Update Ubuntu OS
 function node_os_update(){
   if whiptail --title "Ubuntu Operating System Update" --yesno "Would you like to update the operating system?" 8 60; then
-      sudo apt-get update -y && sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
-    else
-      whiptail --msgbox "User would not like to update the operating system" 8 60;
-    fi
+    sudo apt-get update -y && sudo apt-get --with-new-pkgs upgrade -y && sudo apt autoremove -y
+  else
+    whiptail --msgbox "User would not like to update the operating system" 8 60;
+  fi
 }
 
 # Gets the node's uptime in minutes
@@ -1588,7 +1588,7 @@ function main_terminal(){
     WINDOW_WIDTH=$(tput cols)
     WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
-    update
+    updateInput
   done
 }
 
