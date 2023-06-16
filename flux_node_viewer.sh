@@ -288,11 +288,11 @@ function get_flux_bench_info() {
 
   for ((i = 0; i < numDisks; i++)); do
     keys=$(echo "$flux_bench_stats_disk" | jq -r ".[$i] | keys[]")
-    disk_info=""
+    disk_info="$BLUE_CIRCLE   Bench Disk Info              - "
 
     for key in $keys; do
       value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
-      disk_info+="$key:$value-"
+      disk_info+="$key:$value "
     done
 
     if ((i < numDisks - 1)); then
@@ -581,7 +581,7 @@ function show_flux_benchmark_info_tile() {
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
   echo -e "$BLUE_CIRCLE   Bench Ram                    -    $flux_bench_stats_ram"
-  echo -e "$BLUE_CIRCLE   Bench Disk Info              -    $disk_info"
+  echo -e "$disk_info"
   echo -e "$BLUE_CIRCLE   Bench SSD                    -    $flux_bench_stats_ssd"
   echo -e "$BLUE_CIRCLE   Bench HDD                    -    $flux_bench_stats_hhd"
   echo -e "$BLUE_CIRCLE   Bench ddWrite                -    $flux_bench_stats_ddwrite"
