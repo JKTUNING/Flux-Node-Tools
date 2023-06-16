@@ -623,11 +623,11 @@ function show_node_overview_tile() {
   sleep 0.25
   echo -e "${BLUE} $(figlet -f small $nodeViewVersion)${NC}"
   make_header "FLUX NODE OVERVIEW" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
-  echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_benchmark"
+  echo -e "$BLUE_CIRCLE   Node status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Bench status            -    $flux_bench_benchmark"
   echo -e "$daemon_sync_status"
-  echo -e "$BLUE_CIRCLE   Node maintenance window      -    $maint_window mins"
-  echo -e "$BLUE_CIRCLE   Flux node rank               -    $flux_node_rank"
+  echo -e "$BLUE_CIRCLE   Maintenance window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Node rank               -    $flux_node_rank"
 
   echo -e "$flux_node_version_check"
 
