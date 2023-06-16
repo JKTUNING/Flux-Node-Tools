@@ -468,12 +468,12 @@ function show_flux_daemon_info_tile() {
   clear
   sleep 0.25
   make_header "$DASH_DAEMON_TITLE" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux daemon version          -    $flux_daemon_version"
-  echo -e "$BLUE_CIRCLE   Flux protocol version        -    $flux_daemon_protocol_version"
-  echo -e "$BLUE_CIRCLE   Flux daemon block height     -    $flux_daemon_block_height"
+  echo -e "$BLUE_CIRCLE   Daemon version          -    $flux_daemon_version"
+  echo -e "$BLUE_CIRCLE   Protocol version        -    $flux_daemon_protocol_version"
+  echo -e "$BLUE_CIRCLE   Daemon block height     -    $flux_daemon_block_height"
   echo -e "$daemon_sync_status"
-  echo -e "$BLUE_CIRCLE   Flux daemon connections      -    $flux_daemon_connections"
-  echo -e "$BLUE_CIRCLE   Flux deamon difficulty       -    $flux_daemon_difficulty"
+  echo -e "$BLUE_CIRCLE   Daemon connections      -    $flux_daemon_connections"
+  echo -e "$BLUE_CIRCLE   Daemon difficulty       -    $flux_daemon_difficulty"
   if [[ -n "$flux_daemon_version_check" ]]; then
     echo -e "$flux_daemon_version_check"
   fi
@@ -516,19 +516,19 @@ function show_flux_node_info_tile() {
   sleep 0.25
   node_status_style
   make_header "$DASH_NODE_TITLE" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux node status             -    $flux_node_status"
+  echo -e "$BLUE_CIRCLE   Node status             -    $flux_node_status"
   if [[ "$flux_node_status" == "DOS" ]]; then
     check_flux_dos_list
     echo -e "$flux_node_dos"
   fi
-  echo -e "$BLUE_CIRCLE   Flux node rank               -    $flux_node_rank"
-  echo -e "$BLUE_CIRCLE   Flux node added height       -    $flux_node_added_height"
-  echo -e "$BLUE_CIRCLE   Flux node confirmed height   -    $flux_node_confirmed_height"
-  echo -e "$BLUE_CIRCLE   Flux node last confirmed     -    $flux_node_last_confirmed_height"
-  echo -e "$BLUE_CIRCLE   Flux node last paid height   -    $flux_node_last_paid_height"
-  echo -e "$BLUE_CIRCLE   Blocks since last confirmed  -    $blockDiff"
-  echo -e "$BLUE_CIRCLE   Node Maintenance Window      -    $maint_window mins"
-  echo -e "$BLUE_CIRCLE   Node Uptime                  -    $flux_uptime"
+  echo -e "$BLUE_CIRCLE   Node rank               -    $flux_node_rank"
+  echo -e "$BLUE_CIRCLE   Node added height       -    $flux_node_added_height"
+  echo -e "$BLUE_CIRCLE   Node confirmed height   -    $flux_node_confirmed_height"
+  echo -e "$BLUE_CIRCLE   Node last confirmed     -    $flux_node_last_confirmed_height"
+  echo -e "$BLUE_CIRCLE   Node last paid height   -    $flux_node_last_paid_height"
+  echo -e "$BLUE_CIRCLE   Blocks since confirmed  -    $blockDiff"
+  echo -e "$BLUE_CIRCLE   Maintenance Window      -    $maint_window mins"
+  echo -e "$BLUE_CIRCLE   Uptime                  -    $flux_uptime"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
@@ -570,29 +570,29 @@ function show_flux_benchmark_info_tile() {
   sleep 0.25
   bench_status_style
   make_header "$DASH_BENCH_TITLE" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Flux bench version           -    $flux_bench_version"
-  echo -e "$BLUE_CIRCLE   Flux back status             -    $flux_bench_back"
-  echo -e "$BLUE_CIRCLE   Flux bench status            -    $flux_bench_flux_status"
-  echo -e "$BLUE_CIRCLE   Flux benchmarks              -    $flux_bench_benchmark"
+  echo -e "$BLUE_CIRCLE   Version                 -    $flux_bench_version"
+  echo -e "$BLUE_CIRCLE   Back Status             -    $flux_bench_back"
+  echo -e "$BLUE_CIRCLE   Bench status            -    $flux_bench_flux_status"
+  echo -e "$BLUE_CIRCLE   Benchmark               -    $flux_bench_benchmark"
   if [[ -n "$flux_bench_version_check" ]]; then
     echo -e "$flux_bench_version_check"
   fi
   make_header "$DASH_BENCH_DETAILS_TITLE" "$BLUE"
-  echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
-  echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
-  echo -e "$BLUE_CIRCLE   Bench Ram                    -    $flux_bench_stats_ram"
+  echo -e "$BLUE_CIRCLE   Real Cores              -    $flux_bench_stats_real_cores"
+  echo -e "$BLUE_CIRCLE   Cores                   -    $flux_bench_stats_cores"
+  echo -e "$BLUE_CIRCLE   Ram                     -    $flux_bench_stats_ram"
   echo -e "$disk_info"
-  echo -e "$BLUE_CIRCLE   Bench SSD                    -    $flux_bench_stats_ssd"
-  echo -e "$BLUE_CIRCLE   Bench HDD                    -    $flux_bench_stats_hhd"
-  #echo -e "$BLUE_CIRCLE   Bench ddWrite                -    $flux_bench_stats_ddwrite"
-  echo -e "$BLUE_CIRCLE   Bench Total Storage          -    $flux_bench_stats_storage"
-  echo -e "$BLUE_CIRCLE   Bench EPS                    -    $flux_bench_stats_eps"
-  echo -e "$BLUE_CIRCLE   Bench Ping                   -    $flux_bench_stats_ping"
-  echo -e "$BLUE_CIRCLE   Bench Download Speed         -    $flux_bench_stats_download"
-  echo -e "$BLUE_CIRCLE   Bench Upload Speed           -    $flux_bench_stats_upload"
-  echo -e "$BLUE_CIRCLE   Bench Speed Test Version     -    $flux_bench_stats_speed_test_version"
-  echo -e "$BLUE_CIRCLE   Bench Thunder Enabled        -    $flux_bench_stats_thunder"
-  echo -e "$BLUE_CIRCLE   Bench Errors                 -    $flux_bench_stats_error"
+  echo -e "$BLUE_CIRCLE   SSD                     -    $flux_bench_stats_ssd"
+  echo -e "$BLUE_CIRCLE   HDD                     -    $flux_bench_stats_hhd"
+  #echo -e "$BLUE_CIRCLE  ddWrite                -    $flux_bench_stats_ddwrite"
+  echo -e "$BLUE_CIRCLE   Total Storage           -    $flux_bench_stats_storage"
+  echo -e "$BLUE_CIRCLE   EPS                     -    $flux_bench_stats_eps"
+  echo -e "$BLUE_CIRCLE   Ping                    -    $flux_bench_stats_ping"
+  echo -e "$BLUE_CIRCLE   Download Speed          -    $flux_bench_stats_download"
+  echo -e "$BLUE_CIRCLE   Upload Speed            -    $flux_bench_stats_upload"
+  echo -e "$BLUE_CIRCLE   Speed Test Version      -    $flux_bench_stats_speed_test_version"
+  echo -e "$BLUE_CIRCLE   Thunder Enabled         -    $flux_bench_stats_thunder"
+  echo -e "$BLUE_CIRCLE   Errors                  -    $flux_bench_stats_error"
   make_header "$DASH_BENCH_PORT_TITLE" "$BLUE"
   echo -e "$flux_bench_port"
 
@@ -1282,16 +1282,16 @@ function check_current_blockheight() {
   fi
 
   if [[ $flux_daemon_block_height == "" ]]; then
-    daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
+    daemon_sync_status="${RED_ARROW}   Daemon sync status      -    ${RED}N/A${NC}"
   else
     if [[ "$api_current_height" != "0" && "$api_current_height" =~ ^-?[0-9]+$ ]]; then
       if [[ $flux_daemon_block_height == $api_current_height ]]; then
-        daemon_sync_status="${GREEN_ARROW}   Flux daemon sync status      -    ${GREEN}SYNCED${NC}"
+        daemon_sync_status="${GREEN_ARROW}   Daemon sync status      -    ${GREEN}SYNCED${NC}"
       else
-        daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height - flux_daemon_block_height)) blocks behind"
+        daemon_sync_status="${RED_ARROW}   Daemon sync status      -    ${RED}NOT SYNCED${NC} $((api_current_height - flux_daemon_block_height)) blocks behind"
       fi
     else
-      daemon_sync_status="${RED_ARROW}   Flux daemon sync status      -    ${RED}N/A${NC}"
+      daemon_sync_status="${RED_ARROW}   Daemon sync status      -    ${RED}N/A${NC}"
     fi
   fi
 }
