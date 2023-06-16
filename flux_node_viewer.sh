@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node View 1.1'
+nodeViewVersion='Flux Node View 1.2'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
@@ -288,7 +288,7 @@ function get_flux_bench_info() {
 
   for ((i = 0; i < numDisks; i++)); do
     keys=$(echo "$flux_bench_stats_disk" | jq -r ".[$i] | keys[]")
-    disk_info="$BLUE_CIRCLE   Disk Info              -    "
+    disk_info="$BLUE_CIRCLE   Disk Info               -    "
 
     for key in $keys; do
       value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
