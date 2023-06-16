@@ -286,12 +286,18 @@ function get_flux_bench_info() {
 
   numDisks=$(echo -e $flux_bench_stats_disk | jq length)
 
-  for ((i = 0; i < $numDisks; i++)); do
-    keys=$(echo "$flux_bench_stats_disk" | jq ".[$i] | keys[]")
+  for ((i = 0; i < numDisks; i++)); do
+    keys=$(echo "$flux_bench_stats_disk" | jq -r ".[$i] | keys[]")
+    disk_info=""
+
     for key in $keys; do
       value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
-      disk_info="$key:$value\n"
+      disk_info+="$key:$value-"
     done
+
+    if ((i < numDisks - 1)); then
+      disk_info+="\n"
+    fi
   done
 }
 
