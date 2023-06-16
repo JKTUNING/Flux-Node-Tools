@@ -273,6 +273,7 @@ function get_flux_bench_info() {
   flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats" 2>/dev/null)
+  flux_bench_stats_disk=$(jq -r '.disksinfo' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats" 2>/dev/null)
@@ -282,6 +283,16 @@ function get_flux_bench_info() {
   flux_bench_stats_speed_test_version=$(jq -r '.speed_version' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_thunder=$(jq -r '.thunder' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats" 2>/dev/null)
+
+  numDisks=$(echo -e $flux_bench_stats_disk | jq length)
+
+  for ((i = 0; i < $numDisks; i++)); do
+    keys=$(echo "$flux_bench_stats_disk" | jq ".[$i] | keys[]")
+    for key in $keys; do
+      value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
+      disk_info="$key:$value\n"
+    done
+  done
 }
 
 ## Function to collect flux block chain daemon data
@@ -564,6 +575,7 @@ function show_flux_benchmark_info_tile() {
   echo -e "$BLUE_CIRCLE   Bench Real Cores             -    $flux_bench_stats_real_cores"
   echo -e "$BLUE_CIRCLE   Bench Cores                  -    $flux_bench_stats_cores"
   echo -e "$BLUE_CIRCLE   Bench Ram                    -    $flux_bench_stats_ram"
+  echo -e "$BLUE_CIRCLE   Bench Disk Info              -    $disk_info"
   echo -e "$BLUE_CIRCLE   Bench SSD                    -    $flux_bench_stats_ssd"
   echo -e "$BLUE_CIRCLE   Bench HDD                    -    $flux_bench_stats_hhd"
   echo -e "$BLUE_CIRCLE   Bench ddWrite                -    $flux_bench_stats_ddwrite"
