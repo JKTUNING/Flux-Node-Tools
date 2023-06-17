@@ -1604,6 +1604,7 @@ function main_terminal() {
     WINDOW_HALF_WIDTH=$(bc <<<"$WINDOW_WIDTH / 2")
 
     updateInput
+    updateInput
   done
 }
 
