@@ -168,7 +168,7 @@ fi
 if [ ! -d "/home/$USER/.flux" ]; then
   echo -e "${RED}Flux Directory not found ... ${NC}"
   echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${SEA}Please verify your FluxOS installation${NC}"
+  echo -e "${SEA}Please verify your FluxD installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -177,7 +177,7 @@ fi
 if [ ! -d "/home/$USER/zelflux" ]; then
   echo -e "${RED}zelflux Directory not found ... ${NC}"
   echo -e "${SEA}Please verify you are logged in as the proper user ...${NC}"
-  echo -e "${SEA}Please verify your FluxD installation${NC}"
+  echo -e "${SEA}Please verify your FluxOS installation${NC}"
   sleep 5
   softExit='1'
   exit
@@ -291,7 +291,7 @@ function get_flux_bench_info() {
     disk_info="$BLUE_CIRCLE   Disk Info               -    "
 
     for key in $keys; do
-      value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key")
+      value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key" | awk -F '.' '{print $1}')
       disk_info+="$key:$value "
     done
 
