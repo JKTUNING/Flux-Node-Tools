@@ -285,10 +285,11 @@ function get_flux_bench_info() {
   flux_bench_stats_error=$(jq -r '.error' <<<"$flux_bench_stats" 2>/dev/null)
 
   numDisks=$(echo -e $flux_bench_stats_disk | jq length)
+  disk_info=""
 
   for ((i = 0; i < numDisks; i++)); do
     keys=$(echo "$flux_bench_stats_disk" | jq -r ".[$i] | keys[]")
-    disk_info="$BLUE_CIRCLE   Disk Info               -    "
+    disk_info+="$BLUE_CIRCLE   Disk Info               -    "
 
     for key in $keys; do
       value=$(echo "$flux_bench_stats_disk" | jq -r ".[$i].$key" | awk -F '.' '{print $1}')
