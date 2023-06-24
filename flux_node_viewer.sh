@@ -271,10 +271,7 @@ function get_flux_bench_info() {
   flux_bench_stats_real_cores=$(jq -r '.real_cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_cores=$(jq -r '.cores' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ram=$(jq -r '.ram' <<<"$flux_bench_stats" 2>/dev/null)
-  flux_bench_stats_ssd=$(jq -r '.ssd' <<<"$flux_bench_stats" 2>/dev/null)
-  flux_bench_stats_hhd=$(jq -r '.hdd' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_disk=$(jq -r '.disksinfo' <<<"$flux_bench_stats" 2>/dev/null)
-  flux_bench_stats_ddwrite=$(jq -r '.ddwrite' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_storage=$(jq -r '.totalstorage' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_eps=$(jq -r '.eps' <<<"$flux_bench_stats" 2>/dev/null)
   flux_bench_stats_ping=$(jq -r '.ping' <<<"$flux_bench_stats" 2>/dev/null)
@@ -583,9 +580,6 @@ function show_flux_benchmark_info_tile() {
   echo -e "$BLUE_CIRCLE   Cores                   -    $flux_bench_stats_cores"
   echo -e "$BLUE_CIRCLE   Ram                     -    $flux_bench_stats_ram"
   echo -e "$disk_info"
-  echo -e "$BLUE_CIRCLE   SSD                     -    $flux_bench_stats_ssd"
-  echo -e "$BLUE_CIRCLE   HDD                     -    $flux_bench_stats_hhd"
-  #echo -e "$BLUE_CIRCLE  ddWrite                -    $flux_bench_stats_ddwrite"
   echo -e "$BLUE_CIRCLE   Total Storage           -    $flux_bench_stats_storage"
   echo -e "$BLUE_CIRCLE   EPS                     -    $flux_bench_stats_eps"
   echo -e "$BLUE_CIRCLE   Ping                    -    $flux_bench_stats_ping"
