@@ -12,4 +12,4 @@ jobs:
           SHFMT_OPTS: -i 2 # arguments to shfmt.
         with:
           sh_checker_shellcheck_disable: true
-          sh_checker_exclude: "flux_log_tmux.sh find_best_server.sh"
+          sh_checker_exclude: "flux_log_tmux.sh"

@@ -8,7 +8,7 @@ else
 fi
 
 #check to see if user input is null - if so exit
-if [ -z "$userInput" ]; then 
+if [ -z "$userInput" ]; then
   printf "\nno servers selected ... exiting ...\n"
   exit 0
 fi
@@ -22,8 +22,7 @@ serverIndex=()
 downloadTime='5'
 downloadFileSize=0
 
-for server in 5 6 7 8 9 10 11 12
-do
+for server in 5 6 7 8 9 10 11 12; do
   dotest=0
   #if US selected and server is between 5 and 7
   if [[ $userInput = "US" && $server -ge 5 && $server -le 7 ]]; then
@@ -46,13 +45,12 @@ do
     sleep $downloadTime
     kill -s SIGKILL "$wget_pid"
     wait $! 2>/dev/null
-    
+
     #remove bootstrap download file
     rm -f download_bootstrap
 
     FILE=download_file$server
-    if [ -f "$FILE" ];
-    then
+    if [ -f "$FILE" ]; then
       printf "average download speed for server $server\n"
 
       #grab the size of the file after wget call for $downloadTime amount of time
@@ -83,18 +81,17 @@ printf "\n\n"
 bestTime=0
 bestServer=0
 count=0
- 
- for i in "${downloadSpeed[@]}"
- do
-    
-     if [[ $bestTime -lt $i ]]; then
-        #printf "$i\n"
-        bestTime=$i
-        bestServer=${serverIndex[$count]}
-        #echo "${fileSizes[$count]} Mb"
-        #echo "${downloadSpeed[$count]} Mb/s"
-     fi
-     ((count++))
- done
+
+for i in "${downloadSpeed[@]}"; do
+
+  if [[ $bestTime -lt $i ]]; then
+    #printf "$i\n"
+    bestTime=$i
+    bestServer=${serverIndex[$count]}
+    #echo "${fileSizes[$count]} Mb"
+    #echo "${downloadSpeed[$count]} Mb/s"
+  fi
+  ((count++))
+done
 
 printf "\n----------- RESULTS -----------\nBest server -- $bestServer\nDownload speed -- $bestTime Mb/s\n"
