@@ -1,3 +1,5 @@
+[![Bash Linter](https://github.com/JKTUNING/Flux-Node-Tools/actions/workflows/shfmt.yml/badge.svg)](https://github.com/JKTUNING/Flux-Node-Tools/actions/workflows/shfmt.yml)
+
 # Flux Node Viewer
 
 Flux Node Viewer is a tool to help node ops using a CLI GUI for easy viewing.
