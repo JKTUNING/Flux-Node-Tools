@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node View 1.2'
+nodeViewVersion='Flux Node View 1.3'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
