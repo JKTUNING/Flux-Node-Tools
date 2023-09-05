@@ -1016,10 +1016,10 @@ function check_external_ports() {
     echo -e "${BLUE}   checking api ssl port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_ssl_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
-      external_flux_api_ssl_port="${RED_ARROW}   Flux API Port $api_ssl_port is ${RED}closed${NC} - please check your network settings"
+      external_flux_api_ssl_port="${RED_ARROW}   Flux API SSL Port $api_ssl_port is ${RED}closed${NC} - please check your network settings"
 
     else
-      external_flux_api_ssl_port="${GREEN_ARROW}   Flux API Port $api_ssl_port is ${GREEN}open${NC}"
+      external_flux_api_ssl_port="${GREEN_ARROW}   Flux API SSL Port $api_ssl_port is ${GREEN}open${NC}"
     fi
     sleep 1
     echo -e "${BLUE}   checking syncthing port ... ${NC}"
