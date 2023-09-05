@@ -536,7 +536,7 @@ function show_flux_node_info_tile() {
   fi
   echo -e "$flux_ui_port"
   echo -e "$flux_api_port"
-  echo -e "$flux_api_ssl_port"  
+  echo -e "$flux_api_ssl_port"
   echo -e "$flux_syncthing_port"
   echo -e "$mongodb_port"
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
