@@ -30,7 +30,7 @@ SEA="\\033[38;5;49m"
 NC='\033[0m'
 TAB='  '
 softExit='0'
-nodeViewVersion='Flux Node View 1.2'
+nodeViewVersion='Flux Node View 1.3'
 
 # add alias to bashrc so you can just call fluxnodeview from CLI
 if [[ $(cat /etc/bash.bashrc | grep 'fluxnodeview' | wc -l) == "0" ]]; then
@@ -912,7 +912,7 @@ function check_flux_log() {
 
 #check node external IP address and compare it to device IP address
 function check_ip() {
-  local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}')
+  local_device=$(ip addr | grep 'BROADCAST,MULTICAST,UP,LOWER_UP' | awk 'NR==1 {print $2}' | awk -F"@" '{print $1}')
   WANIP=$(curl --silent --max-time 20 https://api.ipify.org | tr -dc '[:alnum:].')
   if [[ "$WANIP" == "" ]]; then
     WANIP=$(curl --silent --max-time 20 https://ipv4.icanhazip.com | tr -dc '[:alnum:].')
