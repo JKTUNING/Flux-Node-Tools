@@ -975,7 +975,7 @@ function check_port_info() {
   if [[ -n $api_ssl_port ]]; then
     flux_api_ssl_port="${GREEN_ARROW}   Flux API SSL Listening on ${GREEN}$api_ssl_port${NC}"
   else
-    flux_api_ssl_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
+    flux_api_ssl_port="${RED_ARROW}   Flux API SSL is ${RED}not listening${NC}"
   fi
 
   if [[ -n $ui_port ]]; then
