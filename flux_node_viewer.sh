@@ -223,6 +223,7 @@ checking_ports='0'
 # get a list of the LISTEN ports
 # listen_ports=$(sudo lsof -i -n | grep LISTEN)
 flux_api_port=""
+flux_api_ssl_port=""
 flux_ui_port=""
 mongodb_port=""
 flux_bench_port=""
@@ -533,13 +534,15 @@ function show_flux_node_info_tile() {
   if [[ -n $dhcp_status ]]; then
     echo -e "${YELLOW_ARROW}   $dhcp_status${NC}"
   fi
-  echo -e "$flux_api_port"
   echo -e "$flux_ui_port"
+  echo -e "$flux_api_port"
+  echo -e "$flux_api_ssl_port"
   echo -e "$flux_syncthing_port"
   echo -e "$mongodb_port"
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
+  echo -e "$external_flux_api_ssl_port"
   echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
@@ -711,6 +714,7 @@ function show_external_port_info_tile() {
   make_header "FLUX NODE EXTERNAL PORT DETAILS" "$BLUE"
   echo -e "$external_flux_ui_port"
   echo -e "$external_flux_api_port"
+  echo -e "$external_flux_api_ssl_port"
   echo -e "$external_syncthing_port"
   make_header "FLUX UPNP DETAILS" "$BLUE"
   echo -e "$upnp_status"
@@ -958,13 +962,20 @@ function check_port_info() {
 
   #use awk to parse lsof results - find any entry with "node" in the first column and print the port info column $9 - then check to see if that result has a * before the field seperator ":" - return the first row then the second row results
   api_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
-  ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
+  api_ssl_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==2 {print $1}')
+  ui_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "node") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==3 {print $1}')
   syncthing_port=$(awk -v var="${listen_ports}" 'BEGIN {print var}' | awk ' { if ($1 == "syncthing") {print $9} }' | awk -F ":" '{ if ($1 == "*") {print $2} }' | awk 'NR==1 {print $1}')
 
   if [[ -n $api_port ]]; then
     flux_api_port="${GREEN_ARROW}   Flux API Listening on ${GREEN}$api_port${NC}"
   else
     flux_api_port="${RED_ARROW}   Flux API is ${RED}not listening${NC}"
+  fi
+
+  if [[ -n $api_ssl_port ]]; then
+    flux_api_ssl_port="${GREEN_ARROW}   Flux API SSL Listening on ${GREEN}$api_ssl_port${NC}"
+  else
+    flux_api_ssl_port="${RED_ARROW}   Flux API SSL is ${RED}not listening${NC}"
   fi
 
   if [[ -n $ui_port ]]; then
@@ -1002,6 +1013,15 @@ function check_external_ports() {
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
     sleep 1
+    echo -e "${BLUE}   checking api ssl port ... ${NC}"
+    checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_ssl_port" $PORT_CHECK_URL | grep 'open on')
+    if [[ -z $checkPort ]]; then
+      external_flux_api_ssl_port="${RED_ARROW}   Flux API SSL Port $api_ssl_port is ${RED}closed${NC} - please check your network settings"
+
+    else
+      external_flux_api_ssl_port="${GREEN_ARROW}   Flux API SSL Port $api_ssl_port is ${GREEN}open${NC}"
+    fi
+    sleep 1
     echo -e "${BLUE}   checking syncthing port ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
@@ -1013,6 +1033,7 @@ function check_external_ports() {
   else
     external_flux_ui_port="${RED_ARROW}   Flux UI Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
     external_flux_api_port="${RED_ARROW}   Flux API Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
+    external_flux_api_ssl_port="${RED_ARROW}   Flux API SSL Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
     external_syncthing_port="${RED_ARROW}   Syncthing Port is ${RED}NOT LISTENING${NC} - please check FluxOS Service"
   fi
 }
