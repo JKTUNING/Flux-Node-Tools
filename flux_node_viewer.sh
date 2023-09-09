@@ -324,7 +324,7 @@ function get_flux_node_info() {
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_deterministic=$($COIN_CLI viewdeterministiczelnodelist $(grep 'nodeoutpoint' $HOME/.flux/flux.conf | awk -F '=' '{print $2}'))
   flux_node_active_since=$(jq -r '.activesince' <<<"$flux_node_details" 2>/dev/null)
-  flux_node_active_date=$(date -d @$(  echo "($addedTime * 1000 + 500) / 1000" | bc 2>/dev/null) 2>/dev/null)
+  flux_node_active_date=$(date -d @$(  echo "($flux_node_active_since * 1000 + 500) / 1000" | bc 2>/dev/null) 2>/dev/null)
 
   #gather node rank from determin
   if [ ${#flux_node_deterministic[@]} -eq 1 ]; then
