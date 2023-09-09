@@ -323,6 +323,8 @@ function get_flux_node_info() {
   flux_node_last_confirmed_height=$(jq -r '.last_confirmed_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_last_paid_height=$(jq -r '.last_paid_height' <<<"$flux_node_details" 2>/dev/null)
   flux_node_deterministic=$($COIN_CLI viewdeterministiczelnodelist $(grep 'nodeoutpoint' $HOME/.flux/flux.conf | awk -F '=' '{print $2}'))
+  flux_node_active_since=$(jq -r '.activesince' <<<"$flux_node_details" 2>/dev/null)
+  flux_node_active_date=$(date -d @$(  echo "($addedTime * 1000 + 500) / 1000" | bc 2>/dev/null) 2>/dev/null)
 
   #gather node rank from determin
   if [ ${#flux_node_deterministic[@]} -eq 1 ]; then
@@ -528,6 +530,7 @@ function show_flux_node_info_tile() {
   echo -e "$BLUE_CIRCLE   Blocks since confirmed  -    $blockDiff"
   echo -e "$BLUE_CIRCLE   Maintenance Window      -    $maint_window mins"
   echo -e "$BLUE_CIRCLE   Uptime                  -    $flux_uptime"
+  echo -e "$BLUE_CIRCLE   Node added date         -    $flux_node_active_date"
   echo -e "$flux_node_version_check"
   make_header "$DASH_NODE_PORT_TITLE" "$BLUE"
   echo -e "$flux_ip_check"
