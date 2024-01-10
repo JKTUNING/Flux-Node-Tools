@@ -996,15 +996,16 @@ function check_port_info() {
 # Only checks Flux UI port and Flux API Port at this time
 function check_external_ports() {
   if [[ -n $ui_port && -n $api_port ]]; then
-    echo -e "${BLUE}   checking gui port ... ${NC}"
+    echo -e "${BLUE}   checking gui port: ${YELLOW}$ui_port${BLUE} ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$ui_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_ui_port="${RED_ARROW}   Flux UI Port $ui_port is ${RED}closed${NC} - please check your network settings"
     else
       external_flux_ui_port="${GREEN_ARROW}   Flux UI Port $ui_port is ${GREEN}open${NC}"
     fi
-    sleep 1
-    echo -e "${BLUE}   checking api port ... ${NC}"
+    echo -e "${BLUE}   waiting to check next port ... ${NC}"
+    sleep 2
+    echo -e "${BLUE}   checking api port: ${YELLOW}$api_port${BLUE} ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_api_port="${RED_ARROW}   Flux API Port $api_port is ${RED}closed${NC} - please check your network settings"
@@ -1012,8 +1013,9 @@ function check_external_ports() {
     else
       external_flux_api_port="${GREEN_ARROW}   Flux API Port $api_port is ${GREEN}open${NC}"
     fi
-    sleep 1
-    echo -e "${BLUE}   checking api ssl port ... ${NC}"
+    echo -e "${BLUE}   waiting to check next port ... ${NC}"
+    sleep 2
+    echo -e "${BLUE}   checking api ssl port: ${YELLOW}$api_ssl_port${BLUE} ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$api_ssl_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_flux_api_ssl_port="${RED_ARROW}   Flux API SSL Port $api_ssl_port is ${RED}closed${NC} - please check your network settings"
@@ -1021,8 +1023,9 @@ function check_external_ports() {
     else
       external_flux_api_ssl_port="${GREEN_ARROW}   Flux API SSL Port $api_ssl_port is ${GREEN}open${NC}"
     fi
-    sleep 1
-    echo -e "${BLUE}   checking syncthing port ... ${NC}"
+    echo -e "${BLUE}   waiting to check next port ... ${NC}"
+    sleep 2
+    echo -e "${BLUE}   checking syncthing port: ${YELLOW}$syncthing_port${BLUE} ... ${NC}"
     checkPort=$(curl --silent --max-time 20 --data "remoteAddress=$WANIP&portNumber=$syncthing_port" $PORT_CHECK_URL | grep 'open on')
     if [[ -z $checkPort ]]; then
       external_syncthing_port="${RED_ARROW}   Syncthing Port $syncthing_port is ${RED}closed${NC} - please check your network settings"
