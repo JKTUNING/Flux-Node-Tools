@@ -882,7 +882,7 @@ function check_pm2_flux_watchdog_service() {
 #checks last 100 lines of daemon log file for errors or failed entries
 function check_daemon_log() {
   if [[ -f $DAEMON_LOG_DIR ]]; then
-    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a -wi 'error|failed' | tac | head)
+    daemon_log=$(tail -100 $DAEMON_LOG_DIR | egrep -a -wi 'error|failed|invalid' | tac | head)
     if [[ $daemon_log == "" ]]; then
       daemon_log="${GREEN_ARROW}   No Daemon Errors logged"
     fi
@@ -893,7 +893,7 @@ function check_daemon_log() {
 
 function check_benchmark_log() {
   if [[ -f $BENCH_LOG_FILE_DIR ]]; then
-    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'failed|Warning' | tac | head)
+    bench_log=$(tail -100 $BENCH_LOG_FILE_DIR | egrep -a -wi 'error|failed|Warning|invalid' | tac | head)
     if [[ $bench_log == "" ]]; then
       bench_log="${GREEN_ARROW}   No failed benchmark errors logged"
     fi
